@@ -5,7 +5,11 @@ export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({ 
         baseUrl: 'http://localhost:8000',
-        credentials: 'include', // Include credentials (cookies, etc.) if needed for CORS
+        prepareHeaders: (headers) => {
+            // Add any necessary headers
+            headers.set('Content-Type', 'application/json');
+            return headers;
+        },
     }), 
     endpoints: (builder) => ({
         bulkUploadQuestions: builder.mutation({
