@@ -11,10 +11,24 @@ import {
     Menu,
     X
 } from 'lucide-react';
+import workforceModules from "../data.json"; // Adjust the path as needed
 
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
+
+    // Map icon names to Lucide React components
+    const iconMap = {
+        LayoutDashboard: LayoutDashboard,
+        Building: Building,
+        Users: Users,
+        ClipboardCheck: ClipboardCheck,
+        Leaf: Leaf,
+        FileText: FileText,
+        BarChart3: BarChart3,
+        Menu: Menu,
+        X: X
+    };
 
     const toggleSidebar = () => {
         setIsOpen(!isOpen);
@@ -55,117 +69,31 @@ const Sidebar = () => {
                     {/* Navigation */}
                     <nav className="flex-1">
                         <ul className="space-y-1">
-                            <li>
-                                <NavLink
-                                    to="/dashboard"
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${isActive
-                                            ? 'bg-[#20305D] text-white'
-                                            : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
-                                        }`
-                                    }
-                                    onClick={closeSidebar}
-                                >
-                                    <LayoutDashboard className="w-5 h-5 flex-shrink-0" />
-                                    <span>Dashboard</span>
-                                </NavLink>
-                            </li>
-
-                            <li>
-                                <NavLink
-                                    to="/plantmanagement"
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${isActive
-                                            ? 'bg-[#20305D] text-white'
-                                            : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
-                                        }`
-                                    }
-                                    onClick={closeSidebar}
-                                >
-                                    <FileText className="w-5 h-5 flex-shrink-0" />
-                                    <span>Entity Details</span>
-                                </NavLink>
-                            </li>
-
-                            <li>
-                                <NavLink
-                                    to="/workforce"
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${isActive
-                                            ? 'bg-[#20305D] text-white'
-                                            : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
-                                        }`
-                                    }
-                                    onClick={closeSidebar}
-                                >
-                                    <Users className="w-5 h-5 flex-shrink-0" />
-                                    <span>Workforce</span>
-                                </NavLink>
-                            </li>
-
-                            <li>
-                                <NavLink
-                                    to="/stakeholder-engagement"
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${isActive
-                                            ? 'bg-[#20305D] text-white'
-                                            : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
-                                        }`
-                                    }
-                                    onClick={closeSidebar}
-                                >
-                                    <Leaf className="w-5 h-5 flex-shrink-0" />
-                                    <span>Environment</span>
-                                </NavLink>
-                            </li>
-
-                            <li>
-                                <NavLink
-                                    to="/governance"
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${isActive
-                                            ? 'bg-[#20305D] text-white'
-                                            : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
-                                        }`
-                                    }
-                                    onClick={closeSidebar}
-                                >
-                                    <ClipboardCheck className="w-5 h-5 flex-shrink-0" />
-                                    <span>Compliance</span>
-                                </NavLink>
-                            </li>
-
-                            <li>
-                                <NavLink
-                                    to="/finance"
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${isActive
-                                            ? 'bg-[#20305D] text-white'
-                                            : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
-                                        }`
-                                    }
-                                    onClick={closeSidebar}
-                                >
-                                    <BarChart3 className="w-5 h-5 flex-shrink-0" />
-                                    <span>Finance</span>
-                                </NavLink>
-                            </li>
-
-                            <li>
-                                <NavLink
-                                    to="/reports"
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${isActive
-                                            ? 'bg-[#20305D] text-white'
-                                            : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
-                                        }`
-                                    }
-                                    onClick={closeSidebar}
-                                >
-                                    <FileText className="w-5 h-5 flex-shrink-0" />
-                                    <span>Reports</span>
-                                </NavLink>
-                            </li>
+                            {workforceModules.modules.map((module) => {
+                                const IconComponent = iconMap[module.icon];
+                                return (
+                                    <li key={module.name}>
+                                        <NavLink
+                                            to={module.route}
+                                            className={({ isActive }) =>
+                                                `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${
+                                                    isActive
+                                                        ? 'bg-[#20305D] text-white'
+                                                        : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
+                                                }`
+                                            }
+                                            onClick={closeSidebar}
+                                        >
+                                            {IconComponent ? (
+                                                <IconComponent className="w-5 h-5 flex-shrink-0" />
+                                            ) : (
+                                                <span>Icon Missing</span>
+                                            )}
+                                            <span>{module.name}</span>
+                                        </NavLink>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </nav>
                 </div>

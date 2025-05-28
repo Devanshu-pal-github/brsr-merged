@@ -1,0 +1,281 @@
+{
+  "modules": [
+    {
+      "name": "Workforce",
+      "route": "/workforce",
+      "icon": "Users",
+      "submodules": [
+        {
+          "name": "Workforce Details",
+          "questions": [
+            {
+              "name": "Employees and Workers Details",
+              "type": "table",
+              "content": {
+                "title": "Employees",
+                "fields": [
+                  { "label": "Category", "key": "category", "align": "left" },
+                  { "label": "Male No.", "key": "male", "align": "center" },
+                  { "label": "Female No.", "key": "female", "align": "center" }
+                ],
+                "rows": [
+                  {
+                    "category": "Permanent",
+                    "male": { "value": 0, "type": "input", "inputType": "number" },
+                    "female": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "category": "Other than Permanent",
+                    "male": { "value": 0, "type": "input", "inputType": "number" },
+                    "female": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "category": "Total Employees",
+                    "male": { "value": 0, "type": "calc", "formula": "rows[0].male.value / rows[1].male.value" },
+                    "female": { "value": 0, "type": "calc", "formula": "rows.slice(0, -1).reduce((sum, row) => sum + (row.female?.value || 0), 0)" }
+                  }
+                ],
+                "onEditClick": true
+              }
+            },
+            {
+              "name": "Differently Abled Employees and Workers",
+              "type": "table",
+              "content": {
+                "title": "Differently Abled Employees",
+                "fields": [
+                  { "label": "Category", "key": "category", "align": "left" },
+                  { "label": "Male No.", "key": "male", "align": "center" },
+                  { "label": "Female No.", "key": "female", "align": "center" }
+                ],
+                "rows": [
+                  {
+                    "category": "Permanent",
+                    "male": { "value": 0, "type": "input", "inputType": "number" },
+                    "female": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "category": "Other than Permanent",
+                    "male": { "value": 0, "type": "input", "inputType": "number" },
+                    "female": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "category": "Total",
+                    "male": { "value": 0, "type": "calc", "formula": "rows.slice(0, -1).reduce((sum, row) => sum + (row.male?.value || 0), 0)" },
+                    "female": { "value": 0, "type": "calc", "formula": "rows.slice(0, -1).reduce((sum, row) => sum + (row.female?.value || 0), 0)" }
+                  }
+                ],
+                "onEditClick": true
+              }
+            },
+            {
+              "name": "Participation/Inclusion of Women",
+              "type": "table",
+              "content": {
+                "title": "Participation of Women",
+                "fields": [
+                  { "label": "Category", "key": "category", "align": "left" },
+                  { "label": "Female Present", "key": "female", "align": "center" }
+                ],
+                "rows": [
+                  {
+                    "category": "Board of Directors",
+                    "female": { "value": false, "type": "edit", "inputType": "boolean" }
+                  },
+                  {
+                    "category": "Key Management Personnel",
+                    "female": { "value": false, "type": "edit", "inputType": "boolean" }
+                  },
+                  {
+                    "category": "Total",
+                    "female": { "value": 0, "type": "calc", "formula": "rows.slice(0, -1).reduce((sum, row) => sum + (row.female?.value ? 1 : 0), 0)" }
+                  }
+                ],
+                "onEditClick": true
+              }
+            },
+            {
+              "name": "Turnover Rate",
+              "type": "table",
+              "content": {
+                "title": "Turnover Rate",
+                "fields": [
+                  { "label": "Category", "key": "category", "align": "left" },
+                  {
+                    "label": "FY 2023-24",
+                    "key": "fy_2023_24",
+                    "align": "center",
+                    "subFields": [
+                      { "label": "Male (%)", "key": "male1", "align": "center" },
+                      { "label": "Female (%)", "key": "female1", "align": "center" }
+                    ]
+                  },
+                  {
+                    "label": "FY 2024-25",
+                    "key": "fy_2024_25",
+                    "align": "center",
+                    "subFields": [
+                      { "label": "Male (%)", "key": "male2", "align": "center" },
+                      { "label": "Female (%)", "key": "female2", "align": "center" }
+                    ]
+                  }
+                ],
+                "rows": [
+                  {
+                    "category": "Permanent",
+                    "male1": { "value": 0, "type": "input", "inputType": "number" },
+                    "female1": { "value": 0, "type": "input", "inputType": "number" },
+                    "male2": { "value": 0, "type": "input", "inputType": "number" },
+                    "female2": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "category": "Other than Permanent",
+                    "male1": { "value": 0, "type": "input", "inputType": "number" },
+                    "female1": { "value": 0, "type": "input", "inputType": "number" },
+                    "male2": { "value": 0, "type": "input", "inputType": "number" },
+                    "female2": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "category": "Average",
+                    "male1": { "value": 0, "type": "calc", "formula": "rows.slice(0, -1).reduce((sum, row) => sum + (row.male1?.value || 0), 0) / (rows.length - 1)" },
+                    "female1": { "value": 0, "type": "calc", "formula": "rows.slice(0, -1).reduce((sum, row) => sum + (row.female1?.value || 0), 0) / (rows.length - 1)" },
+                    "male2": { "value": 0, "type": "calc", "formula": "rows.slice(0, -1).reduce((sum, row) => sum + (row.male2?.value || 0), 0) / (rows.length - 1)" },
+                    "female2": { "value": 0, "type": "calc", "formula": "rows.slice(0, -1).reduce((sum, row) => sum + (row.female2?.value || 0), 0) / (rows.length - 1)" }
+                  }
+                ],
+                "onEditClick": true
+              }
+            },
+            {
+              "name": "Male Employees Breakdown",
+              "type": "table",
+              "content": {
+                "title": "Male",
+                "fields": [
+                  { "label": "Category", "key": "category", "align": "left" },
+                  { "label": "Number", "key": "value", "align": "center" }
+                ],
+                "rows": [
+                  {
+                    "category": "Permanent",
+                    "value": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "category": "Other than Permanent",
+                    "value": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "category": "Total",
+                    "value": { "value": 0, "type": "calc", "formula": "rows.slice(0, -1).reduce((sum, row) => sum + (row.value?.value || 0), 0)" }
+                  }
+                ],
+                "onEditClick": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "Employee Well-being",
+          "questions": [
+            {
+              "name": "Describe your employee well-being programs",
+              "type": "subjective",
+              "content": {
+                "question": "Provide a detailed description of the employee well-being programs implemented in your organization, including health benefits, mental health support, and work-life balance initiatives.",
+                "answer": "",
+                "policyLink": "https://example.com/employee-wellbeing-policy"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Human Rights",
+          "questions": [
+            {
+              "name": "Human rights policies",
+              "type": "subjective",
+              "content": {
+                "question": "Outline your organization's policies on human rights, including measures to prevent discrimination, forced labor, and child labor.",
+                "answer": "",
+                "policyLink": "https://example.com/human-rights-policy"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Others",
+          "questions": [
+            {
+              "name": "Additional workforce comments",
+              "type": "subjective",
+              "content": {
+                "question": "Provide any additional comments or information related to your workforce that you would like to share.",
+                "answer": "This information use useful and used very much",
+                "policyLink": "https://example.com/workforce-policy"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Environment",
+      "route": "/environment",
+      "icon": "Leaf",
+      "submodules": [
+        {
+          "name": "Environmental Impact",
+          "questions": [
+            {
+              "name": "Describe your environmental sustainability initiatives",
+              "type": "subjective",
+              "content": {
+                "question": "Provide details on your organization's environmental sustainability initiatives, including efforts to reduce carbon emissions and waste.",
+                "answer": "",
+                "policyLink": "https://example.com/environmental-policy"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Finance",
+      "route": "/finance",
+      "icon": "BarChart3",
+      "submodules": [
+        {
+          "name": "Financial Performance",
+          "questions": [
+            {
+              "name": "Financial Overview",
+              "type": "table",
+              "content": {
+                "title": "Financial Metrics",
+                "fields": [
+                  { "label": "Metric", "key": "metric", "align": "left" },
+                  { "label": "Value", "key": "value", "align": "center" }
+                ],
+                "rows": [
+                  {
+                    "metric": "Revenue (FY23-24)",
+                    "value": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "metric": "Revenue (FY24-25)",
+                    "value": { "value": 0, "type": "input", "inputType": "number" }
+                  },
+                  {
+                    "metric": "Growth Rate",
+                    "value": { "value": 0, "type": "calc", "formula": "((rows[1].value.value - rows[0].value.value) / rows[0].value.value) * 100" }
+                  }
+                ],
+                "onEditClick": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

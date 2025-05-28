@@ -1,50 +1,91 @@
-export default function TableCard({ title, fields, rows, onEditClick }) {
-  return (
-    <div className="w-full max-w-full md:max-w-[300px] h-auto p-3 pt-0 rounded-[8px] mx-auto">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-[12px] md:text-[14px] font-semibold text-[#000D30]">{title}</h2>
-        {onEditClick && (
-          <button
-            onClick={onEditClick}
-            className="w-[38px] h-[24px] md:w-[56px] md:h-[26px] bg-[#002A85] text-white text-[11px] md:text-[12px] rounded-md flex items-center justify-center"
-          >
-            Edit
-          </button>
-        )}
-      </div>
+import React, { useState } from "react";
+import { Bot } from "lucide-react";
 
-      <div className="bg-white rounded-[8px] shadow-sm">
-        <table className="w-full min-w-[240px] table-fixed">
-          <thead>
-            <tr className="bg-[#F3F4F6]">
-              {fields.map((field, idx) => (
-                <th
-                  key={idx}
-                  className={`py-2 px-1 sm:px-2 font-medium text-gray-700 text-xs sm:text-sm ${field.align === 'center' ? 'text-center' : 'text-left'}`}
-                >
-                  {field.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, rowIndex) => (
-              <tr
-                key={rowIndex}
-                className={`${rowIndex === rows.length - 1 ? 'bg-gray-50 font-medium' : 'border-b border-gray-200'}`}
-              >
-                {fields.map((field, colIndex) => (
-                  <td
-                    key={colIndex}
-                    className={`py-1 px-1 sm:px-2 text-[10px] md:text-[12px] text-black ${field.align === 'center' ? 'text-center' : ''}`}
-                  >
-                    {row[field.key]}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+export default function QuestionnaireItem({
+  question = "",
+  answer = "",
+  details = "",
+  policyLink = "",
+  isDropdownOpen = false,
+  onUpdate = () => {},
+  onAIAssistantClick = () => console.log("AI Assistant clicked"),
+}) {
+  const [editing, setEditing] = useState(false);
+  const [editAnswer, setEditAnswer] = useState(answer || "");
+
+  const handleEditClick = () => {
+    if (editing) {
+      onUpdate({ answer: editAnswer });
+      console.log("Saved:", { answer: editAnswer }); // Debugging
+    }
+    setEditing(!editing);
+    console.log("Edit clicked, editing:", !editing); // Debugging
+  };
+
+  const handleAnswerChange = (e) => {
+    setEditAnswer(e.target.value);
+    console.log("Answer changed:", e.target.value); // Debugging
+  };
+
+  return (
+    <div
+      className={`w-full max-w-[900px] mx-auto ${
+        isDropdownOpen ? "mt-1 mb-4" : "mt-1 mb-1"
+      } bg-white shadow-[0_4px_10px_rgba(0,0,0,0.2)] rounded-lg p-3`}
+    >
+      <div className="flex justify-between items-start gap-4">
+        <div className="flex-1 space-y-1">
+          <div className="text-[12px] sm:text-[12px] md:text-base font-medium text-black mb-1">
+            {question || "No question provided"}
+          </div>
+          <div className="text-[10px] sm:text-[10px] text-black">
+            <span className="font-medium">Ans:</span>{" "}
+            {editing ? (
+              <div className="flex flex-col gap-2">
+                <textarea
+                  value={editAnswer}
+                  onChange={handleAnswerChange}
+                  placeholder="Enter your answer..."
+                  className="w-full border rounded px-2 py-1 text-[10px] resize-y"
+                  rows="3"
+                />
+              </div>
+            ) : (
+              <>
+                <span>{editAnswer || "No answer provided"}</span>
+                {details && <span className="text-black ml-1">{details}</span>}
+              </>
+            )}
+          </div>
+          {policyLink && (
+            <a
+              href={policyLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline text-[12px] hover:text-blue-800 block mt-1"
+            >
+              View Policy
+            </a>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleEditClick}
+            className="w-[28px] h-[18px] bg-[#002A85] text-white text-[9px] rounded-md flex items-center justify-center"
+            aria-label={editing ? "Save answer" : "Edit answer"}
+          >
+            {editing ? "Save" : "Edit"}
+          </button>
+          <button
+            type="button"
+            onClick={onAIAssistantClick}
+            className="w-[28px] h-[18px] bg-[#20305d] text-white rounded-md flex items-center justify-center"
+            aria-label="AI Assistant"
+          >
+            <Bot size={12} color="white" />
+          </button>
+        </div>
       </div>
     </div>
   );
