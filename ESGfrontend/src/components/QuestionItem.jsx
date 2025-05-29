@@ -1,119 +1,117 @@
 import React, { useState } from "react";
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-export default function QuestionnaireItem({
-  question = "",
-  answer = "",
-  details = "",
-  policyLink = "",
-  isDropdownOpen = false,
-  onUpdate = () => {},
-}) {
-  const [editing, setEditing] = useState(false);
-  const [editAnswer, setEditAnswer] = useState(answer || "");
-  const [rating, setRating] = useState(0);
+const QuestionnaireItem = ({ question, onUpdate }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [answer, setAnswer] = useState('');
 
-  const handleEditClick = () => {
-    if (editing) {
-      // Save changes and return to non-editable state
-      onUpdate({ answer: editAnswer, rating });
-      console.log("Saved:", { answer: editAnswer, rating }); // Debugging
-    }
-    setEditing(!editing);
-    console.log("Edit clicked, editing:", !editing); // Debugging
-  };
+    const handleAnswerChange = (e) => {
+        const newAnswer = e.target.value;
+        setAnswer(newAnswer);
+        onUpdate(question.question_id, { answer: newAnswer });
+    };
 
-  const handleAnswerChange = (e) => {
-    setEditAnswer(e.target.value);
-    console.log("Answer changed:", e.target.value); // Debugging
-  };
-
-  const handleStarClick = (starValue) => {
-    setRating(starValue);
-    console.log("Star clicked, rating:", starValue); // Debugging
-  };
-
-  return (
-    <div
-      className={`w-full max-w-[900px] mx-auto ${
-        isDropdownOpen ? "mt-1 mb-4" : "mt-1 mb-1"
-      } bg-white shadow-[0_4px_10px_rgba(0,0,0,0.2)] rounded-lg p-3`}
-    >
-      <div className="flex justify-between items-start gap-4">
-        <div className="flex-1 space-y-1">
-          <div className="text-[12px] sm:text-[12px] md:text-base font-medium text-black mb-1">
-            {question || "No question provided"}
-          </div>
-          <div className="text-[10px] sm:text-[10px] text-black">
-            <span className="font-medium">Ans:</span>{" "}
-            {editing ? (
-              <div className="flex flex-col gap-2">
-                <textarea
-                  value={editAnswer}
-                  onChange={handleAnswerChange}
-                  placeholder="Enter your answer..."
-                  className="w-full border rounded px-2 py-1 text-[10px] resize-y"
-                  rows="3"
+    const renderInput = () => {
+        if (question.has_decimal_value) {
+            return (
+                <input
+                    type="number"
+                    step="0.01"
+                    value={answer}
+                    onChange={handleAnswerChange}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required={question.decimal_value_required}
                 />
-                <div className="flex gap-1">
-                  {[1, 2, 3].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => handleStarClick(star)}
-                      className={`text-[16px] cursor-pointer ${
-                        rating >= star ? "text-[#20305d]" : "text-gray-300"
-                      }`}
-                      aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-                    >
-                      ★
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <>
-                <span>{editAnswer || "No answer provided"}</span>
-                {details && <span className="text-black ml-1">{details}</span>}
-              </>
-            )}
-          </div>
-          {policyLink && (
-            <a
-              href={policyLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 underline text-[12px] hover:text-blue-800 block mt-1"
-            >
-              View Policy
-            </a>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleEditClick}
-            className="w-[28px] h-[18px] bg-[#002A85] text-white text-[9px] rounded-md flex items-center justify-center"
-            aria-label={editing ? "Save answer" : "Edit answer"}
-          >
-            {editing ? "Save" : "Edit"}
-          </button>
-          {!editing && (
-            <div className="flex gap-1">
-              {[1, 2, 3].map((star) => (
-                <span
-                  key={star}
-                  className={`text-[16px] ${
-                    rating >= star ? "text-[#20305d]" : "text-gray-300"
-                  }`}
-                  aria-label={`Rated ${star} star${star > 1 ? "s" : ""}`}
+            );
+        }
+
+        if (question.has_string_value) {
+            return (
+                <textarea
+                    value={answer}
+                    onChange={handleAnswerChange}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+                    required={question.string_value_required}
+                />
+            );
+        }
+
+        if (question.has_boolean_value) {
+            return (
+                <select
+                    value={answer}
+                    onChange={handleAnswerChange}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required={question.boolean_value_required}
                 >
-                  ★
+                    <option value="">Select an option</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            );
+        }
+
+        // Default to string input if no specific type is specified
+        return (
+            <textarea
+                value={answer}
+                onChange={handleAnswerChange}
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+                required={question.string_value_required}
+            />
+        );
+    };
+
+    return (
+        <div className="border border-gray-200 rounded-lg p-4 bg-white">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between text-left"
+            >
+                <span className="text-sm font-medium text-gray-700">
+                    {question.question}
                 </span>
-              ))}
-            </div>
-          )}
+                {isOpen ? (
+                    <ChevronUp className="w-4 h-4 text-gray-500" />
+                ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                )}
+            </button>
+
+            {isOpen && (
+                <div className="mt-4 space-y-4">
+                    {renderInput()}
+                    
+                    {question.has_note && (
+                        <div className="mt-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Additional Notes
+                            </label>
+                            <textarea
+                                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Add any additional notes here..."
+                                required={question.note_required}
+                            />
+                        </div>
+                    )}
+
+                    {question.has_link && (
+                        <div className="mt-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Reference Link
+                            </label>
+                            <input
+                                type="url"
+                                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Enter reference URL"
+                                required={question.link_required}
+                            />
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
-      </div>
-    </div>
-  );
-}
+    );
+};
+
+export default QuestionnaireItem;

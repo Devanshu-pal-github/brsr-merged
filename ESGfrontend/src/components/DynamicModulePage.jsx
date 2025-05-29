@@ -51,36 +51,13 @@ const DynamicModulePage = () => {
 
     // Render question based on its type
     const renderQuestion = (question) => {
-        switch (question.type) {
-            case 'subjective':
-                return (
-                    <QuestionnaireItem
-                        key={question.question_id}
-                        question={question.question}
-                        answer=""
-                        isDropdownOpen={false}
-                        onUpdate={(data) => handleUpdate(question.question_id, data)}
-                        onAIAssistantClick={() => console.log('AI Assistant clicked for:', question.question_id)}
-                    />
-                );
-            case 'table':
-                return (
-                    <BigTable
-                        key={question.question_id}
-                        title={question.title || ''}
-                        fields={question.fields || []}
-                        rows={question.rows || []}
-                        onEditClick={() => console.log('Edit clicked')}
-                        onUpdate={(data) => handleUpdate(question.question_id, data)}
-                    />
-                );
-            default:
-                return (
-                    <div key={question.question_id} className="text-sm text-gray-500">
-                        Unsupported question type: {question.type}
-                    </div>
-                );
-        }
+        return (
+            <QuestionnaireItem
+                key={question.question_id}
+                question={question}
+                onUpdate={(questionId, data) => handleUpdate(questionId, data)}
+            />
+        );
     };
 
     // Render current submodule content
