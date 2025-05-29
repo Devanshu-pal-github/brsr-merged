@@ -50,8 +50,20 @@ const Login = () => {
                 });
                 const moduleData = await moduleResponse.json();
                 console.log('=== Immediate Module Access Response ===');
-               
-                console.log('Accessible Module IDs:', moduleData.module_ids);
+                
+                // Fetch module names for the received IDs
+                const moduleNamesResponse = await fetch('http://localhost:8000/roleAccess/getModuleNames', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${response.access_token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ module_ids: moduleData.module_ids })
+                });
+                
+                const moduleNames = await moduleNamesResponse.json();
+                console.log('Accessible Modules:', moduleNames);
+                
                 console.log('=====================================');
             } catch (error) {
                 console.error('Error fetching module access:', error);
