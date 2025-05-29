@@ -7,9 +7,9 @@ import Breadcrumb from './Breadcrumb';
 import SubHeader from './SubHeader';
 import ProgressCard from './ProgressCard';
 import AIAssistant from './WorkforceAi';
-import WorkforceQuestion from './WorkforceQuestion';
 import QuestionnaireItem from './QuestionItem';
 import BigTable from './BigTable';
+import QuestionCategory from './QuestionCategory';
 
 const DynamicModulePage = () => {
     const location = useLocation();
@@ -88,21 +88,11 @@ const DynamicModulePage = () => {
         return (
             <div className="flex flex-col space-y-[10px]">
                 {submodule.question_categories?.map((category) => (
-                    <div key={category.id} className="bg-white rounded-lg shadow-sm p-6">
-                        <h3 className="text-lg font-semibold mb-4 text-[#000D30]">
-                            {category.category_name}
-                        </h3>
-                        <div className="space-y-6">
-                            {category.questions.map((question) => (
-                                <WorkforceQuestion 
-                                    key={question.question_id} 
-                                    question={question.question}
-                                >
-                                    {renderQuestion(question)}
-                                </WorkforceQuestion>
-                            ))}
-                        </div>
-                    </div>
+                    <QuestionCategory
+                        key={category.id}
+                        category={category}
+                        renderQuestion={renderQuestion}
+                    />
                 ))}
             </div>
         );
