@@ -73,7 +73,7 @@ const Login = () => {
             // due to the onQueryStarted logic in apiSlice
             
             // Redirect to dashboard after successful login
-            navigate('/entityDetails');
+            navigate('/dashboard');
         } catch (err) {
             console.error('Login failed:', err);
             setError(err.data?.detail || 'Login failed. Please try again.');
