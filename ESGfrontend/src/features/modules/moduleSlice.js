@@ -19,15 +19,25 @@ const moduleSlice = createSlice({
                     id: module._id,
                     name: module.module_name,
                     route: `/${module.module_name.toLowerCase().replace(/\s+/g, '')}`,
-                    icon: 'FileText', // Default icon, you can map this based on module name if needed
+                    icon: 'FileText',
                     submodules: module.submodules?.map(submodule => ({
                         id: submodule.id,
                         name: submodule.submodule_name,
-                        categories: submodule.question_categories
+                        submodule_name: submodule.submodule_name,
+                        question_categories: submodule.question_categories?.map(category => ({
+                            id: category.id,
+                            category_name: category.category_name,
+                            questions: category.questions?.map(question => ({
+                                ...question,
+                                type: question.type || 'subjective'
+                            })) || []
+                        })) || []
                     })) || []
                 }));
                 state.loading = false;
                 state.error = null;
+                
+                console.log('Transformed modules:', state.modules);
             }
         );
         builder.addMatcher(
