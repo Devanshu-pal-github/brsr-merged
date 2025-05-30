@@ -215,6 +215,17 @@ export const apiSlice = createApi({
         }
       }
     }),
+    getQuestionResponses: builder.mutation({
+      query: (questionIds) => ({
+        url: '/questionResponses',
+        method: 'POST',
+        body: { question_ids: questionIds },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }),
+    }),
   }),
 });
 
@@ -226,4 +237,5 @@ export const {
   useGetModuleDetailsMutation,
   useCreateEmployeeMutation,
   useGetSubmodulesByModuleIdQuery,
+  useGetQuestionResponsesMutation,
 } = apiSlice;

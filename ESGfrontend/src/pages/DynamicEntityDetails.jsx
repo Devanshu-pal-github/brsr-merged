@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGetSubmodulesByModuleIdQuery } from '../api/apiSlice';
+import { useGetSubmodulesByModuleIdQuery, useGetQuestionResponsesMutation } from '../api/apiSlice';
 import Layout from '../components/Layout';
 import Breadcrumb from '../components/Breadcrumb';
 import SubHeader from '../components/SubHeader';
@@ -23,6 +23,27 @@ const DynamicEntityDetails = () => {
     // Find the current submodule
     const currentSubmodule = submodules.find(sub => sub.submodule_name === activeTab);
 
+    // Fetch answers for all questions in the selected submodule
+    const [getQuestionResponses, { data: answers, isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation();
+
+    useEffect(() => {
+        if (currentSubmodule && Array.isArray(currentSubmodule.question_categories)) {
+            // Gather all question IDs for this submodule
+            const questionIds = currentSubmodule.question_categories
+                .flatMap(cat => Array.isArray(cat.questions) ? cat.questions.map(q => q.question_id) : []);
+            if (questionIds.length > 0) {
+                getQuestionResponses(questionIds)
+                    .unwrap()
+                    .then(res => {
+                        console.log('Fetched answers:', res);
+                    })
+                    .catch(err => {
+                        console.error('Error fetching answers:', err);
+                    });
+            }
+        }
+    }, [currentSubmodule, getQuestionResponses]);
+
     // Render all question categories and their questions
     const renderSubmodule = (submodule) => {
         if (!submodule || !Array.isArray(submodule.question_categories)) {
@@ -34,6 +55,10 @@ const DynamicEntityDetails = () => {
         }
         return (
             <div className="flex flex-col space-y-8">
+                {/* Debug log */}
+                <pre className="bg-gray-100 text-xs p-2 rounded mb-2">
+                    {isAnswersLoading ? 'Loading answers...' : isAnswersError ? `Error: ${answersError?.data?.detail || 'Unknown error'}` : JSON.stringify(answers, null, 2)}
+                </pre>
                 {submodule.question_categories.map((category) => (
                     <div key={category.id} className="bg-white rounded-lg p-6 shadow-sm">
                         <h3 className="text-lg font-semibold mb-4 text-[#000D30]">
@@ -48,7 +73,7 @@ const DynamicEntityDetails = () => {
                                     >
                                         <QuestionnaireItem
                                             question={question}
-                                            answer=""
+                                            answer={answers?.[question.question_id]?.response || ''}
                                             isDropdownOpen={false}
                                             onUpdate={(updatedData) => {
                                                 // TODO: Implement update logic
