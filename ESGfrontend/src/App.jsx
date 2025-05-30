@@ -4,6 +4,7 @@ import Dashboard from './pages/PlantPages/Dashboard';
 import Login from './pages/LoginPage';
 import DynamicModulePage from './components/DynamicModulePage';
 import CreateEmployee from './pages/createEmployee';
+import DynamicEntityDetails from './pages/DynamicEntityDetails';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/:moduleName" element={<DynamicModulePage />} />
         <Route path="/createEmployee" element={<CreateEmployee />} />
-        <Route path="/module/:moduleId" element={<DynamicModulePage />} />
+        <Route path="/module/:moduleId" element={<DynamicEntityDetails />} />
       </Routes>
     </Router>
   );

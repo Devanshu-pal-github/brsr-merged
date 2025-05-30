@@ -153,14 +153,13 @@ const Sidebar = () => {
 
                             {/* Dynamic Modules */}
                             {modules.map((module) => {
-                                console.log('Rendering module:', module.module_name);
-                                const IconComponent = iconMap[module.icon] || FileText;
-                                // Get the module ID from the original module access response
+                                // Use the moduleAccessId (the one from module access, not _id)
                                 const moduleAccessId = module.id || module._id;
+                                const IconComponent = iconMap[module.icon] || FileText;
                                 return (
-                                    <li key={module._id}>
+                                    <li key={moduleAccessId}>
                                         <NavLink
-                                            to={`/module/${module._id}`}
+                                            to={`/module/${moduleAccessId}`}
                                             className={({ isActive }) =>
                                                 `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${
                                                     isActive
@@ -169,7 +168,6 @@ const Sidebar = () => {
                                                 }`
                                             }
                                             onClick={() => {
-                                                // Use the module ID from module access API
                                                 setSelectedModuleId(moduleAccessId);
                                                 console.log('Selected module ID for submodules:', moduleAccessId);
                                                 closeSidebar();
