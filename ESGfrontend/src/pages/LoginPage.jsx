@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Shield } from 'lucide-react';
-import { useLoginMutation, useGetModuleAccessQuery } from '../api/apiSlice';
+import { useLoginMutation } from '../api/apiSlice';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -11,11 +11,6 @@ const Login = () => {
     const [error, setError] = useState(null);
     const [login, { isLoading }] = useLoginMutation();
     const navigate = useNavigate();
-
-    // This will automatically fetch module access when the token is available
-    const { data: moduleData } = useGetModuleAccessQuery(undefined, {
-        skip: !localStorage.getItem('access_token'), // Skip until we have a token
-    });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -35,62 +30,19 @@ const Login = () => {
                 password: formData.password,
             };
             const response = await login(credentials).unwrap();
-            // Store the token and user_id in localStorage
+            
+            // Store token and user_id in localStorage
             localStorage.setItem('access_token', response.access_token);
             localStorage.setItem('user_id', response.user_id);
             console.log('Login successful:', response);
             
-            // Immediately fetch and log module access data
-            try {
-                const moduleResponse = await fetch('http://localhost:8000/roleAccess/moduleAccess', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${response.access_token}`
-                    }
-                });
-                const moduleData = await moduleResponse.json();
-                console.log('=== Immediate Module Access Response ===');
-                
-                // Fetch module names for the received IDs
-                const moduleNamesResponse = await fetch('http://localhost:8000/roleAccess/getModuleNames', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${response.access_token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ module_ids: moduleData.module_ids })
-                });
-                
-                const moduleNames = await moduleNamesResponse.json();
-                console.log('Accessible Modules:', moduleNames);
-                
-                console.log('=====================================');
-            } catch (error) {
-                console.error('Error fetching module access:', error);
-            }
-            
-            // The module access query will automatically trigger after login
-            // due to the onQueryStarted logic in apiSlice
-            
-            // Redirect to dashboard after successful login
+            // Redirect to dashboard
             navigate('/dashboard');
         } catch (err) {
             console.error('Login failed:', err);
             setError(err.data?.detail || 'Login failed. Please try again.');
         }
     };
-
-    // Log module access data when it's available
-    if (moduleData) {
-        console.log('=== Module Access Response ===');
-        console.log('Module Access Data:', moduleData);
-        console.log('Accessible Module IDs:', moduleData?.moduleIds || []);
-        console.log('User Role:', moduleData?.userRole || 'N/A');
-        console.log('Company ID:', moduleData?.companyId || 'N/A');
-        console.log('Plant ID:', moduleData?.plantId || 'N/A');
-        console.log('Financial Year:', moduleData?.financialYear || 'N/A');
-        console.log('=========================');
-    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1E3A8A]/10 via-[#14B8A6]/10 to-white">

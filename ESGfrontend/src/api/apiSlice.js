@@ -31,62 +31,121 @@ export const apiSlice = createApi({
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
-          const { data: loginData } = await queryFulfilled;
-          // Store token
-          localStorage.setItem("access_token", loginData.access_token);
-          // Removed automatic module access query call
+          const { data } = await queryFulfilled;
+          // Store all relevant user data
+          localStorage.setItem("access_token", data.access_token);
+          localStorage.setItem("user_id", data.user_id);
+          localStorage.setItem("user_role", JSON.stringify(data.user_role));
+          localStorage.setItem("company_id", data.company_id);
+          localStorage.setItem("plant_id", data.plant_id);
+          localStorage.setItem("financial_year", data.financial_year);
+          console.log("Stored user data in localStorage");
         } catch (error) {
           console.error("Login error:", error);
         }
       },
     }),
     getModuleAccess: builder.query({
-      query: () => ({
-        url: "/roleAccess/moduleAccess",
-        method: "GET",
-      }),
+      query: () => {
+        const company_id = localStorage.getItem("company_id");
+        const plant_id = localStorage.getItem("plant_id");
+        const financial_year = localStorage.getItem("financial_year");
+        const user_role = localStorage.getItem("user_role");
+        
+        // Parse user_role - if it's an array in string form, get the first role
+        const primaryRole = user_role ? 
+          (JSON.parse(user_role)[0] || "default") : 
+          "default";
+        
+        console.log("🔄 Initiating module access request with params:", { 
+          company_id, 
+          plant_id, 
+          financial_year,
+          user_role: primaryRole
+        });
+        
+        return {
+          url: `/roleAccess/moduleAccess`,
+          method: "POST",
+          body: {
+            company_id,
+            plant_id,
+            financial_year,
+            user_role: primaryRole // Send single role as string
+          },
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        };
+      },
+      transformResponse: (response) => {
+        console.log('📥 Module Access Response:', response);
+        if (response?.module_ids) {
+          console.log('💾 Storing module IDs:', response.module_ids);
+          localStorage.setItem("module_ids", JSON.stringify(response.module_ids));
+          return response.module_ids;
+        }
+        console.warn('⚠️ No module IDs found in response');
+        return [];
+      },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          // Store module access data in localStorage
-          localStorage.setItem("moduleAccess", JSON.stringify(data));
-          
-          if (data?.module_ids?.length > 0) {
-            // Automatically fetch complete module details when we get module IDs
-            dispatch(
-              apiSlice.endpoints.getModuleDetails.initiate(data.module_ids)
-            );
-          }
+          console.log('✅ Module access query completed successfully');
         } catch (error) {
-          console.error("Module access error:", error);
+          console.error('❌ Module access query failed:', error);
         }
-      },
+      }
     }),
     getModuleDetails: builder.mutation({
-      query: (moduleIds) => ({
-        url: "/modules/details",
-        method: "POST",
-        body: moduleIds,
-      }),
+      query: () => {
+        const moduleIds = JSON.parse(localStorage.getItem("module_ids") || "[]");
+        console.log('🔄 Fetching module details for IDs:', moduleIds);
+        
+        if (!moduleIds || moduleIds.length === 0) {
+          console.warn('⚠️ No module IDs found in localStorage');
+          throw new Error('No module IDs available');
+        }
+        
+        // The backend expects module_ids as a direct parameter, not nested in a body object
+        return {
+          url: "/modules/details",
+          method: "POST",
+          body: moduleIds,  // Send the array directly as the body
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        };
+      },
+      transformResponse: (response) => {
+        console.log('📥 Module Details Raw Response:', response);
+        if (response?.modules) {
+          console.log('💾 Storing module details in localStorage');
+          localStorage.setItem("modules", JSON.stringify(response.modules));
+          return response;
+        }
+        console.warn('⚠️ No modules found in response');
+        return { modules: [] };
+      },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          console.group("Module Details Response");
+          console.group("📦 Module Details Response");
           console.log("Full Response:", data);
 
           if (data?.modules?.length > 0) {
             data.modules.forEach((module, index) => {
-              console.group(`Module ${index + 1}: ${module.module_name}`);
+              console.group(`📑 Module ${index + 1}: ${module.module_name}`);
               console.log("Module ID:", module._id);
               console.log("Module Name:", module.module_name);
               console.log("Description:", module.description);
 
               if (module.submodules?.length > 0) {
-                console.group("Submodules");
+                console.group("📚 Submodules");
                 module.submodules.forEach((submodule, sIndex) => {
                   console.log(`${sIndex + 1}. ${submodule.name}`);
                   if (submodule.categories?.length > 0) {
-                    console.group("Categories");
+                    console.group("🗂️ Categories");
                     submodule.categories.forEach((category, cIndex) => {
                       console.log(`${cIndex + 1}. ${category.name}`);
                     });
@@ -98,11 +157,12 @@ export const apiSlice = createApi({
               console.groupEnd();
             });
           } else {
-            console.log("No modules found in the response");
+            console.warn("⚠️ No modules found in the response");
           }
           console.groupEnd();
         } catch (error) {
-          console.error("Error fetching module details:", error);
+          console.error("❌ Error fetching module details:", error);
+          throw error;
         }
       },
     }),

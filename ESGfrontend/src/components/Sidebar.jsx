@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
     LayoutDashboard,
     Building,
@@ -12,12 +12,62 @@ import {
     Menu,
     X
 } from 'lucide-react';
-import { selectAllModules } from '../features/modules/moduleSlice';
+import { useGetModuleAccessQuery, useGetModuleDetailsMutation } from '../api/apiSlice';
 
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [modules, setModules] = useState([]);
     const navigate = useNavigate();
-    const modules = useSelector(selectAllModules);
+    const dispatch = useDispatch();
+
+    // Get module access first
+    const { data: moduleAccess, isSuccess: moduleAccessSuccess, isError: moduleAccessError, error: moduleAccessErrorDetails } = useGetModuleAccessQuery();
+    const [getModuleDetails, { isError: moduleDetailsError, error: moduleDetailsErrorDetails }] = useGetModuleDetailsMutation();
+
+    // Fetch module details when we have module access
+    useEffect(() => {
+        const fetchModuleDetails = async () => {
+            console.log('🔄 Sidebar: Checking for stored module IDs...');
+            const storedModuleIds = localStorage.getItem("module_ids");
+            
+            if (storedModuleIds) {
+                try {
+                    console.log('🔄 Sidebar: Fetching module details...');
+                    const result = await getModuleDetails().unwrap();
+                    if (result?.modules) {
+                        console.log('✅ Sidebar: Successfully loaded module details');
+                        setModules(result.modules);
+                    } else {
+                        console.warn('⚠️ Sidebar: No modules found in response');
+                    }
+                } catch (error) {
+                    console.error('❌ Sidebar: Error fetching module details:', error);
+                    if (error.status === 422) {
+                        console.warn('⚠️ Sidebar: Invalid module IDs or empty module list');
+                    }
+                }
+            } else {
+                console.warn('⚠️ Sidebar: No module IDs found in localStorage');
+            }
+        };
+
+        if (moduleAccessSuccess) {
+            console.log('✅ Sidebar: Module access successful, preparing to fetch details...');
+            // Small delay to ensure localStorage is updated
+            setTimeout(fetchModuleDetails, 100);
+        }
+
+        if (moduleAccessError) {
+            console.error('❌ Sidebar: Module access error:', moduleAccessErrorDetails);
+        }
+    }, [moduleAccessSuccess, moduleAccessError, getModuleDetails]);
+
+    // Log module rendering
+    useEffect(() => {
+        if (modules.length > 0) {
+            console.log('📱 Sidebar: Rendering modules:', modules.map(m => m.module_name).join(', '));
+        }
+    }, [modules]);
 
     // Map icon names to Lucide React components
     const iconMap = {
@@ -37,8 +87,7 @@ const Sidebar = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user_id');
+        localStorage.clear(); // Clear all localStorage data
         sessionStorage.clear();
         navigate('/');
     };
@@ -90,11 +139,12 @@ const Sidebar = () => {
 
                             {/* Dynamic Modules */}
                             {modules.map((module) => {
+                                console.log('Rendering module:', module.module_name);
                                 const IconComponent = iconMap[module.icon] || FileText;
                                 return (
-                                    <li key={module.id}>
+                                    <li key={module._id}>
                                         <NavLink
-                                            to={module.route}
+                                            to={`/module/${module._id}`}
                                             className={({ isActive }) =>
                                                 `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${
                                                     isActive
@@ -105,7 +155,7 @@ const Sidebar = () => {
                                             onClick={closeSidebar}
                                         >
                                             <IconComponent className="w-5 h-5 flex-shrink-0" />
-                                            <span>{module.name}</span>
+                                            <span>{module.module_name}</span>
                                         </NavLink>
                                     </li>
                                 );
