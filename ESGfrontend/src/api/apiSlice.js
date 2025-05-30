@@ -106,6 +106,21 @@ export const apiSlice = createApi({
         }
       },
     }),
+    createEmployee: builder.mutation({
+      query: ({ company_id, plant_id, financial_year, employee }) => ({
+        url: `/plants/${plant_id}/employees/${financial_year}?company_id=${company_id}`,
+        method: "POST",
+        body: employee,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          console.log("Employee created successfully:", data);
+        } catch (error) {
+          console.error("Create employee error:", error);
+        }
+      },
+    }),
   }),
 });
 
@@ -115,4 +130,5 @@ export const {
   useLoginMutation,
   useGetModuleAccessQuery,
   useGetModuleDetailsMutation,
+  useCreateEmployeeMutation,
 } = apiSlice;
