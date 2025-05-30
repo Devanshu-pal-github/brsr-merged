@@ -186,16 +186,22 @@ export const apiSlice = createApi({
         if (!moduleId) {
           throw new Error('Module ID is required to fetch submodules');
         }
+        // Use the module ID from module access API and the correct endpoint
         console.log('🔄 Fetching submodules for module ID:', moduleId);
         return {
-          url: `/modules/${moduleId}`,
+          url: `/modules/${moduleId}/submodules`,
           method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
         };
       },
       transformResponse: (response) => {
-        if (response?.submodules) {
-          console.log('📥 Submodules Response:', response.submodules);
-          return response.submodules;
+        // The response is now a direct array of submodules
+        if (Array.isArray(response)) {
+          console.log('📥 Submodules Response:', response);
+          return response;
         }
         console.warn('⚠️ No submodules found in response');
         return [];

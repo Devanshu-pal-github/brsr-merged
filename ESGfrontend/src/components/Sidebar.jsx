@@ -12,17 +12,23 @@ import {
     Menu,
     X
 } from 'lucide-react';
-import { useGetModuleAccessQuery, useGetModuleDetailsMutation } from '../api/apiSlice';
+import { useGetModuleAccessQuery, useGetModuleDetailsMutation, useGetSubmodulesByModuleIdQuery } from '../api/apiSlice';
 
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [modules, setModules] = useState([]);
+    const [selectedModuleId, setSelectedModuleId] = useState(null);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     // Get module access first
     const { data: moduleAccess, isSuccess: moduleAccessSuccess, isError: moduleAccessError, error: moduleAccessErrorDetails } = useGetModuleAccessQuery();
     const [getModuleDetails, { isError: moduleDetailsError, error: moduleDetailsErrorDetails }] = useGetModuleDetailsMutation();
+    
+    // Query for submodules when a module is selected
+    const { data: submodules, isLoading: isLoadingSubmodules } = useGetSubmodulesByModuleIdQuery(selectedModuleId, {
+        skip: !selectedModuleId // Skip the query if no module is selected
+    });
 
     // Fetch module details when we have module access
     useEffect(() => {
@@ -68,6 +74,14 @@ const Sidebar = () => {
             console.log('📱 Sidebar: Rendering modules:', modules.map(m => m.module_name).join(', '));
         }
     }, [modules]);
+
+    // Log submodules when they are fetched
+    useEffect(() => {
+        if (submodules) {
+            console.log('📦 Submodules fetched for module:', selectedModuleId);
+            console.log('Submodules data:', submodules);
+        }
+    }, [submodules, selectedModuleId]);
 
     // Map icon names to Lucide React components
     const iconMap = {
@@ -141,6 +155,8 @@ const Sidebar = () => {
                             {modules.map((module) => {
                                 console.log('Rendering module:', module.module_name);
                                 const IconComponent = iconMap[module.icon] || FileText;
+                                // Get the module ID from the original module access response
+                                const moduleAccessId = module.id || module._id;
                                 return (
                                     <li key={module._id}>
                                         <NavLink
@@ -152,7 +168,12 @@ const Sidebar = () => {
                                                         : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
                                                 }`
                                             }
-                                            onClick={closeSidebar}
+                                            onClick={() => {
+                                                // Use the module ID from module access API
+                                                setSelectedModuleId(moduleAccessId);
+                                                console.log('Selected module ID for submodules:', moduleAccessId);
+                                                closeSidebar();
+                                            }}
                                         >
                                             <IconComponent className="w-5 h-5 flex-shrink-0" />
                                             <span>{module.module_name}</span>
