@@ -7,6 +7,18 @@ import SubHeader from '../components/SubHeader';
 import WorkforceQuestion from '../components/WorkforceQuestion';
 import QuestionnaireItem from '../components/QuestionItem';
 
+const getBestAnswerValue = (answerObj) => {
+    if (!answerObj) return '';
+    // Prefer string_value, then decimal_value, then bool_value, then link, then note
+    if (typeof answerObj.string_value !== 'undefined') return answerObj.string_value;
+    if (typeof answerObj.decimal_value !== 'undefined') return answerObj.decimal_value;
+    if (typeof answerObj.bool_value !== 'undefined') return answerObj.bool_value;
+    if (typeof answerObj.link !== 'undefined') return answerObj.link;
+    if (typeof answerObj.note !== 'undefined') return answerObj.note;
+    if (typeof answerObj.response !== 'undefined') return answerObj.response;
+    return '';
+};
+
 const DynamicEntityDetails = () => {
     const { moduleId } = useParams();
     const { data: submodules = [], isLoading, isError, error } = useGetSubmodulesByModuleIdQuery(moduleId);
@@ -55,10 +67,7 @@ const DynamicEntityDetails = () => {
         }
         return (
             <div className="flex flex-col space-y-8">
-                {/* Debug log */}
-                <pre className="bg-gray-100 text-xs p-2 rounded mb-2">
-                    {isAnswersLoading ? 'Loading answers...' : isAnswersError ? `Error: ${answersError?.data?.detail || 'Unknown error'}` : JSON.stringify(answers, null, 2)}
-                </pre>
+                {/* Debug log removed as requested */}
                 {submodule.question_categories.map((category) => (
                     <div key={category.id} className="bg-white rounded-lg p-6 shadow-sm">
                         <h3 className="text-lg font-semibold mb-4 text-[#000D30]">
@@ -73,7 +82,7 @@ const DynamicEntityDetails = () => {
                                     >
                                         <QuestionnaireItem
                                             question={question}
-                                            answer={answers?.[question.question_id]?.response || ''}
+                                            answer={getBestAnswerValue(answers?.[question.question_id])}
                                             isDropdownOpen={false}
                                             onUpdate={(updatedData) => {
                                                 // TODO: Implement update logic

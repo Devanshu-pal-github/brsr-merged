@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-const QuestionnaireItem = ({ question, onUpdate }) => {
+const QuestionnaireItem = ({ question, answer: answerProp = '', onUpdate }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [answer, setAnswer] = useState('');
+    const [answer, setAnswer] = useState(answerProp);
+
+    // Sync local state with prop
+    useEffect(() => {
+        setAnswer(answerProp);
+    }, [answerProp]);
 
     const handleAnswerChange = (e) => {
         const newAnswer = e.target.value;
