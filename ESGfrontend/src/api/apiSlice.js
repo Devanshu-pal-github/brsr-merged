@@ -34,8 +34,7 @@ export const apiSlice = createApi({
           const { data: loginData } = await queryFulfilled;
           // Store token
           localStorage.setItem("access_token", loginData.access_token);
-          // Automatically trigger module access query after successful login
-          dispatch(apiSlice.endpoints.getModuleAccess.initiate());
+          // Removed automatic module access query call
         } catch (error) {
           console.error("Login error:", error);
         }
@@ -49,6 +48,9 @@ export const apiSlice = createApi({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          // Store module access data in localStorage
+          localStorage.setItem("moduleAccess", JSON.stringify(data));
+          
           if (data?.module_ids?.length > 0) {
             // Automatically fetch complete module details when we get module IDs
             dispatch(
