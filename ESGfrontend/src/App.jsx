@@ -13,7 +13,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/:moduleName" element={<DynamicModulePage />} />
         <Route path="/createEmployee" element={<CreateEmployee />} />
-
+        <Route path="/module/:moduleId" element={<DynamicModulePage />} />
       </Routes>
     </Router>
   );

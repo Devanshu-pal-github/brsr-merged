@@ -181,6 +181,34 @@ export const apiSlice = createApi({
         }
       },
     }),
+    getSubmodulesByModuleId: builder.query({
+      query: (moduleId) => {
+        if (!moduleId) {
+          throw new Error('Module ID is required to fetch submodules');
+        }
+        console.log('🔄 Fetching submodules for module ID:', moduleId);
+        return {
+          url: `/modules/${moduleId}`,
+          method: 'GET',
+        };
+      },
+      transformResponse: (response) => {
+        if (response?.submodules) {
+          console.log('📥 Submodules Response:', response.submodules);
+          return response.submodules;
+        }
+        console.warn('⚠️ No submodules found in response');
+        return [];
+      },
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          console.log('✅ Submodules fetched successfully:', data);
+        } catch (error) {
+          console.error('❌ Error fetching submodules:', error);
+        }
+      }
+    }),
   }),
 });
 
@@ -191,4 +219,5 @@ export const {
   useGetModuleAccessQuery,
   useGetModuleDetailsMutation,
   useCreateEmployeeMutation,
+  useGetSubmodulesByModuleIdQuery,
 } = apiSlice;
