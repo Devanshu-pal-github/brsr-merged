@@ -105,19 +105,27 @@ const DynamicEntityDetails = () => {
                                             key={question.question_id}
                                             question={question.question}
                                         >
-                                            <QuestionnaireItem
-                                                question={question}
-                                                answer={getBestAnswerValue(answers?.[question.question_id])}
-                                                isDropdownOpen={false}
-                                                onUpdate={(updatedData) => {
-                                                    // TODO: Implement update logic
-                                                    console.log('Updated:', updatedData);
-                                                }}
-                                                onAIAssistantClick={() => {
-                                                    // TODO: Implement AI assistant logic
-                                                    console.log('AI Assistant clicked for:', question.question_id);
-                                                }}
-                                            />
+                                            <div className="flex flex-col relative">
+                                                <QuestionnaireItem
+                                                    question={question}
+                                                    answer={getBestAnswerValue(answers?.[question.question_id])}
+                                                    isDropdownOpen={false}
+                                                    onUpdate={(updatedData) => {
+                                                        // TODO: Implement update logic
+                                                        console.log('Updated:', updatedData);
+                                                    }}
+                                                    onAIAssistantClick={() => {
+                                                        // TODO: Implement AI assistant logic
+                                                        console.log('AI Assistant clicked for:', question.question_id);
+                                                    }}
+                                                />
+                                                <button
+                                                    className="absolute top-4 right-4 bg-[#0A2E87] hover:bg-[#20305D] text-white font-medium py-1.5 px-5 rounded focus:outline-none transition-colors"
+                                                    onClick={() => console.log('Edit clicked for', question.question_id)}
+                                                >
+                                                    Edit
+                                                </button>
+                                            </div>
                                         </WorkforceQuestion>
                                     ))
                                 ) : (
@@ -172,11 +180,55 @@ const DynamicEntityDetails = () => {
                 </section>
                 {/* Right Sidebar: Progress + AI Assistant */}
                 <aside className="w-full lg:w-1/3 xl:w-1/4 min-w-0 max-w-md flex flex-col gap-6 px-4 pt-4 pb-8 lg:sticky lg:top-[80px] lg:h-[calc(100vh-80px)]">
-                    <div className="mb-2">
-                        <ProgressCard covered={14} total={20} />
+                    {/* Progress Circle */}
+                    <div className="flex flex-col items-center mb-2">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="12" />
+                            <circle cx="60" cy="60" r="50" fill="none" stroke="#4F46E5" strokeWidth="12" strokeDasharray="314" strokeDashoffset="60" strokeLinecap="round" />
+                        </svg>
+                        <div className="mt-2 text-gray-700 font-medium text-base">38 of 50 questions completed</div>
                     </div>
-                    <div className="flex-1 min-h-0">
-                        <AIAssistant />
+                    {/* Course Sections */}
+                    <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                        <div className="font-semibold text-lg mb-2 text-[#000D30]">Course Sections</div>
+                        <div className="mb-3">
+                            <div className="text-sm font-medium text-[#000D30] mb-1">Section 1: Introduction</div>
+                            <div className="w-full h-2 bg-gray-200 rounded-full mb-1">
+                                <div className="h-2 bg-[#4F46E5] rounded-full" style={{ width: '80%' }}></div>
+                            </div>
+                            <div className="text-xs text-gray-500">8 of 10 completed</div>
+                        </div>
+                        <div className="mb-3">
+                            <div className="text-sm font-medium text-[#000D30] mb-1">Section 2: Fundamentals</div>
+                            <div className="w-full h-2 bg-gray-200 rounded-full mb-1">
+                                <div className="h-2 bg-[#4F46E5] rounded-full" style={{ width: '60%' }}></div>
+                            </div>
+                            <div className="text-xs text-gray-500">6 of 10 completed</div>
+                        </div>
+                        <div className="mb-3">
+                            <div className="text-sm font-medium text-[#000D30] mb-1">Section 3: Advanced Topics</div>
+                            <div className="w-full h-2 bg-gray-200 rounded-full mb-1">
+                                <div className="h-2 bg-[#4F46E5] rounded-full" style={{ width: '40%' }}></div>
+                            </div>
+                            <div className="text-xs text-gray-500">4 of 10 completed</div>
+                        </div>
+                        <div className="mb-3">
+                            <div className="text-sm font-medium text-[#000D30] mb-1">Section 4: Practice</div>
+                            <div className="w-full h-2 bg-gray-200 rounded-full mb-1">
+                                <div className="h-2 bg-[#4F46E5] rounded-full" style={{ width: '20%' }}></div>
+                            </div>
+                            <div className="text-xs text-gray-500">2 of 10 completed</div>
+                        </div>
+                    </div>
+                    {/* Category Overview */}
+                    <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                        <div className="font-semibold text-lg mb-2 text-[#000D30]">Category Overview</div>
+                        <div className="space-y-1">
+                            <div className="flex justify-between text-sm"><span>Fundamentals</span><span>15/20 questions</span></div>
+                            <div className="flex justify-between text-sm"><span>Theory</span><span>12/15 questions</span></div>
+                            <div className="flex justify-between text-sm"><span>Practical Examples</span><span>8/10 questions</span></div>
+                            <div className="flex justify-between text-sm"><span>Assessments</span><span>3/5 questions</span></div>
+                        </div>
                     </div>
                 </aside>
             </div>
