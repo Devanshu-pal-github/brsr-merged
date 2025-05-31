@@ -8,6 +8,7 @@ import WorkforceQuestion from '../components/WorkforceQuestion';
 import QuestionnaireItem from '../components/QuestionItem';
 import ProgressCard from '../components/ProgressCard';
 import AIAssistant from '../components/WorkforceAi';
+import AIAssisstantChat from '../components/AIAssisstantChat';
 
 const getBestAnswerValue = (answerObj) => {
     if (!answerObj) return '';
@@ -74,6 +75,31 @@ const DynamicEntityDetails = () => {
         setOpenCategories(prev => ({ ...prev, [catId]: !prev[catId] }));
     };
 
+    // Modal state for editing answers
+    const [editModalQuestionId, setEditModalQuestionId] = useState(null);
+    const renderEditModal = (question) => (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-lg shadow-lg p-0 max-w-3xl w-full relative">
+                <button
+                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                    onClick={() => setEditModalQuestionId(null)}
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+                <img
+                    src="https://files.oaiusercontent.com/file-1b1e2e2e-6e2e-4e2e-8e2e-1e2e2e2e2e2e.png" // Replace with your uploaded image URL or local asset
+                    alt="Edit Answer Placeholder"
+                    className="w-full rounded-lg"
+                />
+                <div className="p-4 text-center text-gray-600">Edit popup placeholder for: <span className="font-semibold">{question.question}</span></div>
+            </div>
+        </div>
+    );
+
+    // AI Chat state
+    const [aiChatOpen, setAiChatOpen] = useState(false);
+
     // Render all question categories and their questions
     const renderSubmodule = (submodule) => {
         if (!submodule || !Array.isArray(submodule.question_categories)) {
@@ -106,25 +132,22 @@ const DynamicEntityDetails = () => {
                                             question={question.question}
                                         >
                                             <div className="flex flex-col relative">
+                                                {/* Render QuestionnaireItem as view-only by disabling input */}
                                                 <QuestionnaireItem
                                                     question={question}
                                                     answer={getBestAnswerValue(answers?.[question.question_id])}
                                                     isDropdownOpen={false}
-                                                    onUpdate={(updatedData) => {
-                                                        // TODO: Implement update logic
-                                                        console.log('Updated:', updatedData);
-                                                    }}
-                                                    onAIAssistantClick={() => {
-                                                        // TODO: Implement AI assistant logic
-                                                        console.log('AI Assistant clicked for:', question.question_id);
-                                                    }}
+                                                    isReadOnly={true}
+                                                    onUpdate={() => {}}
+                                                    onAIAssistantClick={() => {}}
                                                 />
                                                 <button
                                                     className="absolute top-4 right-4 bg-[#0A2E87] hover:bg-[#20305D] text-white font-medium py-1.5 px-5 rounded focus:outline-none transition-colors"
-                                                    onClick={() => console.log('Edit clicked for', question.question_id)}
+                                                    onClick={() => setEditModalQuestionId(question.question_id)}
                                                 >
                                                     Edit
                                                 </button>
+                                                {editModalQuestionId === question.question_id && renderEditModal(question)}
                                             </div>
                                         </WorkforceQuestion>
                                     ))
@@ -232,6 +255,23 @@ const DynamicEntityDetails = () => {
                     </div>
                 </aside>
             </div>
+            {/* Floating AI Button and Overlay Chat */}
+            <button
+                className="fixed z-[120] bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-lg flex items-center justify-center hover:scale-110 transition-transform border-4 border-white"
+                style={{ boxShadow: '0 8px 32px 0 rgba(10,46,135,0.25)' }}
+                onClick={() => setAiChatOpen(true)}
+                aria-label="Open AI Assistant Chat"
+            >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 15c1.333-2 6.667-2 8 0"/><path d="M9 9h.01"/><path d="M15 9h.01"/></svg>
+            </button>
+            {aiChatOpen && (
+                <div className="fixed inset-0 z-[110] flex items-end justify-end bg-opacity-30">
+                    <div className="w-full h-full absolute top-0 left-0" onClick={() => setAiChatOpen(false)} />
+                    <div className="relative z-10 w-full max-w-md m-6">
+                        <AIAssisstantChat onClose={() => setAiChatOpen(false)} />
+                    </div>
+                </div>
+            )}
         </Layout>
     );
 };
