@@ -161,9 +161,9 @@ const DynamicEntityDetails = () => {
 
     return (
         <Layout>
-            <div className="relative flex w-full h-screen ">
+            <div className="relative flex w-full h-screen">
                 {/* Main Content Area */}
-                <section className="flex-1 flex flex-col min-w-0 max-w-4xl mx-auto bg-transparent px-0 sm:px-4 md:px-8 pt-0 pb-0">
+                <section className="flex-1 flex flex-col min-w-0 max-w-4xl mx-auto bg-transparent px-2 sm:px-6 md:px-10 pt-0 pb-0">
                     {/* Fixed Header: Breadcrumb + SubHeader */}
                     <div className="sticky top-0 z-30 pt-6 pb-2 border-b border-gray-200">
                         <div className="w-full max-w-4xl mx-auto px-0 sm:px-2 md:px-0">
@@ -178,7 +178,7 @@ const DynamicEntityDetails = () => {
                         </div>
                     </div>
                     {/* Scrollable Content Area */}
-                    <div className="flex-1 overflow-y-auto min-h-0 py-6 pr-2 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto min-h-0 py-8 pr-2 custom-scrollbar flex flex-col gap-8">
                         {isLoading && (
                             <div className="flex items-center justify-center min-h-[30vh] text-gray-500 text-base">Loading submodules...</div>
                         )}
@@ -193,51 +193,53 @@ const DynamicEntityDetails = () => {
                     </div>
                 </section>
                 {/* Right Sidebar: Progress + AI Assistant */}
-                <aside className="hidden mt-[40px] lg:flex flex-col gap-4 px-2 pt-6 pb-4 bg-white border-l border-gray-200 shadow-lg min-w-[260px] max-w-[280px] w-full sticky top-0 h-[75vh] z-20">
+                <aside className="hidden lg:flex flex-col mt-[40px] gap-6 px-4 pt-8 pb-6 bg-white border-l border-gray-200 shadow-lg min-w-[300px] max-w-[320px] w-full sticky top-0 h-[85vh] z-20 items-center justify-start">
                     {/* Progress Circle */}
-                    <div className="flex flex-col items-center mb-1">
+                    <div className="flex flex-col items-center mb-2">
                         <svg width="80" height="80" viewBox="0 0 120 120">
                             <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="10" />
                             <circle cx="60" cy="60" r="50" fill="none" stroke="#4F46E5" strokeWidth="10" strokeDasharray="314" strokeDashoffset="60" strokeLinecap="round" />
                         </svg>
-                        <div className="mt-1 text-gray-700 font-semibold text-sm">38 of 50 questions completed</div>
+                        <div className="mt-2 text-gray-700 font-semibold text-sm">38 of 50 questions completed</div>
                     </div>
                     {/* Course Sections */}
-                    <div className="bg-[#F8FAFC] rounded-lg shadow p-3 border border-gray-100">
+                    <div className="bg-[#F8FAFC] rounded-lg shadow p-4 border border-gray-100 w-full flex flex-col gap-3">
                         <div className="font-semibold text-sm mb-1 text-[#000D30]">Course Sections</div>
-                        <div className="mb-2">
-                            <div className="text-xs font-medium text-[#000D30] mb-0.5">Section 1: Introduction</div>
-                            <div className="w-full h-1.5 bg-gray-200 rounded-full mb-0.5">
-                                <div className="h-1.5 bg-[#4F46E5] rounded-full" style={{ width: '80%' }}></div>
+                        <div className="flex flex-col gap-2">
+                            <div>
+                                <div className="text-xs font-medium text-[#000D30] mb-0.5">Section 1: Introduction</div>
+                                <div className="w-full h-1.5 bg-gray-200 rounded-full mb-0.5">
+                                    <div className="h-1.5 bg-[#4F46E5] rounded-full" style={{ width: '80%' }}></div>
+                                </div>
+                                <div className="text-[11px] text-gray-500">8 of 10 completed</div>
                             </div>
-                            <div className="text-[11px] text-gray-500">8 of 10 completed</div>
-                        </div>
-                        <div className="mb-2">
-                            <div className="text-xs font-medium text-[#000D30] mb-0.5">Section 2: Fundamentals</div>
-                            <div className="w-full h-1.5 bg-gray-200 rounded-full mb-0.5">
-                                <div className="h-1.5 bg-[#4F46E5] rounded-full" style={{ width: '60%' }}></div>
+                            <div>
+                                <div className="text-xs font-medium text-[#000D30] mb-0.5">Section 2: Fundamentals</div>
+                                <div className="w-full h-1.5 bg-gray-200 rounded-full mb-0.5">
+                                    <div className="h-1.5 bg-[#4F46E5] rounded-full" style={{ width: '60%' }}></div>
+                                </div>
+                                <div className="text-[11px] text-gray-500">6 of 10 completed</div>
                             </div>
-                            <div className="text-[11px] text-gray-500">6 of 10 completed</div>
-                        </div>
-                        <div className="mb-2">
-                            <div className="text-xs font-medium text-[#000D30] mb-0.5">Section 3: Advanced Topics</div>
-                            <div className="w-full h-1.5 bg-gray-200 rounded-full mb-0.5">
-                                <div className="h-1.5 bg-[#4F46E5] rounded-full" style={{ width: '40%' }}></div>
+                            <div>
+                                <div className="text-xs font-medium text-[#000D30] mb-0.5">Section 3: Advanced Topics</div>
+                                <div className="w-full h-1.5 bg-gray-200 rounded-full mb-0.5">
+                                    <div className="h-1.5 bg-[#4F46E5] rounded-full" style={{ width: '40%' }}></div>
+                                </div>
+                                <div className="text-[11px] text-gray-500">4 of 10 completed</div>
                             </div>
-                            <div className="text-[11px] text-gray-500">4 of 10 completed</div>
-                        </div>
-                        <div className="mb-2">
-                            <div className="text-xs font-medium text-[#000D30] mb-0.5">Section 4: Practice</div>
-                            <div className="w-full h-1.5 bg-gray-200 rounded-full mb-0.5">
-                                <div className="h-1.5 bg-[#4F46E5] rounded-full" style={{ width: '20%' }}></div>
+                            <div>
+                                <div className="text-xs font-medium text-[#000D30] mb-0.5">Section 4: Practice</div>
+                                <div className="w-full h-1.5 bg-gray-200 rounded-full mb-0.5">
+                                    <div className="h-1.5 bg-[#4F46E5] rounded-full" style={{ width: '20%' }}></div>
+                                </div>
+                                <div className="text-[11px] text-gray-500">2 of 10 completed</div>
                             </div>
-                            <div className="text-[11px] text-gray-500">2 of 10 completed</div>
                         </div>
                     </div>
                     {/* Category Overview */}
-                    <div className="bg-[#F8FAFC] rounded-lg shadow p-3 border border-gray-100">
+                    <div className="bg-[#F8FAFC] rounded-lg shadow p-4 border border-gray-100 w-full flex flex-col gap-2">
                         <div className="font-semibold text-sm mb-1 text-[#000D30]">Category Overview</div>
-                        <div className="space-y-0.5">
+                        <div className="flex flex-col gap-1">
                             <div className="flex justify-between text-xs"><span>Fundamentals</span><span>15/20 questions</span></div>
                             <div className="flex justify-between text-xs"><span>Theory</span><span>12/15 questions</span></div>
                             <div className="flex justify-between text-xs"><span>Practical Examples</span><span>8/10 questions</span></div>
