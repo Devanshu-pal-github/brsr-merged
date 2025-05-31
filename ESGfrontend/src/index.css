@@ -1,12 +1,12 @@
 @import "tailwindcss";
 /* At the very top or bottom of your global CSS */
 html, body, #root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: #F2F4F5; /* Same as your layout background */
-  font-family: 'Inter', 'sans-serif';
-  color: #1A1A1A;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body {
+  overscroll-behavior: none;
 }
 
 html, body {
