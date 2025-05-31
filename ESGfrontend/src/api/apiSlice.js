@@ -1,20 +1,41 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+// Custom baseQuery to handle 401 Unauthorized globally
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: "http://localhost:8000",
+  credentials: "include",
+  prepareHeaders: (headers, { getState }) => {
+    // Always attach the access token from localStorage
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+    return headers;
+  },
+});
+
+const baseQuery = async (args, api, extraOptions) => {
+  const result = await rawBaseQuery(args, api, extraOptions);
+  if (result.error && result.error.status === 401) {
+    // Clear token and redirect to login on 401 Unauthorized
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("user_role");
+    localStorage.removeItem("company_id");
+    localStorage.removeItem("plant_id");
+    localStorage.removeItem("financial_year");
+    localStorage.removeItem("module_ids");
+    localStorage.removeItem("modules");
+    // Optionally show a message or toast here
+    window.location.href = "/login";
+  }
+  return result;
+};
+
 // Define the API slice
 export const apiSlice = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000",
-    credentials: "include",
-    prepareHeaders: (headers, { getState }) => {
-      // Get the token from localStorage if it exists
-      const token = localStorage.getItem("access_token");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery,
   endpoints: (builder) => ({
     bulkUploadQuestions: builder.mutation({
       query: (questions) => ({
@@ -193,7 +214,6 @@ export const apiSlice = createApi({
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
           }
         };
       },
@@ -222,7 +242,6 @@ export const apiSlice = createApi({
         body: { question_ids: questionIds },
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         }
       }),
     }),

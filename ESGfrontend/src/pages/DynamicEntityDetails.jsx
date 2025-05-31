@@ -135,49 +135,47 @@ const DynamicEntityDetails = () => {
         <Layout>
             <div className="min-h-screen flex flex-row">
                 {/* Main Content Area */}
-                <div className="flex-1 max-w-[calc(100%-400px)] pl-[100px] pr-6 pt-2 pb-8">
+                <div className="flex-1 max-w-[calc(100%-400px)] pl-[100px] pr-6 pt-2 pb-8 space-y-5">
                     {/* Breadcrumb */}
                     <div className="h-25 w-full">
-                        <div className="ml-[10px] z-10 w-full">
+                        <div className="ml-[40px] z-10 w-full">
                             <Breadcrumb section="Entity Details" activeTab={activeTab} />
                         </div>
                     </div>
                     {/* Submodule Tabs and Content */}
-                    <div className="mt-[10px] pt-[10px]">
-                        <div className="w-full flex flex-col space-y-[10px]">
-                            {/* Tabs */}
-                            <div className="h-10 w-full">
-                                <div className="ml-[10px] z-10 w-[calc(100%-230px)]">
-                                    <SubHeader
-                                        tabs={tabs}
-                                        activeTab={activeTab}
-                                        onTabChange={setActiveTab}
-                                    />
+                    <div className="flex flex-col space-y-5">
+                        {/* Tabs */}
+                        <div className="h-10 w-full">
+                            <div className="ml-[40px] z-10 w-[calc(100%-230px)]" id="submodule-tabs-anchor">
+                                <SubHeader
+                                    tabs={tabs}
+                                    activeTab={activeTab}
+                                    onTabChange={setActiveTab}
+                                />
+                            </div>
+                        </div>
+                        {/* Content Area */}
+                        <div className="px-2 ml-[40px]">
+                            {isLoading && (
+                                <div className="flex items-center justify-center min-h-[40vh] text-gray-500">
+                                    Loading submodules...
                                 </div>
-                            </div>
-                            {/* Content Area */}
-                            <div className="mt-[20px] px-2">
-                                {isLoading && (
-                                    <div className="flex items-center justify-center min-h-[40vh] text-gray-500">
-                                        Loading submodules...
-                                    </div>
-                                )}
-                                {isError && (
-                                    <div className="flex items-center justify-center min-h-[40vh] text-red-500">
-                                        Error loading submodules: {error?.error || 'Unknown error'}
-                                    </div>
-                                )}
-                                {!isLoading && !isError && (
-                                    currentSubmodule
-                                        ? renderSubmodule(currentSubmodule)
-                                        : <div className="flex items-center justify-center min-h-[40vh] text-gray-500">Select a submodule to view content</div>
-                                )}
-                            </div>
+                            )}
+                            {isError && (
+                                <div className="flex items-center justify-center min-h-[40vh] text-red-500">
+                                    Error loading submodules: {error?.error || 'Unknown error'}
+                                </div>
+                            )}
+                            {!isLoading && !isError && (
+                                currentSubmodule
+                                    ? renderSubmodule(currentSubmodule)
+                                    : <div className="flex items-center justify-center min-h-[40vh] text-gray-500">Select a submodule to view content</div>
+                            )}
                         </div>
                     </div>
                 </div>
                 {/* Right Sidebar: Progress + AI Assistant */}
-                <div className="hidden lg:flex flex-col w-[370px] min-w-[370px] max-w-[370px] h-full pt-8 pr-8">
+                <div className="hidden lg:flex flex-col w-[370px] min-w-[370px] max-w-[370px] h-full" style={{ marginTop: '180px', marginRight: '40px' }}>
                     <div className="mb-6">
                         <ProgressCard covered={14} total={20} />
                     </div>
