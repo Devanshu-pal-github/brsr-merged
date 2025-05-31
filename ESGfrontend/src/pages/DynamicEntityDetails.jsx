@@ -133,18 +133,13 @@ const DynamicEntityDetails = () => {
                                             key={question.question_id}
                                             question={question.question}
                                         >
-                                            <div className="flex flex-col relative">
-                                                {/* Render QuestionnaireItem as view-only by disabling input */}
-                                                <QuestionnaireItem
-                                                    question={question}
-                                                    answer={getBestAnswerValue(answers?.[question.question_id])}
-                                                    isDropdownOpen={false}
-                                                    isReadOnly={true}
-                                                    onUpdate={() => {}}
-                                                    onAIAssistantClick={() => {}}
-                                                />
+                                            <div className="flex flex-col relative bg-white rounded-xl shadow-md p-6 mb-2 border border-gray-100">
+                                                <div className="text-[1.05rem] font-medium text-[#1A2341] mb-2">{question.question}</div>
+                                                <div className="text-gray-700 text-[0.98rem] leading-relaxed mb-1">
+                                                    {getBestAnswerValue(answers?.[question.question_id]) || <span className="italic text-gray-400">No answer provided.</span>}
+                                                </div>
                                                 <button
-                                                    className="absolute top-4 right-4 bg-[#0A2E87] hover:bg-[#20305D] text-white font-medium py-1.5 px-5 rounded focus:outline-none transition-colors"
+                                                    className="absolute top-4 right-4 bg-[#0A2E87] hover:bg-[#20305D] text-white font-medium py-1 px-4 rounded-md text-xs shadow focus:outline-none transition-colors"
                                                     onClick={() => setEditModalQuestionId(question.question_id)}
                                                 >
                                                     Edit
@@ -198,7 +193,7 @@ const DynamicEntityDetails = () => {
                     </div>
                 </section>
                 {/* Right Sidebar: Progress + AI Assistant */}
-                <aside className="hidden lg:flex flex-col gap-6 px-4 pt-8 pb-8 bg-white border-l border-gray-200 shadow-lg min-w-[340px] max-w-xs w-full sticky top-0 h-screen z-20">
+                <aside className="hidden mt-[20px] lg:flex flex-col gap-6 px-4 pt-8 pb-8 bg-white border-l border-gray-200 shadow-lg min-w-[340px] max-w-xs w-full sticky top-0 h-screen z-20">
                     {/* Progress Circle */}
                     <div className="flex flex-col items-center mb-2">
                         <svg width="100" height="100" viewBox="0 0 120 120">
