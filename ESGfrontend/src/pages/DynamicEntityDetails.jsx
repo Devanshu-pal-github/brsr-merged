@@ -114,7 +114,7 @@ const DynamicEntityDetails = () => {
         return (
             <div className="flex flex-col gap-4">
                 {submodule.question_categories.map((category) => (
-                    <div key={category.id} className="bg-white rounded-[6px] shadow-sm p-4 border border-gray-200 transition-all duration-300 hover:shadow-md">
+                    <div key={category.id} className="bg-white rounded-[6px] shadow-sm p-0 border border-gray-200 transition-all duration-300 hover:shadow-md">
                         <button
                             onClick={() => toggleCategory(category.id)}
                             className="w-full flex items-center justify-between text-base md:text-lg font-semibold mb-2 text-[#000D30] hover:text-[#20305D] transition-colors focus:outline-none rounded-[6px] px-2 py-2"
