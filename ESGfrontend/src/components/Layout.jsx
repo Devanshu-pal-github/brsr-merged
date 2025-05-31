@@ -13,26 +13,21 @@ const Layout = ({ children }) => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F2F4F5] flex font-sans text-[#1A1A1A]">
-            {/* Fixed Sidebar */}
-            <div
-                ref={sidebarRef}
-                className="fixed top-0 left-0 h-full w-[18vw] min-w-[180px] max-w-[320px] z-40 transition-all duration-500 bg-[#000D30]"
-            >
+        <div className="min-h-screen w-screen bg-[#F2F4F5] font-sans text-[#1A1A1A] grid grid-cols-[minmax(220px,280px)_1fr] grid-rows-[auto_1fr]" style={{overflow:'hidden'}}>
+            {/* Sidebar: visually balanced, always full height */}
+            <aside className="row-span-2 col-span-1 h-screen bg-[#000D30] z-40 transition-all duration-500 flex flex-col">
                 <Sidebar />
-            </div>
+            </aside>
 
-            {/* Main content wrapper (includes header and main) */}
-            <div className="flex-1 flex flex-col min-w-0 transition-all duration-500" style={{ marginLeft: '18vw' }}>
-                {/* Fixed Header */}
-                <header className="fixed top-0 w-full right-0 z-50 w-auto bg-[#000D30] shadow-md h-[8vh] min-h-[56px] flex items-center transition-all duration-500">
-                    <Header toggleSidebar={toggleSidebar} />
-                </header>
-                {/* Main content - scrollable, with header offset */}
-                <main className="flex-1 w-full min-w-0 max-w-[90vw] mx-auto pt-[8vh] pb-[3vh] overflow-y-auto transition-all duration-500 px-[2vw]">
-                    {children}
-                </main>
-            </div>
+            {/* Navbar: always meets sidebar, never shredded */}
+            <header className="col-span-1 row-span-1 h-[64px] min-h-[56px] max-h-[90px] bg-[#000D30] shadow-md flex items-center px-6 transition-all duration-500 z-50">
+                <Header toggleSidebar={toggleSidebar} />
+            </header>
+
+            {/* Main content: fills remaining space, always aligned */}
+            <main className="col-span-1 row-span-1 flex flex-col min-w-0 max-w-full pt-0 pb-0 overflow-y-auto transition-all duration-500 px-6" style={{height:'calc(100vh - 64px)'}}>
+                {children}
+            </main>
         </div>
     );
 };
