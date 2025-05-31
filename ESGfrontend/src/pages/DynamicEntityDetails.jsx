@@ -4,11 +4,11 @@ import { useGetSubmodulesByModuleIdQuery, useGetQuestionResponsesMutation } from
 import Layout from '../components/Layout';
 import Breadcrumb from '../components/Breadcrumb';
 import SubHeader from '../components/SubHeader';
-import WorkforceQuestion from '../components/WorkforceQuestion';
 import QuestionnaireItem from '../components/QuestionItem';
 import ProgressCard from '../components/ProgressCard';
 import AIAssistant from '../components/WorkforceAi';
 import AIAssisstantChat from '../components/AIAssisstantChat';
+import QuestionFormPopup from "../components/QuestionFormPopup";
 
 const getBestAnswerValue = (answerObj) => {
     if (!answerObj) return '';
@@ -77,27 +77,24 @@ const DynamicEntityDetails = () => {
 
     // Modal state for editing answers
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
-    const renderEditModal = (question) => (
-        <div className="fixed inset-0 z-[140] flex items-center justify-center bg-black bg-opacity-40">
-            <div className="bg-white rounded-[6px] shadow-2xl max-w-2xl w-full p-0 overflow-hidden border border-gray-200 relative animate-fadeIn">
-                <button
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none"
-                    onClick={() => setEditModalQuestionId(null)}
-                    aria-label="Close"
-                >
-                    ×
-                </button>
-                <div className="p-0">
-                    <img
-                        src="https://files.oaiusercontent.com/file-1b1e2e2e-6e2e-4e2e-8e2e-1e2e2e2e2e2e.png"
-                        alt="Edit Answer Placeholder"
-                        className="w-full rounded-t-[6px]"
-                    />
-                    <div className="p-6 text-center text-gray-700 text-base font-medium border-t border-gray-100">Edit popup placeholder for: <span className="font-semibold">{(currentSubmodule?.question_categories.flatMap(cat => cat.questions).find(q => q.question_id === editModalQuestionId)?.question) || ''}</span></div>
-                </div>
-            </div>
-        </div>
-    );
+    const renderEditModal = (question, answers, setEditModalQuestionId) => {
+        const initialValues = answers?.[question.question_id] || {};
+        console.log('[DynamicEntityDetails] Rendering QuestionFormPopup for question:', question);
+        console.log('[DynamicEntityDetails] initialValues:', initialValues);
+        const handleSubmit = (response) => {
+            console.log('[DynamicEntityDetails] onSubmit from QuestionFormPopup:', response);
+            // TODO: Integrate with actual update logic
+            setEditModalQuestionId(null);
+        };
+        return (
+            <QuestionFormPopup
+                questionData={question}
+                onSubmit={handleSubmit}
+                onClose={() => setEditModalQuestionId(null)}
+                initialValues={initialValues}
+            />
+        );
+    };
 
     // AI Chat state
     const [aiChatOpen, setAiChatOpen] = useState(false);
@@ -111,6 +108,16 @@ const DynamicEntityDetails = () => {
                 </div>
             );
         }
+        // Log all questions and their current answers for view-only mode
+        submodule.question_categories.forEach(category => {
+            if (Array.isArray(category.questions)) {
+                category.questions.forEach(question => {
+                    const answer = answers?.[question.question_id];
+                    console.log('[DynamicEntityDetails][View] Question:', question);
+                    console.log('[DynamicEntityDetails][View] Answer:', answer);
+                });
+            }
+        });
         return (
             <div className="flex flex-col gap-4">
                 {submodule.question_categories.map((category) => (
@@ -129,27 +136,87 @@ const DynamicEntityDetails = () => {
                             <div className="flex flex-col gap-2 px-0.5 pb-1 pt-0.5">
                                 {Array.isArray(category.questions) && category.questions.length > 0 ? (
                                     category.questions.map((question) => (
-                                        <WorkforceQuestion
-                                            key={question.question_id}
-                                            question={question.question}
-                                        >
-                                            <div className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[36px]">
-                                                <div className="text-[13px] md:text-[14px] font-medium text-[#1A2341] mb-0.5 leading-tight transition-all duration-300 truncate">
+                                        <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[36px]">
+                                            <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
+                                                {/* Question text, wraps before Edit button */}
+                                                <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start">
                                                     {question.question}
                                                 </div>
-                                                <div className="text-gray-700 text-[12px] md:text-[13px] leading-snug mb-0.5 transition-all duration-300 truncate">
-                                                    {getBestAnswerValue(answers?.[question.question_id]) || <span className="italic text-gray-400">No answer provided.</span>}
-                                                </div>
+                                                {/* Edit button absolutely positioned, always top right, aligned with top of question */}
                                                 <button
-                                                    className="absolute top-2 right-2 bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
+                                                    className="absolute right-2 top-0 bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
                                                     onClick={() => setEditModalQuestionId(question.question_id)}
                                                     aria-label="Edit"
+                                                    style={{ marginLeft: 'auto' }}
                                                 >
                                                     Edit
                                                 </button>
-                                                {editModalQuestionId === question.question_id && renderEditModal(question)}
+                                                {editModalQuestionId === question.question_id && renderEditModal(question, answers, setEditModalQuestionId)}
                                             </div>
-                                        </WorkforceQuestion>
+                                            {/* ANSWER DISPLAY ROW: prevent overlap with Edit button, show all fields clearly */}
+                                            <div className="flex flex-row flex-wrap items-start justify-between gap-2 pr-[60px] relative mt-1">
+                                                <div className="flex flex-col gap-1 min-w-0 max-w-full break-words">
+                                                    {(() => {
+                                                        const answer = answers?.[question.question_id];
+                                                        const displayItems = [];
+                                                        // Link (top row)
+                                                        if (answer && answer.link) {
+                                                            displayItems.push(
+                                                                <span key="link" className="flex items-center flex-wrap">
+                                                                    <span className="font-semibold">Link:</span> <a href={answer.link} className="text-blue-600 underline break-all" target="_blank" rel="noopener noreferrer">{answer.link}</a>
+                                                                </span>
+                                                            );
+                                                        }
+                                                        // Boolean (Yes/No) always shown, on its own line if no link, or beside link if both
+                                                        if (typeof answer?.bool_value === 'boolean') {
+                                                            displayItems.push(
+                                                                <span key="bool" className={answer.bool_value ? 'text-green-600 font-semibold ml-0' : 'text-red-600 font-semibold ml-0'}>
+                                                                    {answer.bool_value ? 'Yes' : 'No'}
+                                                                </span>
+                                                            );
+                                                        }
+                                                        // String value
+                                                        if (answer && answer.string_value) {
+                                                            displayItems.push(
+                                                                <span key="string">
+                                                                    <span className="font-semibold">Response:</span> {answer.string_value}
+                                                                </span>
+                                                            );
+                                                        }
+                                                        // Decimal value
+                                                        if (answer && typeof answer.decimal_value !== 'undefined') {
+                                                            displayItems.push(
+                                                                <span key="decimal">
+                                                                    <span className="font-semibold">Value:</span> {answer.decimal_value}
+                                                                </span>
+                                                            );
+                                                        }
+                                                        // Note
+                                                        if (answer && answer.note) {
+                                                            displayItems.push(
+                                                                <span key="note">
+                                                                    <span className="font-semibold">Note:</span> {answer.note}
+                                                                </span>
+                                                            );
+                                                        }
+                                                        if (displayItems.length === 0) {
+                                                            return <span className="italic text-gray-400">No answer provided.</span>;
+                                                        }
+                                                        // If both link and bool, show them together on top row, else each on its own line
+                                                        if (displayItems.length > 1 && displayItems[0].key === 'link' && displayItems[1].key === 'bool') {
+                                                            return (
+                                                                <>
+                                                                    <div className="flex flex-row flex-wrap items-center gap-2">{displayItems[0]}{displayItems[1]}</div>
+                                                                    {displayItems.slice(2).map((item, idx) => <div key={item.key || idx}>{item}</div>)}
+                                                                </>
+                                                            );
+                                                        }
+                                                        // Otherwise, all on their own lines
+                                                        return displayItems.map((item, idx) => <div key={item.key || idx}>{item}</div>);
+                                                    })()}
+                                                </div>
+                                            </div>
+                                        </div>
                                     ))
                                 ) : (
                                     <div className="text-gray-500 italic text-xs">No questions in this category.</div>
