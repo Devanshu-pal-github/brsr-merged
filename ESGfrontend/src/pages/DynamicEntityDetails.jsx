@@ -139,10 +139,11 @@ const DynamicEntityDetails = () => {
                                                     {getBestAnswerValue(answers?.[question.question_id]) || <span className="italic text-gray-400">No answer provided.</span>}
                                                 </div>
                                                 <button
-                                                    className="absolute top-3 right-3 bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] text-white font-semibold py-1 px-3 rounded-[6px] text-xs shadow-sm focus:outline-none transition-all duration-300 opacity-80 hover:opacity-100 hover:scale-105 active:scale-95"
+                                                    className="absolute top-3 right-3 bg-[#002A85] text-white font-medium px-3 min-w-[43px] min-h-[26px] rounded-[6px] text-xs shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
                                                     onClick={() => setEditModalQuestionId(question.question_id)}
+                                                    aria-label="Edit"
                                                 >
-                                                    <span className="inline-block align-middle">✏️</span>
+                                                    Edit
                                                 </button>
                                                 {editModalQuestionId === question.question_id && renderEditModal(question)}
                                             </div>

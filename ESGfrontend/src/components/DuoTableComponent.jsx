@@ -154,15 +154,14 @@ export default function DuoTableComponent({ title, fields = [], rows = [], onEdi
     <div className="w-full max-w-full h-auto p-3 pt-0 rounded-[8px] mx-auto">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-[12px] md:text-[14px] font-semibold text-[#000D30]">{title || "Untitled Table"}</h2>
-   {onEditClick && (
-            <button
-              onClick={handleEditClick}
-              className="w-[38px] h-[23px] bg-[#002A85] text-white text-[9px] rounded-md flex items-center justify-center"
-            >
-              {editing ? "Save" : "Edit"}
-            </button>
-          )}
-         
+        {onEditClick && (
+          <button
+            onClick={handleEditClick}
+            className="bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] text-white font-semibold py-1 px-3 rounded-[6px] text-xs shadow-sm focus:outline-none transition-all duration-300 opacity-80 hover:opacity-100 hover:scale-105 active:scale-95 min-w-[48px] min-h-[26px]"
+          >
+            {editing ? "Save" : "Edit"}
+          </button>
+        )}
       </div>
 
       <div className="bg-white rounded-[8px] overflow-x-auto shadow-sm">

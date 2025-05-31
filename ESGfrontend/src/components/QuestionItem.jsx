@@ -115,6 +115,14 @@ const QuestionnaireItem = ({ question, answer: answerProp = '', onUpdate }) => {
                     )}
                 </div>
             )}
+
+            <button
+              className="absolute top-1/2 right-4 -translate-y-1/2 bg-[#002A85] text-white font-medium px-3 min-w-[43px] min-h-[26px] rounded-[6px] text-xs shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
+              onClick={handleEditClick}
+              aria-label="Edit"
+            >
+              Edit
+            </button>
         </div>
     );
 };

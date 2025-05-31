@@ -148,7 +148,7 @@ export default function BigTable({ title, fields, rows, onEditClick ,onAIHelpCli
           {onEditClick && (
             <button
               onClick={handleEditClick}
-              className="w-[38px] h-[23px] bg-[#002A85] text-white text-[9px] rounded-md flex items-center justify-center"
+              className="bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] text-white font-semibold py-1 px-3 rounded-[6px] text-xs shadow-sm focus:outline-none transition-all duration-300 opacity-80 hover:opacity-100 hover:scale-105 active:scale-95 min-w-[48px] min-h-[26px]"
             >
               {editing ? "Save" : "Edit"}
             </button>
