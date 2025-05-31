@@ -68,35 +68,10 @@ export const apiSlice = createApi({
     }),
     getModuleAccess: builder.query({
       query: () => {
-        const company_id = localStorage.getItem("company_id");
-        const plant_id = localStorage.getItem("plant_id");
-        const financial_year = localStorage.getItem("financial_year");
-        const user_role = localStorage.getItem("user_role");
-        
-        // Parse user_role - if it's an array in string form, get the first role
-        const primaryRole = user_role ? 
-          (JSON.parse(user_role)[0] || "default") : 
-          "default";
-        
-        console.log("🔄 Initiating module access request with params:", { 
-          company_id, 
-          plant_id, 
-          financial_year,
-          user_role: primaryRole
-        });
-        
+        // The backend expects a GET request and uses the token for user context
         return {
           url: `/roleAccess/moduleAccess`,
-          method: "POST",
-          body: {
-            company_id,
-            plant_id,
-            financial_year,
-            user_role: primaryRole // Send single role as string
-          },
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          method: "GET"
         };
       },
       transformResponse: (response) => {
