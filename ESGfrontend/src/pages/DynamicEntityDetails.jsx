@@ -161,15 +161,15 @@ const DynamicEntityDetails = () => {
 
     return (
         <Layout>
-            <div className="relative flex w-full h-screen ">
+            <div className="relative flex w-full h-screen">
                 {/* Main Content Area */}
-                <section className="flex-1 flex flex-col min-w-0 max-w-4xl mx-auto bg-transparent px-2 sm:px-4 md:px-6 pt-0 pb-0">
+                <section className="flex-1 flex flex-col min-w-0 max-w-[70vw] mx-auto bg-transparent px-[2vw] pt-0 pb-0">
                     {/* Fixed Header: Breadcrumb + SubHeader */}
-                    <div className="sticky top-0 z-30 pt-6 pb-2 border-b border-gray-200 ">
-                        <div className="w-full max-w-4xl mx-auto px-0 sm:px-2 md:px-0">
+                    <div className="sticky top-0 z-30 pt-[2vh] pb-[1vh] border-b border-gray-200">
+                        <div className="w-full max-w-[70vw] mx-auto px-0 sm:px-[1vw] md:px-0">
                             <Breadcrumb section="Entity Details" activeTab={activeTab} />
                         </div>
-                        <div className="w-full max-w-4xl mx-auto px-0 sm:px-2 md:px-0 mt-2">
+                        <div className="w-full max-w-[70vw] mx-auto px-0 sm:px-[1vw] md:px-0 mt-[1vh]">
                             <SubHeader
                                 tabs={tabs}
                                 activeTab={activeTab}
@@ -178,7 +178,7 @@ const DynamicEntityDetails = () => {
                         </div>
                     </div>
                     {/* Scrollable Content Area */}
-                    <div className="flex-1 overflow-y-auto min-h-0 py-6 pr-2 custom-scrollbar flex flex-col gap-6 scroll-smooth hover:scroll-auto transition-all duration-500">
+                    <div className="flex-1 overflow-y-auto min-h-0 py-[2vh] pr-[1vw] custom-scrollbar flex flex-col gap-[2vh] scroll-smooth hover:scroll-auto transition-all duration-500">
                         {isLoading && (
                             <div className="flex items-center justify-center min-h-[30vh] text-gray-500 text-base">Loading submodules...</div>
                         )}
@@ -193,19 +193,19 @@ const DynamicEntityDetails = () => {
                     </div>
                 </section>
                 {/* Right Sidebar: Progress + AI Assistant */}
-                <aside className="hidden lg:flex flex-col mt-[32px] gap-4 px-3 pt-6 pb-4 bg-white border-l border-gray-200 shadow-lg min-w-[220px] max-w-[250px] w-full sticky top-0 h-[85vh] z-20 items-center justify-start rounded-[6px] transition-all duration-500">
+                <aside className="hidden lg:flex flex-col mt-[3vh] gap-[2vh] px-[1vw] pt-[2vh] pb-[2vh] bg-white border-l border-gray-200 shadow-lg min-w-[20vw] max-w-[25vw] w-full sticky top-0 h-[85vh] z-20 items-center justify-start rounded-[6px] transition-all duration-500">
                     {/* Progress Circle */}
-                    <div className="flex flex-col items-center mb-2">
-                        <svg width="64" height="64" viewBox="0 0 120 120">
+                    <div className="flex flex-col items-center mb-[1vh]">
+                        <svg width="8vw" height="8vw" viewBox="0 0 120 120">
                             <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="10" />
                             <circle cx="60" cy="60" r="50" fill="none" stroke="#4F46E5" strokeWidth="10" strokeDasharray="314" strokeDashoffset="60" strokeLinecap="round" />
                         </svg>
-                        <div className="mt-2 text-gray-700 font-semibold text-xs">38 of 50 questions completed</div>
+                        <div className="mt-[1vh] text-gray-700 font-semibold text-xs">38 of 50 questions completed</div>
                     </div>
                     {/* Course Sections */}
-                    <div className="bg-[#F8FAFC] rounded-[6px] shadow p-3 border border-gray-100 w-full flex flex-col gap-2">
-                        <div className="font-semibold text-xs mb-1 text-[#000D30]">Course Sections</div>
-                        <div className="flex flex-col gap-1">
+                    <div className="bg-[#F8FAFC] rounded-[6px] shadow p-[1vw] border border-gray-100 w-full flex flex-col gap-[1vh]">
+                        <div className="font-semibold text-xs mb-[0.5vh] text-[#000D30]">Course Sections</div>
+                        <div className="flex flex-col gap-[0.5vh]">
                             <div>
                                 <div className="text-xs font-medium text-[#000D30] mb-0.5">Section 1: Introduction</div>
                                 <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
@@ -237,9 +237,9 @@ const DynamicEntityDetails = () => {
                         </div>
                     </div>
                     {/* Category Overview */}
-                    <div className="bg-[#F8FAFC] rounded-[6px] shadow p-3 border border-gray-100 w-full flex flex-col gap-1">
-                        <div className="font-semibold text-xs mb-1 text-[#000D30]">Category Overview</div>
-                        <div className="flex flex-col gap-0.5">
+                    <div className="bg-[#F8FAFC] rounded-[6px] shadow p-[1vw] border border-gray-100 w-full flex flex-col gap-[0.5vh]">
+                        <div className="font-semibold text-xs mb-[0.5vh] text-[#000D30]">Category Overview</div>
+                        <div className="flex flex-col gap-[0.25vh]">
                             <div className="flex justify-between text-[11px]"><span>Fundamentals</span><span>15/20 questions</span></div>
                             <div className="flex justify-between text-[11px]"><span>Theory</span><span>12/15 questions</span></div>
                             <div className="flex justify-between text-[11px]"><span>Practical Examples</span><span>8/10 questions</span></div>
@@ -249,7 +249,7 @@ const DynamicEntityDetails = () => {
                 </aside>
                 {/* Floating AI Button and Overlay Chat */}
                 <button
-                    className="fixed z-[120] bottom-8 right-8 w-12 h-12 rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-xl flex items-center justify-center hover:scale-110 transition-transform border-4 border-white focus:outline-none"
+                    className="fixed z-[120] bottom-[3vh] right-[3vw] w-[6vw] h-[6vw] min-w-[48px] min-h-[48px] max-w-[80px] max-h-[80px] rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-xl flex items-center justify-center hover:scale-110 transition-transform border-4 border-white focus:outline-none"
                     style={{ boxShadow: '0 8px 32px 0 rgba(10,46,135,0.25)' }}
                     onClick={() => setAiChatOpen(true)}
                     aria-label="Open AI Assistant Chat"
