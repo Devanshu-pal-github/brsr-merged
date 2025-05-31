@@ -133,56 +133,52 @@ const DynamicEntityDetails = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen flex flex-row">
+            <div className="flex flex-col lg:flex-row w-full h-full">
                 {/* Main Content Area */}
-                <div className="flex-1 max-w-[calc(100%-400px)] pl-[100px] pr-6 pt-2 pb-8 space-y-5">
+                <section className="flex-1 w-full max-w-4xl mx-auto bg-transparent rounded-lg shadow-none px-0 sm:px-2 md:px-4 pt-2 pb-8 space-y-6 min-h-0 flex flex-col">
                     {/* Breadcrumb */}
-                    <div className="h-25 w-full">
-                        <div className="ml-[40px] z-10 w-full">
-                            <Breadcrumb section="Entity Details" activeTab={activeTab} />
-                        </div>
+                    <div className="w-full">
+                        <Breadcrumb section="Entity Details" activeTab={activeTab} />
                     </div>
                     {/* Submodule Tabs and Content */}
-                    <div className="flex flex-col space-y-5">
+                    <div className="flex flex-col space-y-6">
                         {/* Tabs */}
-                        <div className="h-10 w-full">
-                            <div className="ml-[40px] z-10 w-[calc(100%-230px)]" id="submodule-tabs-anchor">
-                                <SubHeader
-                                    tabs={tabs}
-                                    activeTab={activeTab}
-                                    onTabChange={setActiveTab}
-                                />
-                            </div>
+                        <div className="w-full sticky top-0 z-20 bg-[#F2F4F5] pt-2 pb-2">
+                            <SubHeader
+                                tabs={tabs}
+                                activeTab={activeTab}
+                                onTabChange={setActiveTab}
+                            />
                         </div>
-                        {/* Content Area */}
-                        <div className="px-2 ml-[40px]">
+                        {/* Content Area (scrollable) */}
+                        <div className="flex-1 w-full overflow-y-auto min-h-0">
                             {isLoading && (
-                                <div className="flex items-center justify-center min-h-[40vh] text-gray-500">
+                                <div className="flex items-center justify-center min-h-[30vh] text-gray-500">
                                     Loading submodules...
                                 </div>
                             )}
                             {isError && (
-                                <div className="flex items-center justify-center min-h-[40vh] text-red-500">
+                                <div className="flex items-center justify-center min-h-[30vh] text-red-500">
                                     Error loading submodules: {error?.error || 'Unknown error'}
                                 </div>
                             )}
                             {!isLoading && !isError && (
                                 currentSubmodule
                                     ? renderSubmodule(currentSubmodule)
-                                    : <div className="flex items-center justify-center min-h-[40vh] text-gray-500">Select a submodule to view content</div>
+                                    : <div className="flex items-center justify-center min-h-[30vh] text-gray-500">Select a submodule to view content</div>
                             )}
                         </div>
                     </div>
-                </div>
+                </section>
                 {/* Right Sidebar: Progress + AI Assistant */}
-                <div className="hidden lg:flex flex-col w-[370px] min-w-[370px] max-w-[370px] h-full" style={{ marginTop: '180px', marginRight: '40px' }}>
-                    <div className="mb-6">
+                <aside className="w-full lg:w-1/3 xl:w-1/4 min-w-0 max-w-md flex flex-col gap-6 px-4 pt-4 pb-8 lg:sticky lg:top-[80px] lg:h-[calc(100vh-80px)]">
+                    <div className="mb-2">
                         <ProgressCard covered={14} total={20} />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-h-0">
                         <AIAssistant />
                     </div>
-                </div>
+                </aside>
             </div>
         </Layout>
     );

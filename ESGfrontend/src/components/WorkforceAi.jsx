@@ -2,7 +2,7 @@ import { Send } from "lucide-react";
 
 const AIAssistant = () => {
   return (
-    <div className="flex flex-col rounded-lg shadow-lg border border-gray-200 bg-white w-full max-w-[500px] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-full">
+    <div className="flex flex-col rounded-lg shadow-lg border border-gray-200 bg-white w-full min-w-0 h-full max-w-full p-0">
       {/* Chat Header */}
       <div className="flex items-center space-x-3 p-4 border-b border-gray-200">
         <div className="w-8 h-8 bg-[#000D30] rounded-[8px] flex items-center justify-center">

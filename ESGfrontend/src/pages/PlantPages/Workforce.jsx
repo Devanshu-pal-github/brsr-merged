@@ -224,45 +224,52 @@ const Workforce = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen">
-        <div className="h-25 w-full">
-          <div className="fixed top-[30px] ml-0.5 z-10 w-full">
+      <div className="relative min-h-screen w-full bg-[#F2F4F5]">
+        {/* Fixed Breadcrumb */}
+        <div className="fixed top-[60px] left-0 right-0 z-30 bg-[#F2F4F5] border-b border-gray-100 px-4 md:px-8" style={{height:'56px'}}>
+          <div className="max-w-7xl mx-auto">
             <Breadcrumb section={currentModule.name} activeTab={activeTab} />
           </div>
         </div>
 
-        <div className="mt-[10px] pt-[10px] mx-2 flex flex-col md:flex-row gap-6">
-          <div className="w-full md:w-7/10 flex flex-col space-y-[10px]">
-            <div className="h-10 w-full">
-              <div className="fixed top-[140px] ml-0.5 z-10 custom-width w-[56vw]">
-                <SubHeader tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-              </div>
-            </div>
-            <div
-          className="fixed top-[150px] left-0 z-10 overflow-y-auto px-2 hide-scrollbar ml-[273px] mr[100px] mt-[40px]"
-          style={{ height: "calc(100vh - 150px)", width: "calc(100% - 42vw)" }}
-        >
-
-
-            <div>{tabContent[activeTab]}</div>
-</div>
-            <div className="md:block fixed top-[140px] right-2 md:right-2 lg:right-10 w-[20%] min-w-[20vw] flex flex-col space-y-2 gap-6">
-              <ProgressCard covered={14} total={20} />
-              <AIAssistant />
-            </div>
+        {/* Fixed SubHeader (Tabs) */}
+        <div className="fixed top-[116px] left-0 right-0 z-30 bg-[#F2F4F5] border-b border-gray-100 px-4 md:px-8" style={{height:'48px'}}>
+          <div className="max-w-7xl mx-auto">
+            <SubHeader tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
           </div>
         </div>
-         <style>
-          {`
-            .hide-scrollbar::-webkit-scrollbar {
-              display: none;
-            }
-            .hide-scrollbar {
-              -ms-overflow-style: none;
-              scrollbar-width: none;
-            }
-          `}
-        </style>
+
+        {/* Main Content Layout */}
+        <div className="flex w-full max-w-7xl mx-auto pt-[172px] pb-8 px-4 md:px-8 gap-6">
+          {/* Main Scrollable Content */}
+          <div className="flex-1 min-w-0">
+            <div className="overflow-y-auto rounded-lg bg-transparent" style={{maxHeight:'calc(100vh - 180px)'}}>
+              {tabContent[activeTab]}
+            </div>
+          </div>
+
+          {/* Fixed Right Panel: Progress + AI Assistant */}
+          <div className="hidden xl:flex flex-col gap-4 w-[320px] shrink-0 sticky top-[172px] h-fit">
+            <ProgressCard covered={14} total={20} />
+            <AIAssistant />
+          </div>
+        </div>
+
+        {/* Responsive: Right Panel below on small screens */}
+        <div className="xl:hidden max-w-7xl mx-auto px-4 md:px-8 pb-8 flex flex-col gap-4">
+          <ProgressCard covered={14} total={20} />
+          <AIAssistant />
+        </div>
+
+        <style>{`
+          html, body, #root {
+            font-family: 'Inter', 'sans-serif';
+            background: #F2F4F5;
+            color: #1A1A1A;
+          }
+          .hide-scrollbar::-webkit-scrollbar { display: none; }
+          .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        `}</style>
       </div>
     </Layout>
   );

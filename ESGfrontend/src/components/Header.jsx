@@ -30,8 +30,7 @@ const Header = ({ toggleSidebar }) => {
 
     return (
     <div
-  className="fixed top-0 right-0 left-[230px] bg-white flex items-center justify-between px-4 shadow-md z-40"
-  style={{ height: '55px' }}
+  className="w-full flex items-center justify-between px-4 md:px-8 h-[60px] bg-ehite shadow-md border-b border-gray-100 z-50"
 >
 
             <div className="flex items-center gap-4">
