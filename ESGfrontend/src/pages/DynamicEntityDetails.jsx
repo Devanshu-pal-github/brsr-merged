@@ -181,7 +181,7 @@ const DynamicEntityDetails = () => {
                         </div>
                     </div>
                     {/* Scrollable Content Area */}
-                    <div className="flex-1 overflow-y-auto min-h-0 py-[2vh] pr-[1vw] custom-scrollbar flex flex-col gap-[2vh] scroll-smooth hover:scroll-auto transition-all duration-500">
+                    <div className="flex-1 overflow-y-auto min-h-0 py-[2vh] pr-[1vw] custom-scrollbar flex flex-col gap-[2vh] scroll-smooth hover:scroll-auto transition-all duration-500 scrollbar-hide">
                         {isLoading && (
                             <div className="flex items-center justify-center min-h-[30vh] text-gray-500 text-base">Loading submodules...</div>
                         )}

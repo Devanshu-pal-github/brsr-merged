@@ -2,7 +2,9 @@
 /* At the very top or bottom of your global CSS */
 html, body, #root {
   height: 100vh;
-  overflow: hidden;
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100vw !important;
 }
 
 body {
@@ -80,3 +82,17 @@ button, .custom-button, .action-btn {
 /* Hide scrollbars utility */
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Hide scrollbars utility for Tailwind utility class */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+/* Fix for scrollbar gap: force overlay scrollbars and remove right padding on scrollable area */
+.scrollbar-hide {
+  padding-right: 0 !important;
+  overflow-y: overlay !important;
+}
