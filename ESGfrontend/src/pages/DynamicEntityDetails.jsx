@@ -6,6 +6,8 @@ import Breadcrumb from '../components/Breadcrumb';
 import SubHeader from '../components/SubHeader';
 import WorkforceQuestion from '../components/WorkforceQuestion';
 import QuestionnaireItem from '../components/QuestionItem';
+import ProgressCard from '../components/ProgressCard';
+import AIAssistant from '../components/WorkforceAi';
 
 const getBestAnswerValue = (answerObj) => {
     if (!answerObj) return '';
@@ -56,6 +58,22 @@ const DynamicEntityDetails = () => {
         }
     }, [currentSubmodule, getQuestionResponses]);
 
+    // Collapsible state for each category
+    const [openCategories, setOpenCategories] = useState({});
+    useEffect(() => {
+        // Reset open state when submodule changes
+        if (currentSubmodule) {
+            const initial = {};
+            currentSubmodule.question_categories?.forEach(cat => {
+                initial[cat.id] = false;
+            });
+            setOpenCategories(initial);
+        }
+    }, [currentSubmodule]);
+    const toggleCategory = (catId) => {
+        setOpenCategories(prev => ({ ...prev, [catId]: !prev[catId] }));
+    };
+
     // Render all question categories and their questions
     const renderSubmodule = (submodule) => {
         if (!submodule || !Array.isArray(submodule.question_categories)) {
@@ -66,39 +84,47 @@ const DynamicEntityDetails = () => {
             );
         }
         return (
-            <div className="flex flex-col space-y-8">
-                {/* Debug log removed as requested */}
+            <div className="flex flex-col space-y-6">
                 {submodule.question_categories.map((category) => (
-                    <div key={category.id} className="bg-white rounded-lg p-6 shadow-sm">
-                        <h3 className="text-lg font-semibold mb-4 text-[#000D30]">
-                            {category.category_name || 'Unnamed Category'}
-                        </h3>
-                        <div className="space-y-4">
-                            {Array.isArray(category.questions) && category.questions.length > 0 ? (
-                                category.questions.map((question) => (
-                                    <WorkforceQuestion
-                                        key={question.question_id}
-                                        question={question.question}
-                                    >
-                                        <QuestionnaireItem
-                                            question={question}
-                                            answer={getBestAnswerValue(answers?.[question.question_id])}
-                                            isDropdownOpen={false}
-                                            onUpdate={(updatedData) => {
-                                                // TODO: Implement update logic
-                                                console.log('Updated:', updatedData);
-                                            }}
-                                            onAIAssistantClick={() => {
-                                                // TODO: Implement AI assistant logic
-                                                console.log('AI Assistant clicked for:', question.question_id);
-                                            }}
-                                        />
-                                    </WorkforceQuestion>
-                                ))
-                            ) : (
-                                <div className="text-gray-500 italic">No questions in this category.</div>
-                            )}
-                        </div>
+                    <div key={category.id} className="bg-white rounded-lg shadow-sm p-0 border border-gray-200">
+                        <button
+                            onClick={() => toggleCategory(category.id)}
+                            className="w-full flex items-center justify-between text-lg font-semibold px-6 py-4 text-[#000D30] hover:text-[#20305D] transition-colors focus:outline-none"
+                            style={{ borderBottom: openCategories[category.id] ? '1px solid #e5e7eb' : 'none' }}
+                        >
+                            <span>{category.category_name || 'Unnamed Category'}</span>
+                            <span className={`transition-transform ${openCategories[category.id] ? 'rotate-180' : ''}`}>
+                                <svg width="20" height="20" fill="none" stroke="#20305D" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                            </span>
+                        </button>
+                        {openCategories[category.id] && (
+                            <div className="space-y-4 px-6 pb-6 pt-2">
+                                {Array.isArray(category.questions) && category.questions.length > 0 ? (
+                                    category.questions.map((question) => (
+                                        <WorkforceQuestion
+                                            key={question.question_id}
+                                            question={question.question}
+                                        >
+                                            <QuestionnaireItem
+                                                question={question}
+                                                answer={getBestAnswerValue(answers?.[question.question_id])}
+                                                isDropdownOpen={false}
+                                                onUpdate={(updatedData) => {
+                                                    // TODO: Implement update logic
+                                                    console.log('Updated:', updatedData);
+                                                }}
+                                                onAIAssistantClick={() => {
+                                                    // TODO: Implement AI assistant logic
+                                                    console.log('AI Assistant clicked for:', question.question_id);
+                                                }}
+                                            />
+                                        </WorkforceQuestion>
+                                    ))
+                                ) : (
+                                    <div className="text-gray-500 italic">No questions in this category.</div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
@@ -107,44 +133,56 @@ const DynamicEntityDetails = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen">
-                {/* Breadcrumb */}
-                <div className="h-25 w-full">
-                    <div className="fixed top-[30px] ml-0.5 z-10 w-full">
-                        <Breadcrumb section="Entity Details" activeTab={activeTab} />
+            <div className="min-h-screen flex flex-row">
+                {/* Main Content Area */}
+                <div className="flex-1 max-w-[calc(100%-400px)] pl-[100px] pr-6 pt-2 pb-8">
+                    {/* Breadcrumb */}
+                    <div className="h-25 w-full">
+                        <div className="ml-[10px] z-10 w-full">
+                            <Breadcrumb section="Entity Details" activeTab={activeTab} />
+                        </div>
                     </div>
-                </div>
-                {/* Submodule Tabs and Content */}
-                <div className="mt-[10px] pt-[10px] mx-2">
-                    <div className="w-full flex flex-col space-y-[10px]">
-                        {/* Tabs */}
-                        <div className="h-10 w-full">
-                            <div className="fixed top-[140px] ml-0.5 z-10 w-[calc(100%-230px)]">
-                                <SubHeader
-                                    tabs={tabs}
-                                    activeTab={activeTab}
-                                    onTabChange={setActiveTab}
-                                />
+                    {/* Submodule Tabs and Content */}
+                    <div className="mt-[10px] pt-[10px]">
+                        <div className="w-full flex flex-col space-y-[10px]">
+                            {/* Tabs */}
+                            <div className="h-10 w-full">
+                                <div className="ml-[10px] z-10 w-[calc(100%-230px)]">
+                                    <SubHeader
+                                        tabs={tabs}
+                                        activeTab={activeTab}
+                                        onTabChange={setActiveTab}
+                                    />
+                                </div>
+                            </div>
+                            {/* Content Area */}
+                            <div className="mt-[20px] px-2">
+                                {isLoading && (
+                                    <div className="flex items-center justify-center min-h-[40vh] text-gray-500">
+                                        Loading submodules...
+                                    </div>
+                                )}
+                                {isError && (
+                                    <div className="flex items-center justify-center min-h-[40vh] text-red-500">
+                                        Error loading submodules: {error?.error || 'Unknown error'}
+                                    </div>
+                                )}
+                                {!isLoading && !isError && (
+                                    currentSubmodule
+                                        ? renderSubmodule(currentSubmodule)
+                                        : <div className="flex items-center justify-center min-h-[40vh] text-gray-500">Select a submodule to view content</div>
+                                )}
                             </div>
                         </div>
-                        {/* Content Area */}
-                        <div className="mt-[180px] px-4">
-                            {isLoading && (
-                                <div className="flex items-center justify-center min-h-[40vh] text-gray-500">
-                                    Loading submodules...
-                                </div>
-                            )}
-                            {isError && (
-                                <div className="flex items-center justify-center min-h-[40vh] text-red-500">
-                                    Error loading submodules: {error?.error || 'Unknown error'}
-                                </div>
-                            )}
-                            {!isLoading && !isError && (
-                                currentSubmodule
-                                    ? renderSubmodule(currentSubmodule)
-                                    : <div className="flex items-center justify-center min-h-[40vh] text-gray-500">Select a submodule to view content</div>
-                            )}
-                        </div>
+                    </div>
+                </div>
+                {/* Right Sidebar: Progress + AI Assistant */}
+                <div className="hidden lg:flex flex-col w-[370px] min-w-[370px] max-w-[370px] h-full pt-8 pr-8">
+                    <div className="mb-6">
+                        <ProgressCard covered={14} total={20} />
+                    </div>
+                    <div className="flex-1">
+                        <AIAssistant />
                     </div>
                 </div>
             </div>
