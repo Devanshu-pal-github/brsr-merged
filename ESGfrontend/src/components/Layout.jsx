@@ -13,7 +13,7 @@ const Layout = ({ children }) => {
     };
 
     return (
-        <div className="min-h-screen w-screen bg-[#F2F4F5] font-sans text-[#1A1A1A] grid grid-cols-[minmax(220px,280px)_1fr] grid-rows-[auto_1fr]" style={{overflow:'hidden'}}>
+        <div className="min-h-screen w-screen bg-[#F2F4F5] font-sans text-[#1A1A1A] grid grid-cols-[198px_1fr] lg:grid-cols-[214px_1fr] xl:grid-cols-[230px_1fr] grid-rows-[auto_1fr]" style={{overflow:'hidden'}}>
             {/* Sidebar: visually balanced, always full height */}
             <aside className="row-span-2 col-span-1 h-screen bg-[#000D30] z-40 transition-all duration-500 flex flex-col">
                 <Sidebar />

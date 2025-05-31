@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const SubHeader = ({ tabs, onTabChange, activeTab }) => {
   return (
-    <div className="bg-white text-[12px] sm:text-[13px] font-medium flex items-center rounded-[8px] shadow-sm w-full min-w-0 overflow-x-auto pt-2 pb-1 pl-1">
+    <div className="bg-white text-[12px] sm:text-[13px] font-medium flex items-center h-[48px] rounded-[8px] shadow-sm w-full min-w-0 overflow-x-auto pt-2 pl-1">
       <div className="flex items-center justify-start px-2 sm:px-3 h-full overflow-x-auto">
         <div className="flex space-x-4 sm:space-x-6 h-full">
           {tabs?.map((tab) => (
