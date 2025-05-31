@@ -30,13 +30,13 @@ const Header = ({ toggleSidebar }) => {
 
     return (
     <div
-  className="w-full flex items-center justify-between px-4 md:px-8 h-[60px] bg-ehite shadow-md border-b border-gray-100 z-50"
->
+      className="w-full flex items-center justify-between px-4 md:px-8 h-[60px] bg-[#000D30] shadow-md border-b z-50 transition-all duration-500"
+    >
 
             <div className="flex items-center gap-4">
                 {/* Hamburger Menu (Mobile only) */}
                 <button
-                    className="lg:hidden text-[#000D30] focus:outline-none"
+                    className="lg:hidden text-[#FFFFFF] focus:outline-none"
                     onClick={toggleSidebar}
                 >
                     <Menu className="w-5 h-5" />
@@ -46,7 +46,7 @@ const Header = ({ toggleSidebar }) => {
                 <div className="relative">
                     <button
                         onClick={toggleFYDropdown}
-                        className="flex items-center gap-2 px-3 py-2 rounded-md text-[12px] text-[#000D30] font-medium bg-white border border-gray-200 shadow-sm hover:bg-gray-100"
+                        className="flex items-center gap-2 px-3 py-2 rounded-md text-[12px] text-[#FFFFFF] font-medium bg-[#20305D] border border-gray-200 shadow-sm hover:bg-[#345678]"
                     >
                         <span>FY {selectedFY}</span>
                         <ChevronDown className="w-5 h-5" />
@@ -72,7 +72,7 @@ const Header = ({ toggleSidebar }) => {
             {/* Right: Notifications & User Profile */}
             <div className="flex items-center gap-4">
                 {/* Notifications */}
-                <button className="relative text-[#20305D] focus:outline-none">
+                <button className="relative text-[#FFFFFF] focus:outline-none">
                     <Bell className="w-5 h-5" />
                     <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white" />
                 </button>
@@ -87,8 +87,8 @@ const Header = ({ toggleSidebar }) => {
                             JS
                         </div>
                         <div className="hidden sm:flex items-center gap-1">
-                            <span className="text-[#20305D] text-[12px] font-medium">John Smith</span>
-                            <ChevronDown className="w-5 h-5 text-[#000D30]" />
+                            <span className="text-[#FFFFFF] text-[12px] font-medium">John Smith</span>
+                            <ChevronDown className="w-5 h-5 text-[#FFFFFF]" />
                         </div>
                     </button>
 

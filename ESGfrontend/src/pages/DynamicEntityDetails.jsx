@@ -161,11 +161,11 @@ const DynamicEntityDetails = () => {
 
     return (
         <Layout>
-            <div className="relative flex w-full h-screen bg-[#F6F8FA]">
+            <div className="relative flex w-full h-screen ">
                 {/* Main Content Area */}
                 <section className="flex-1 flex flex-col min-w-0 max-w-4xl mx-auto bg-transparent px-2 sm:px-4 md:px-6 pt-0 pb-0">
                     {/* Fixed Header: Breadcrumb + SubHeader */}
-                    <div className="sticky top-0 z-30 pt-6 pb-2 border-b border-gray-200 bg-[#F6F8FA]">
+                    <div className="sticky top-0 z-30 pt-6 pb-2 border-b border-gray-200 ">
                         <div className="w-full max-w-4xl mx-auto px-0 sm:px-2 md:px-0">
                             <Breadcrumb section="Entity Details" activeTab={activeTab} />
                         </div>

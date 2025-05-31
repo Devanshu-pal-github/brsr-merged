@@ -114,12 +114,7 @@ const Sidebar = () => {
         <>
             {/* Sidebar */}
             <div
-                className={`fixed top-0 left-0 h-full 
-              w-[198px] lg:w-[214px] xl:w-[230px] 
-              bg-[#000D30] text-[#E5E7EB] 
-              transform transition-transform duration-300 ease-in-out 
-              ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
-              lg:translate-x-0 z-20`}
+                className={`fixed top-0 left-0 h-full w-[198px] lg:w-[214px] xl:w-[230px] bg-[#000D30] text-[#E5E7EB] transform transition-all duration-500 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 z-20`}
             >
                 <div className="pt-6 pb-6 flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-300">
                     {/* Header */}
