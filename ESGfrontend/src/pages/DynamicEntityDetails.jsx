@@ -117,29 +117,31 @@ const DynamicEntityDetails = () => {
                     <div key={category.id} className="bg-white rounded-[6px] shadow-sm p-0 border border-gray-200 transition-all duration-300 hover:shadow-md">
                         <button
                             onClick={() => toggleCategory(category.id)}
-                            className="w-full flex items-center justify-between text-base md:text-lg font-semibold mb-2 text-[#000D30] hover:text-[#20305D] transition-colors focus:outline-none rounded-[6px] px-2 py-2"
+                            className="w-full flex items-center justify-between text-base md:text-lg font-semibold mb-1 text-[#000D30] hover:text-[#20305D] transition-colors focus:outline-none rounded-[6px] px-6 py-1 pt-1 h-[36px]"
                             style={{ borderBottom: openCategories[category.id] ? '1px solid #e5e7eb' : 'none' }}
                         >
-                            <span>{category.category_name || 'Unnamed Category'}</span>
+                            <span className="flex items-center pl-[8px] h-full">{category.category_name || 'Unnamed Category'}</span>
                             <span className={`transition-transform duration-300 ${openCategories[category.id] ? 'rotate-180' : ''}`}>
                                 <svg width="20" height="20" fill="none" stroke="#20305D" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
                             </span>
                         </button>
                         {openCategories[category.id] && (
-                            <div className="flex flex-col gap-3 px-1 pb-2 pt-1">
+                            <div className="flex flex-col gap-2 px-0.5 pb-1 pt-0.5">
                                 {Array.isArray(category.questions) && category.questions.length > 0 ? (
                                     category.questions.map((question) => (
                                         <WorkforceQuestion
                                             key={question.question_id}
                                             question={question.question}
                                         >
-                                            <div className="flex flex-col relative bg-white rounded-[6px] shadow border border-gray-100 p-4 mb-1 transition-all duration-300 hover:shadow-lg group">
-                                                <div className="text-[15px] md:text-base font-semibold text-[#1A2341] mb-1 leading-tight transition-all duration-300">{question.question}</div>
-                                                <div className="text-gray-700 text-[13px] md:text-[14px] leading-relaxed mb-1 transition-all duration-300">
+                                            <div className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[36px]">
+                                                <div className="text-[13px] md:text-[14px] font-medium text-[#1A2341] mb-0.5 leading-tight transition-all duration-300 truncate">
+                                                    {question.question}
+                                                </div>
+                                                <div className="text-gray-700 text-[12px] md:text-[13px] leading-snug mb-0.5 transition-all duration-300 truncate">
                                                     {getBestAnswerValue(answers?.[question.question_id]) || <span className="italic text-gray-400">No answer provided.</span>}
                                                 </div>
                                                 <button
-                                                    className="absolute top-3 right-3 bg-[#002A85] text-white font-medium px-3 min-w-[43px] min-h-[26px] rounded-[6px] text-xs shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
+                                                    className="absolute top-2 right-2 bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
                                                     onClick={() => setEditModalQuestionId(question.question_id)}
                                                     aria-label="Edit"
                                                 >
@@ -150,7 +152,7 @@ const DynamicEntityDetails = () => {
                                         </WorkforceQuestion>
                                     ))
                                 ) : (
-                                    <div className="text-gray-500 italic">No questions in this category.</div>
+                                    <div className="text-gray-500 italic text-xs">No questions in this category.</div>
                                 )}
                             </div>
                         )}
