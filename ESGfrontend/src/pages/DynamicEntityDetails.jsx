@@ -78,21 +78,23 @@ const DynamicEntityDetails = () => {
     // Modal state for editing answers
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
     const renderEditModal = (question) => (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="bg-white rounded-lg shadow-lg p-0 max-w-3xl w-full relative">
+        <div className="fixed inset-0 z-[140] flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-0 overflow-hidden border border-gray-200 relative animate-fadeIn">
                 <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none"
                     onClick={() => setEditModalQuestionId(null)}
                     aria-label="Close"
                 >
                     ×
                 </button>
-                <img
-                    src="https://files.oaiusercontent.com/file-1b1e2e2e-6e2e-4e2e-8e2e-1e2e2e2e2e2e.png" // Replace with your uploaded image URL or local asset
-                    alt="Edit Answer Placeholder"
-                    className="w-full rounded-lg"
-                />
-                <div className="p-4 text-center text-gray-600">Edit popup placeholder for: <span className="font-semibold">{question.question}</span></div>
+                <div className="p-0">
+                    <img
+                        src="https://files.oaiusercontent.com/file-1b1e2e2e-6e2e-4e2e-8e2e-1e2e2e2e2e2e.png"
+                        alt="Edit Answer Placeholder"
+                        className="w-full rounded-t-2xl"
+                    />
+                    <div className="p-6 text-center text-gray-700 text-base font-medium border-t border-gray-100">Edit popup placeholder for: <span className="font-semibold">{(currentSubmodule?.question_categories.flatMap(cat => cat.questions).find(q => q.question_id === editModalQuestionId)?.question) || ''}</span></div>
+                </div>
             </div>
         </div>
     );
@@ -164,79 +166,73 @@ const DynamicEntityDetails = () => {
 
     return (
         <Layout>
-            <div className="flex flex-col lg:flex-row w-full h-full">
+            <div className="relative flex w-full h-screen bg-[#F6F8FA]">
                 {/* Main Content Area */}
-                <section className="flex-1 w-full max-w-4xl mx-auto bg-transparent rounded-lg shadow-none px-0 sm:px-2 md:px-4 pt-2 pb-8 space-y-6 min-h-0 flex flex-col">
-                    {/* Breadcrumb */}
-                    <div className="w-full">
-                        <Breadcrumb section="Entity Details" activeTab={activeTab} />
-                    </div>
-                    {/* Submodule Tabs and Content */}
-                    <div className="flex flex-col space-y-6">
-                        {/* Tabs */}
-                        <div className="w-full sticky top-0 z-20 bg-[#F2F4F5] pt-2 pb-2">
+                <section className="flex-1 flex flex-col min-w-0 max-w-4xl mx-auto bg-transparent px-0 sm:px-4 md:px-8 pt-0 pb-0">
+                    {/* Fixed Header: Breadcrumb + SubHeader */}
+                    <div className="sticky top-0 z-30 bg-[#F6F8FA] pt-6 pb-2 border-b border-gray-200">
+                        <div className="w-full max-w-4xl mx-auto px-0 sm:px-2 md:px-0">
+                            <Breadcrumb section="Entity Details" activeTab={activeTab} />
+                        </div>
+                        <div className="w-full max-w-4xl mx-auto px-0 sm:px-2 md:px-0 mt-2">
                             <SubHeader
                                 tabs={tabs}
                                 activeTab={activeTab}
                                 onTabChange={setActiveTab}
                             />
                         </div>
-                        {/* Content Area (scrollable) */}
-                        <div className="flex-1 w-full overflow-y-auto min-h-0">
-                            {isLoading && (
-                                <div className="flex items-center justify-center min-h-[30vh] text-gray-500">
-                                    Loading submodules...
-                                </div>
-                            )}
-                            {isError && (
-                                <div className="flex items-center justify-center min-h-[30vh] text-red-500">
-                                    Error loading submodules: {error?.error || 'Unknown error'}
-                                </div>
-                            )}
-                            {!isLoading && !isError && (
-                                currentSubmodule
-                                    ? renderSubmodule(currentSubmodule)
-                                    : <div className="flex items-center justify-center min-h-[30vh] text-gray-500">Select a submodule to view content</div>
-                            )}
-                        </div>
+                    </div>
+                    {/* Scrollable Content Area */}
+                    <div className="flex-1 overflow-y-auto min-h-0 py-6 pr-2 custom-scrollbar">
+                        {isLoading && (
+                            <div className="flex items-center justify-center min-h-[30vh] text-gray-500 text-base">Loading submodules...</div>
+                        )}
+                        {isError && (
+                            <div className="flex items-center justify-center min-h-[30vh] text-red-500 text-base">Error loading submodules: {error?.error || 'Unknown error'}</div>
+                        )}
+                        {!isLoading && !isError && (
+                            currentSubmodule
+                                ? renderSubmodule(currentSubmodule)
+                                : <div className="flex items-center justify-center min-h-[30vh] text-gray-500 text-base">Select a submodule to view content</div>
+                        )}
                     </div>
                 </section>
                 {/* Right Sidebar: Progress + AI Assistant */}
-                <aside className="w-full lg:w-1/3 xl:w-1/4 min-w-0 max-w-md flex flex-col gap-6 px-4 pt-4 pb-8 lg:sticky lg:top-[80px] lg:h-[calc(100vh-80px)]">
+                <aside className="hidden lg:flex flex-col gap-6 px-4 pt-8 pb-8 bg-white border-l border-gray-200 shadow-lg min-w-[340px] max-w-xs w-full sticky top-0 h-screen z-20">
                     {/* Progress Circle */}
                     <div className="flex flex-col items-center mb-2">
-                        <svg width="120" height="120" viewBox="0 0 120 120">
+                        <svg width="100" height="100" viewBox="0 0 120 120">
                             <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="12" />
                             <circle cx="60" cy="60" r="50" fill="none" stroke="#4F46E5" strokeWidth="12" strokeDasharray="314" strokeDashoffset="60" strokeLinecap="round" />
                         </svg>
-                        <div className="mt-2 text-gray-700 font-medium text-base">38 of 50 questions completed</div>
+                        <div className="mt-2 text-gray-700 font-semibold text-base">38 of 50 questions completed</div>
                     </div>
                     {/* Course Sections */}
-                    <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-                        <div className="font-semibold text-lg mb-2 text-[#000D30]">Course Sections</div>
+                    <div className="bg-[#F8FAFC] rounded-xl shadow p-4 border border-gray-100">
+                        <div className="font-semibold text-base mb-2 text-[#000D30]">Course Sections</div>
                         <div className="mb-3">
-                            <div className="text-sm font-medium text-[#000D30] mb-1">Section 1: Introduction</div>
+                            <div className="text-xs font-medium text-[#000D30] mb-1">Section 1: Introduction</div>
                             <div className="w-full h-2 bg-gray-200 rounded-full mb-1">
                                 <div className="h-2 bg-[#4F46E5] rounded-full" style={{ width: '80%' }}></div>
                             </div>
                             <div className="text-xs text-gray-500">8 of 10 completed</div>
                         </div>
                         <div className="mb-3">
-                            <div className="text-sm font-medium text-[#000D30] mb-1">Section 2: Fundamentals</div>
+                            <div className="text-xs font-medium text-[#000D30] mb-1">Section 2: Fundamentals</div>
                             <div className="w-full h-2 bg-gray-200 rounded-full mb-1">
                                 <div className="h-2 bg-[#4F46E5] rounded-full" style={{ width: '60%' }}></div>
                             </div>
                             <div className="text-xs text-gray-500">6 of 10 completed</div>
                         </div>
                         <div className="mb-3">
-                            <div className="text-sm font-medium text-[#000D30] mb-1">Section 3: Advanced Topics</div>
+                            <div className="text-xs font-medium text-[#000D30] mb-1">Section 3: Advanced Topics</div>
                             <div className="w-full h-2 bg-gray-200 rounded-full mb-1">
                                 <div className="h-2 bg-[#4F46E5] rounded-full" style={{ width: '40%' }}></div>
                             </div>
                             <div className="text-xs text-gray-500">4 of 10 completed</div>
                         </div>
                         <div className="mb-3">
-                            <div className="text-sm font-medium text-[#000D30] mb-1">Section 4: Practice</div>
+                            <div className="text-xs font-medium text-[#000D30] mb-1">Section 4: Practice</div>
                             <div className="w-full h-2 bg-gray-200 rounded-full mb-1">
                                 <div className="h-2 bg-[#4F46E5] rounded-full" style={{ width: '20%' }}></div>
                             </div>
@@ -244,34 +240,58 @@ const DynamicEntityDetails = () => {
                         </div>
                     </div>
                     {/* Category Overview */}
-                    <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-                        <div className="font-semibold text-lg mb-2 text-[#000D30]">Category Overview</div>
+                    <div className="bg-[#F8FAFC] rounded-xl shadow p-4 border border-gray-100">
+                        <div className="font-semibold text-base mb-2 text-[#000D30]">Category Overview</div>
                         <div className="space-y-1">
-                            <div className="flex justify-between text-sm"><span>Fundamentals</span><span>15/20 questions</span></div>
-                            <div className="flex justify-between text-sm"><span>Theory</span><span>12/15 questions</span></div>
-                            <div className="flex justify-between text-sm"><span>Practical Examples</span><span>8/10 questions</span></div>
-                            <div className="flex justify-between text-sm"><span>Assessments</span><span>3/5 questions</span></div>
+                            <div className="flex justify-between text-xs"><span>Fundamentals</span><span>15/20 questions</span></div>
+                            <div className="flex justify-between text-xs"><span>Theory</span><span>12/15 questions</span></div>
+                            <div className="flex justify-between text-xs"><span>Practical Examples</span><span>8/10 questions</span></div>
+                            <div className="flex justify-between text-xs"><span>Assessments</span><span>3/5 questions</span></div>
                         </div>
                     </div>
                 </aside>
-            </div>
-            {/* Floating AI Button and Overlay Chat */}
-            <button
-                className="fixed z-[120] bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-lg flex items-center justify-center hover:scale-110 transition-transform border-4 border-white"
-                style={{ boxShadow: '0 8px 32px 0 rgba(10,46,135,0.25)' }}
-                onClick={() => setAiChatOpen(true)}
-                aria-label="Open AI Assistant Chat"
-            >
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 15c1.333-2 6.667-2 8 0"/><path d="M9 9h.01"/><path d="M15 9h.01"/></svg>
-            </button>
-            {aiChatOpen && (
-                <div className="fixed inset-0 z-[110] flex items-end justify-end bg-opacity-30">
-                    <div className="w-full h-full absolute top-0 left-0" onClick={() => setAiChatOpen(false)} />
-                    <div className="relative z-10 w-full max-w-md m-6">
-                        <AIAssisstantChat onClose={() => setAiChatOpen(false)} />
+                {/* Floating AI Button and Overlay Chat */}
+                <button
+                    className="fixed z-[120] bottom-8 right-8 w-14 h-14 rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-xl flex items-center justify-center hover:scale-110 transition-transform border-4 border-white"
+                    style={{ boxShadow: '0 8px 32px 0 rgba(10,46,135,0.25)' }}
+                    onClick={() => setAiChatOpen(true)}
+                    aria-label="Open AI Assistant Chat"
+                >
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 15c1.333-2 6.667-2 8 0"/><path d="M9 9h.01"/><path d="M15 9h.01"/></svg>
+                </button>
+                {aiChatOpen && (
+                    <div className="fixed inset-0 z-[130] flex items-end justify-end bg-black bg-opacity-40">
+                        <div className="w-full h-full absolute top-0 left-0" onClick={() => setAiChatOpen(false)} />
+                        <div className="relative z-10 w-full max-w-md m-8">
+                            <div className="bg-white rounded-2xl shadow-2xl p-0 overflow-hidden border border-gray-200">
+                                <AIAssisstantChat onClose={() => setAiChatOpen(false)} />
+                            </div>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+                {/* Edit Modal Overlay (UI improved) */}
+                {editModalQuestionId && (
+                    <div className="fixed inset-0 z-[140] flex items-center justify-center bg-black bg-opacity-40">
+                        <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-0 overflow-hidden border border-gray-200 relative animate-fadeIn">
+                            <button
+                                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none"
+                                onClick={() => setEditModalQuestionId(null)}
+                                aria-label="Close"
+                            >
+                                ×
+                            </button>
+                            <div className="p-0">
+                                <img
+                                    src="https://files.oaiusercontent.com/file-1b1e2e2e-6e2e-4e2e-8e2e-1e2e2e2e2e2e.png"
+                                    alt="Edit Answer Placeholder"
+                                    className="w-full rounded-t-2xl"
+                                />
+                                <div className="p-6 text-center text-gray-700 text-base font-medium border-t border-gray-100">Edit popup placeholder for: <span className="font-semibold">{(currentSubmodule?.question_categories.flatMap(cat => cat.questions).find(q => q.question_id === editModalQuestionId)?.question) || ''}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </Layout>
     );
 };
