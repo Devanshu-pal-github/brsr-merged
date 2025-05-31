@@ -68,7 +68,7 @@ const QuestionnaireItem = ({ question, answer: answerProp = '', onUpdate }) => {
     };
 
     return (
-        <div className="border border-gray-200 rounded-lg p-4 bg-white">
+        <div className="border border-gray-200 rounded-lg p-1 m-0.5 bg-white text-[0.92rem]">
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex items-center justify-between text-left"

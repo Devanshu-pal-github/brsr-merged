@@ -8,11 +8,12 @@ const KPI = ({ label, value, color }) => {
           .metric-card {
             width: 208px;
             height: 88px;
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 16px;
+            padding: 8px;
+            margin: 4px;
             box-sizing: border-box;
           }
 
@@ -21,7 +22,7 @@ const KPI = ({ label, value, color }) => {
             font-weight: 300;
             font-size: 14px;
             color: #6b7280; /* Matches Tailwind's text-gray-500 */
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             text-align: left;
           }
 
@@ -33,7 +34,7 @@ const KPI = ({ label, value, color }) => {
           }
         `}
       </style>
-      <div className={`metric-card bg-white shadow-sm border border-gray-100`}>
+      <div className={`metric-card bg-white shadow-sm`}>
         <div className="metric-card-label">{label}</div>
         <div className={`metric-card-value ${color}`}>{value}</div>
       </div>

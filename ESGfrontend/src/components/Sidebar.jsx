@@ -114,26 +114,26 @@ const Sidebar = () => {
         <>
             {/* Sidebar */}
             <div
-                className={`fixed top-0 left-0 h-full w-[198px] lg:w-[214px] xl:w-[230px] bg-[#000D30] text-[#E5E7EB] transform transition-all duration-500 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 z-20`}
+                className={`fixed top-0 left-0 h-full w-[150px] lg:w-[170px] xl:w-[190px] bg-[#000D30] text-[#E5E7EB] transform transition-all duration-500 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 z-20`}
             >
-                <div className="pt-6 pb-6 flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-300">
+                <div className="pt-3 pb-3 flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-300">
                     {/* Header */}
-                    <div className="flex items-center gap-4 pl-8 mb-8">
-                        <Building className="w-6 h-6 text-green-300 flex-shrink-0" />
-                        <h2 className="text-[18px] font-bold text-[#E5E7EB]">
+                    <div className="flex items-center gap-3 pl-5 mb-5">
+                        <Building className="w-5 h-5 text-green-300 flex-shrink-0" />
+                        <h2 className="text-[1rem] font-bold text-[#E5E7EB]">
                             BRSR
                         </h2>
                     </div>
 
                     {/* Navigation */}
                     <nav className="flex-1">
-                        <ul className="space-y-1">
+                        <ul className="space-y-1 flex flex-col items-start pl-0">
                             {/* Dashboard is always present */}
-                            <li>
+                            <li className="w-full">
                                 <NavLink
                                     to="/dashboard"
                                     className={({ isActive }) =>
-                                        `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${
+                                        `flex items-center gap-3 w-full h-[32px] text-[0.92rem] font-medium pl-10 rounded-none transition-colors justify-start ${
                                             isActive
                                                 ? 'bg-[#20305D] text-white'
                                                 : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
@@ -141,8 +141,8 @@ const Sidebar = () => {
                                     }
                                     onClick={closeSidebar}
                                 >
-                                    <LayoutDashboard className="w-5 h-5 flex-shrink-0" />
-                                    <span>Dashboard</span>
+                                    <LayoutDashboard className="w-4 h-4 flex-shrink-0" />
+                                    <span className="text-left">Dashboard</span>
                                 </NavLink>
                             </li>
 
@@ -152,11 +152,11 @@ const Sidebar = () => {
                                 const moduleAccessId = module.id || module._id;
                                 const IconComponent = iconMap[module.icon] || FileText;
                                 return (
-                                    <li key={moduleAccessId}>
+                                    <li key={moduleAccessId} className="w-full">
                                         <NavLink
                                             to={`/module/${moduleAccessId}`}
                                             className={({ isActive }) =>
-                                                `flex items-center gap-4 w-full h-[42px] text-[12px] font-medium pl-8 rounded-none transition-colors ${
+                                                `flex items-center gap-3 w-full h-[32px] text-[0.92rem] font-medium pl-10 rounded-none transition-colors justify-start ${
                                                     isActive
                                                         ? 'bg-[#20305D] text-white'
                                                         : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
@@ -168,8 +168,8 @@ const Sidebar = () => {
                                                 closeSidebar();
                                             }}
                                         >
-                                            <IconComponent className="w-5 h-5 flex-shrink-0" />
-                                            <span>{module.module_name}</span>
+                                            <IconComponent className="w-4 h-4 flex-shrink-0" />
+                                            <span className="text-left">{module.module_name}</span>
                                         </NavLink>
                                     </li>
                                 );
@@ -178,12 +178,12 @@ const Sidebar = () => {
                     </nav>
 
                     {/* Logout Button */}
-                    <div className="mt-auto px-8">
+                    <div className="mt-auto px-5">
                         <button
                             onClick={handleLogout}
-                            className="w-full flex items-center gap-4 text-[12px] font-medium text-[#E5E7EB] hover:text-white transition-colors"
+                            className="w-full flex items-center gap-3 text-[0.92rem] font-medium text-[#E5E7EB] hover:text-white transition-colors"
                         >
-                            <X className="w-5 h-5" />
+                            <X className="w-4 h-4" />
                             <span>Logout</span>
                         </button>
                     </div>

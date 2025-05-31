@@ -165,7 +165,7 @@ export default function DuoTableComponent({ title, fields = [], rows = [], onEdi
       </div>
 
       <div className="bg-white rounded-[8px] overflow-x-auto shadow-sm">
-        <table className="w-full min-w-[600px] table-fixed">
+        <table className="duo-table w-full text-[0.9rem] border-spacing-[0.12rem]">
           <thead>
             {/* First Header Row: Main columns and groups */}
             <tr className="bg-[#F3F4F6]">

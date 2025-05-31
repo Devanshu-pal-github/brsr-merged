@@ -163,7 +163,7 @@ export default function BigTable({ title, fields, rows, onEditClick ,onAIHelpCli
       </div>
 
       <div className="bg-white rounded-[8px] overflow-x-auto shadow-sm">
-        <table className="w-full min-w-[360px] table-fixed">
+        <table className="big-table w-full text-[0.9rem] border-spacing-[0.12rem]">
           <thead>
             <tr className="bg-[#F3F4F6]">
               {fields.map((field, idx) => (

@@ -77,7 +77,7 @@ const DynamicModulePage = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen">
+            <div className="dynamic-module-page min-h-screen p-2 md:p-3">
                 <div className="h-25 w-full">
                     <div className="fixed top-[30px] ml-0.5 z-10 w-full">
                         <Breadcrumb section={currentModule.name} activeTab={activeTab} />
@@ -129,4 +129,4 @@ const DynamicModulePage = () => {
     );
 };
 
-export default DynamicModulePage; 
+export default DynamicModulePage;

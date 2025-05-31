@@ -87,6 +87,10 @@ export default function QuestionnaireItem({
           </button>
         </div>
       </div>
+      {/* TableComponent: scale down table cell paddings and font size for compactness */}
+      <table className="table-component w-full text-[0.9rem] border-spacing-[0.12rem]">
+        {/* ...existing table code... */}
+      </table>
     </div>
   );
 }

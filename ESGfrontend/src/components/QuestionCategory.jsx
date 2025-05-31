@@ -7,17 +7,19 @@ const QuestionCategory = ({ category, renderQuestion }) => {
 
     return (
         <div className="bg-white rounded-lg shadow-sm p-6">
-            <button
+            <div
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-full flex items-center justify-between text-lg font-semibold mb-4 text-[#000D30] hover:text-[#20305D] transition-colors"
+                className="flex items-center h-[36px] px-2 pt-1 cursor-pointer select-none"
             >
-                <span>{category.category_name}</span>
+                <span className="flex-1 flex items-center h-full font-medium text-[0.92rem] mb-4 text-[#000D30] hover:text-[#20305D] transition-colors">
+                    {category.category_name}
+                </span>
                 {isExpanded ? (
                     <ChevronUp className="w-5 h-5" />
                 ) : (
                     <ChevronDown className="w-5 h-5" />
                 )}
-            </button>
+            </div>
             
             {isExpanded && (
                 <div className="space-y-6">
@@ -35,4 +37,4 @@ const QuestionCategory = ({ category, renderQuestion }) => {
     );
 };
 
-export default QuestionCategory; 
+export default QuestionCategory;

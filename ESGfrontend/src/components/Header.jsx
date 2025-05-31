@@ -30,7 +30,7 @@ const Header = ({ toggleSidebar }) => {
 
     return (
     <div
-      className="w-full flex items-center justify-between px-4 md:px-8 h-[60px] bg-[#000D30] shadow-md border-b z-50 transition-all duration-500"
+      className="w-full flex items-center justify-between px-3 md:px-5 h-[48px] bg-[#000D30] shadow-md border-b z-50 transition-all duration-500"
     >
 
             <div className="flex items-center gap-4">

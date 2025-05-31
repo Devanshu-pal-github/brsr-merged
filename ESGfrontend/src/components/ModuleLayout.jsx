@@ -35,15 +35,15 @@ const ModuleLayout = ({ children, renderSubmodule }) => {
 
     return (
         <Layout>
-            <div className="min-h-screen">
+            <div className="module-layout min-h-screen p-2 md:p-3">
                 <div className="h-25 w-full">
                     <div className="fixed top-[30px] ml-0.5 z-10 w-full">
                         <Breadcrumb section={currentModule.name} activeTab={activeTab} />
                     </div>
                 </div>
 
-                <div className="mt-[10px] pt-[10px] mx-2 flex flex-col md:flex-row gap-6">
-                    <div className="w-full md:w-7/10 flex flex-col space-y-[10px]">
+                <div className="mt-[10px] pt-[10px] mx-2 flex flex-col md:flex-row gap-4">
+                    <div className="w-full md:w-7/10 flex flex-col space-y-[8px]">
                         <div className="h-10 w-full">
                             <div className="fixed top-[140px] ml-0.5 z-10 custom-width w-[56vw]">
                                 <SubHeader 
@@ -59,7 +59,7 @@ const ModuleLayout = ({ children, renderSubmodule }) => {
                     </div>
 
                     {/* Right side: progress + assistant */}
-                    <div className="md:block fixed top-[140px] right-2 md:right-2 lg:right-10 w-[20%] min-w-[20vw] flex flex-col space-y-2 gap-6">
+                    <div className="md:block fixed top-[140px] right-2 md:right-2 lg:right-10 w-[20%] min-w-[20vw] flex flex-col space-y-2 gap-4">
                         <ProgressCard covered={14} total={20} />
                         <AIAssistant />
                     </div>
@@ -69,4 +69,4 @@ const ModuleLayout = ({ children, renderSubmodule }) => {
     );
 };
 
-export default ModuleLayout; 
+export default ModuleLayout;

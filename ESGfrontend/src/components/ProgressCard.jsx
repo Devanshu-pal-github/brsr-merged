@@ -1,7 +1,7 @@
 const ProgressCard = ({ title = "Progress", covered = 14, total = 20 }) => {
   return (
     <div
-      className="bg-white rounded-[8px] shadow-sm border border-gray-200 w-full h-auto flex flex-col sm:flex-row items-center justify-between px-4 py-2 min-w-0"
+      className="bg-white shadow-sm rounded-[6px] p-2 m-1 flex flex-col sm:flex-row items-center justify-between min-w-0"
     >
       <span className="text-[10px] sm:text-[12px] md:text-[14px] font-medium text-black text-left sm:flex-1">
         {title}
