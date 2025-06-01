@@ -37,116 +37,76 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen ">
-        <div className="mx-10">
-        <div className="min-h-screen  flex">
-        <div className="mx-auto py-4 sm:py-6 pr-40">
-          <h1 className="text-[18px] p-[20px] pr-40 font-bold text-gray-900 mb-4 sm:mb-6">
-            BRSR Dashboard
-          </h1>
-
-          {/* Main Container: Side by Side Layout */}
-          <div className="flex flex-col lg:flex-row gap-6">
-            
-            {/* Left Section: Main Content */}
-            <div className="flex-1 flex flex-col gap-4">
-              {/* KPIs */}
-              <div className="w-full">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                  {metrics.map((metric, index) => (
-                    <KPI
+      <div className="min-h-screen flex flex-col gap-[1.5vw] px-[2vw] py-[1vw]" style={{overflow: 'hidden'}}> {/* Responsive padding, no scrollbars */}
+        <h1 className="text-[1.1vw] font-semibold text-[#1A2341] mb-[1vw] pl-[0.2vw]">BRSR Dashboard</h1>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-[1vw]"> {/* Responsive grid gap */}
+          {/* Left Section: Main Content */}
+          <div className="lg:col-span-3 flex flex-col gap-[1vw]">
+            {/* KPIs */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+              {metrics.map((metric, index) => (
+                <KPI
+                  key={index}
+                  label={metric.label}
+                  value={metric.value}
+                  color={metric.color}
+                  className="p-[0.7vw] bg-white rounded-[0.4vw] shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 h-[4vw] min-h-[48px] flex flex-col justify-center min-w-0"
+                  labelClassName="text-[0.8vw] text-gray-500 font-medium mb-[0.3vw] leading-tight"
+                  valueClassName="text-[1.3vw] font-bold leading-none"
+                />
+              ))}
+            </div>
+            {/* Custom Buttons + Department Progress */}
+            <div className="flex flex-col xl:flex-row gap-[1vw]">
+              <div className="flex-1 flex flex-col gap-[1vw]">
+                <div className="rounded-[0.4vw] bg-white p-[0.7vw] shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <div className="flex flex-wrap items-center gap-[0.7vw]">
+                    {['Generate Report', 'View Analytics', 'Generate Report', 'Generate Report'].map((name, index) => (
+                      <CustomButton
+                        key={index}
+                        name={name}
+                        className="h-[2vw] min-h-[28px] bg-[#002A85] text-white text-[0.85vw] font-medium rounded-[0.4vw] shadow-sm flex items-center justify-between px-[0.7vw] hover:bg-[#0A2E87] transition-colors duration-200"
+                        icon={<ChevronDown className="w-[1vw] h-[1vw] min-w-[14px] min-h-[14px] text-white ml-[0.3vw]" />}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <h2 className="text-[0.9vw] font-medium text-[#1A2341] pl-[0.2vw]">Department Progress</h2>
+                <div className="space-y-[0.7vw]">
+                  {departments.map((dept, index) => (
+                    <DepartmentProgressItem
                       key={index}
-                      label={metric.label}
-                      value={metric.value}
-                      color={metric.color}
-                      className="p-[11px_24px] bg-white rounded-lg shadow-sm border border-gray-100"
+                      name={dept.name}
+                      totalFields={dept.totalFields}
+                      completed={dept.completed}
                     />
                   ))}
                 </div>
               </div>
-
-              {/* Custom Buttons + Department Progress and Recent Updates */}
-              <div className="flex flex-col xl:flex-row gap-4">
-                {/* Custom Buttons + Department Progress */}
-                <div className="flex-1 flex flex-col gap-4">
-                  {/* Custom Buttons */}
-                  <div className="rounded-[8px] bg-white p-4">
-                    <div className="flex flex-wrap items-center gap-[12px]">
-                      <CustomButton
-                        name="Generate Report"
-                        className="w-[142px] h-[39px] bg-blue-600 text-white text-base font-semibold rounded-[8px] shadow-sm flex items-center justify-between px-4 py-2"
-                        icon={<ChevronDown className="w-5 h-5 text-white" />}
+              {/* Recent Updates */}
+              <div className="w-full xl:w-[16vw] min-w-[180px]">
+                <div className="h-full rounded-[0.4vw] bg-white p-[0.7vw] shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col justify-between">
+                  <h2 className="text-[0.9vw] font-medium text-[#1A2341] mb-[0.7vw]">Recent Updates</h2>
+                  <div className="space-y-[0.5vw]">
+                    {recentUpdates.map((update, index) => (
+                      <RecentUpdateItem
+                        key={index}
+                        description={update.description}
+                        timestamp={update.timestamp}
                       />
-                      <CustomButton
-                        name="View Analytics"
-                        className="w-[142px] h-[39px] bg-blue-600 text-white text-base font-semibold rounded-[8px] shadow-sm flex items-center justify-between px-4 py-2"
-                        icon={<ChevronDown className="w-5 h-5 text-white" />}
-                      />
-                      <CustomButton
-                        name="Generate Report"
-                        className="w-[142px] h-[39px] bg-blue-600 text-white text-base font-semibold rounded-[8px] shadow-sm flex items-center justify-between px-4 py-2"
-                        icon={<ChevronDown className="w-5 h-5 text-white" />}
-                      />
-                      <CustomButton
-                        name="Generate Report"
-                        className="w-[142px] h-[39px] bg-blue-600 text-white text-base font-semibold rounded-[8px] shadow-sm flex items-center justify-between px-4 py-2"
-                        icon={<ChevronDown className="w-5 h-5 text-white" />}
-                      />
-                    </div>
-                  </div>
- <h2 className="text-base sm:text-[16px] font-medium text-gray-900 ">
-                      Department Progress
-                    </h2>
-                  {/* Department Progress */}
-                  
-                   
-                    <div className="space-y-4">
-                      {departments.map((dept, index) => (
-                        <DepartmentProgressItem
-                          key={index}
-                          name={dept.name}
-                          totalFields={dept.totalFields}
-                          completed={dept.completed}
-                        />
-                      ))}
-                    
-                  </div>
-                </div>
-
-                {/* Recent Updates */}
-                <div className="w-full xl:w-[440px]">
-                  <div className="h-full rounded-[8px] bg-white p-4 sm:p-6">
-                    <h2 className="text-base sm:text-[16px] font-medium text-gray-900 mb-5">
-                      Recent Updates
-                    </h2>
-                    <div className="space-y-2">
-                      {recentUpdates.map((update, index) => (
-                        <RecentUpdateItem
-                          key={index}
-                          description={update.description}
-                          timestamp={update.timestamp}
-                        />
-                      ))}
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
-
-            
-             <div className="w-full lg:w-[360px] flex flex-col gap-4">
-              <BRSRCompletionStatusCard data={progressData} />
-             
-               <div className="bg-white w-full lg:w-[360px] rounded-[8px] p-4 flex-1">
-                <AIAssistant />
-              </div>
-               
-            
-            </div>
-              
           </div>
-        </div>
-      </div>
+          {/* Right Section: Sidebar */}
+          <div className="flex flex-col gap-[1vw]">
+            <BRSRCompletionStatusCard data={progressData} />
+            <div className="bg-white rounded-[0.4vw] p-[0.7vw] shadow-sm hover:shadow-md transition-shadow duration-200">
+              <AIAssistant />
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
