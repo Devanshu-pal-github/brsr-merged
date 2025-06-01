@@ -1,20 +1,29 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
 /* At the very top or bottom of your global CSS */
 html, body, #root {
   height: 100vh;
   overflow: hidden !important;
   position: fixed !important;
   width: 100vw !important;
+  font-family: 'Roboto', Arial, Helvetica, sans-serif !important;
 }
 
 body {
   overscroll-behavior: none;
+  color: #333; /* Default text color */
 }
 
 html, body {
   margin: 0;
   padding: 0;
   font-size: 14px;
+}
+
+/* Light font color for responses */
+.response-text {
+  color: #666; /* Slightly lighter color for responses */
+  font-style: italic;
 }
 
 h1, .h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }

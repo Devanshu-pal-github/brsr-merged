@@ -139,7 +139,7 @@ const DynamicEntityDetails = () => {
                                         <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[36px]">
                                             <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
                                                 {/* Question text, wraps before Edit button */}
-                                                <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start">
+                                                <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto">
                                                     {question.question}
                                                 </div>
                                                 {/* Edit button absolutely positioned, always top right, aligned with top of question */}
@@ -154,53 +154,53 @@ const DynamicEntityDetails = () => {
                                                 {editModalQuestionId === question.question_id && renderEditModal(question, answers, setEditModalQuestionId)}
                                             </div>
                                             {/* ANSWER DISPLAY ROW: prevent overlap with Edit button, show all fields clearly */}
-                                            <div className="flex flex-row flex-wrap items-start justify-between gap-2 pr-[60px] relative mt-1">
-                                                <div className="flex flex-col gap-1 min-w-0 max-w-full break-words">
+                                            <div className="flex flex-row flex-wrap items-start justify-between gap-2 pr-[60px] relative mt-2">
+                                                <div className="flex flex-col gap-1 min-w-0 max-w-full break-words pl-2">
                                                     {(() => {
                                                         const answer = answers?.[question.question_id];
                                                         const displayItems = [];
                                                         // Link (top row)
                                                         if (answer && answer.link) {
                                                             displayItems.push(
-                                                                <span key="link" className="flex items-center flex-wrap">
-                                                                    <span className="font-semibold">Link:</span> <a href={answer.link} className="text-blue-600 underline break-all" target="_blank" rel="noopener noreferrer">{answer.link}</a>
+                                                                <span key="link" className="flex items-center flex-wrap italic font-roboto">
+                                                                    <span className="font-semibold not-italic font-roboto">Link:</span> <a href={answer.link} className="text-blue-600 underline break-all font-roboto" target="_blank" rel="noopener noreferrer">{answer.link}</a>
                                                                 </span>
                                                             );
                                                         }
-                                                        // Boolean (Yes/No) always shown, on its own line if no link, or beside link if both
+                                                        // Boolean (Yes/No) always shown, in blue color, italic
                                                         if (typeof answer?.bool_value === 'boolean') {
                                                             displayItems.push(
-                                                                <span key="bool" className={answer.bool_value ? 'text-green-600 font-semibold ml-0' : 'text-red-600 font-semibold ml-0'}>
+                                                                <span key="bool" className="text-[#002A85] font-semibold ml-0 italic font-roboto">
                                                                     {answer.bool_value ? 'Yes' : 'No'}
                                                                 </span>
                                                             );
                                                         }
-                                                        // String value
+                                                        // String value (Response) in italic
                                                         if (answer && answer.string_value) {
                                                             displayItems.push(
-                                                                <span key="string">
-                                                                    <span className="font-semibold">Response:</span> {answer.string_value}
+                                                                <span key="string" className="italic font-roboto">
+                                                                    <span className="font-semibold not-italic font-roboto">Response:</span> {answer.string_value}
                                                                 </span>
                                                             );
                                                         }
-                                                        // Decimal value
+                                                        // Decimal value in italic
                                                         if (answer && typeof answer.decimal_value !== 'undefined') {
                                                             displayItems.push(
-                                                                <span key="decimal">
-                                                                    <span className="font-semibold">Value:</span> {answer.decimal_value}
+                                                                <span key="decimal" className="italic font-roboto">
+                                                                    <span className="font-semibold not-italic font-roboto">Value:</span> {answer.decimal_value}
                                                                 </span>
                                                             );
                                                         }
-                                                        // Note
+                                                        // Note (not italic)
                                                         if (answer && answer.note) {
                                                             displayItems.push(
-                                                                <span key="note">
-                                                                    <span className="font-semibold">Note:</span> {answer.note}
+                                                                <span key="note" className="font-roboto">
+                                                                    <span className="font-semibold font-roboto">Note:</span> {answer.note}
                                                                 </span>
                                                             );
                                                         }
                                                         if (displayItems.length === 0) {
-                                                            return <span className="italic text-gray-400">No answer provided.</span>;
+                                                            return <span className="italic text-gray-400 font-roboto">No answer provided.</span>;
                                                         }
                                                         // If both link and bool, show them together on top row, else each on its own line
                                                         if (displayItems.length > 1 && displayItems[0].key === 'link' && displayItems[1].key === 'bool') {
