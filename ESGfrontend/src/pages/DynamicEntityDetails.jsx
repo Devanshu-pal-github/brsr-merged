@@ -139,7 +139,7 @@ const DynamicEntityDetails = () => {
                                         <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[36px]">
                                             <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
                                                 {/* Question text, wraps before Edit button */}
-                                                <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto">
+                                                <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2"> {/* Added margin-bottom for spacing */}
                                                     {question.question}
                                                 </div>
                                                 {/* Edit button absolutely positioned, always top right, aligned with top of question */}
@@ -155,7 +155,7 @@ const DynamicEntityDetails = () => {
                                             </div>
                                             {/* ANSWER DISPLAY ROW: prevent overlap with Edit button, show all fields clearly */}
                                             <div className="flex flex-row flex-wrap items-start justify-between gap-2 pr-[60px] relative mt-2">
-                                                <div className="flex flex-col gap-1 min-w-0 max-w-full break-words pl-2">
+                                                <div className="flex flex-col gap-0.5 min-w-0 max-w-full break-words pl-2"> {/* Reduced gap between responses */}
                                                     {(() => {
                                                         const answer = answers?.[question.question_id];
                                                         const displayItems = [];
@@ -163,23 +163,28 @@ const DynamicEntityDetails = () => {
                                                         if (answer && answer.link) {
                                                             displayItems.push(
                                                                 <span key="link" className="flex items-center flex-wrap italic font-roboto">
-                                                                    <span className="font-semibold not-italic font-roboto">Link:</span> <a href={answer.link} className="text-blue-600 underline break-all font-roboto" target="_blank" rel="noopener noreferrer">{answer.link}</a>
+                                                                    <a href={answer.link} className="text-blue-600 underline break-all font-roboto" target="_blank" rel="noopener noreferrer">{answer.link}</a>
                                                                 </span>
                                                             );
                                                         }
                                                         // Boolean (Yes/No) always shown, in blue color, italic
                                                         if (typeof answer?.bool_value === 'boolean') {
                                                             displayItems.push(
-                                                                <span key="bool" className="text-[#002A85] font-semibold ml-0 italic font-roboto">
+                                                                <span key="bool" className="text-[#002A85] font-semibold italic font-roboto">
                                                                     {answer.bool_value ? 'Yes' : 'No'}
                                                                 </span>
                                                             );
                                                         }
-                                                        // String value (Response) in italic
+                                                        // String value (Response) in italic, placed beside boolean if present
                                                         if (answer && answer.string_value) {
+                                                            const isLongResponse = answer.string_value.length > 200;
                                                             displayItems.push(
-                                                                <span key="string" className="italic font-roboto">
-                                                                    <span className="font-semibold not-italic font-roboto">Response:</span> {answer.string_value}
+                                                                <span
+                                                                    key="string"
+                                                                    className="italic font-roboto"
+                                                                    title={isLongResponse ? answer.string_value : undefined} // Add hover dialog for long responses
+                                                                >
+                                                                    {isLongResponse ? `${answer.string_value.slice(0, 200)}....` : answer.string_value}
                                                                 </span>
                                                             );
                                                         }
