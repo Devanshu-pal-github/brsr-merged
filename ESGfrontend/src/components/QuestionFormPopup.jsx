@@ -80,17 +80,30 @@ const QuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues = {}
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[140] p-4">
             <div className={`bg-white rounded-[6px] shadow-lg border border-gray-100 w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all duration-300 ${isVisible ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-8"}`}>
-                <div className="bg-[#F9FAFB] p-4 border-b border-gray-200 relative">
-                    <div className="flex justify-between items-start">
-                        <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-semibold text-[#1A2341] uppercase bg-gray-200 px-2 py-1 rounded">{questionData.question_id}</span>
+                <div className="bg-[#F9FAFB] p-4 border-b border-gray-200 relative">                        <div className="flex justify-between items-start">
+                            <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs font-semibold text-[#1A2341] uppercase bg-gray-200 px-2 py-1 rounded">{questionData.question_id}</span>
+                                </div>
+                                <h2 className="text-lg font-semibold text-[#1A2341] leading-tight">{questionData.question}</h2>
                             </div>
-                            <h2 className="text-lg font-semibold text-[#1A2341] leading-tight">{questionData.question}</h2>
-                        </div>
-                        <button onClick={onClose} className="p-1 rounded bg-gray-200 hover:bg-gray-300 text-[#1A2341] transition-all duration-200">
-                            <X className="w-5 h-5" />
-                        </button>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    className="bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87] flex items-center gap-1"
+                                    onClick={() => console.log('AI Assistant clicked')}
+                                >
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <path d="M8 15c1.333-2 6.667-2 8 0" />
+                                        <path d="M9 9h.01" />
+                                        <path d="M15 9h.01" />
+                                    </svg>
+                                    AI
+                                </button>
+                                <button onClick={onClose} className="p-1 rounded bg-gray-200 hover:bg-gray-300 text-[#1A2341] transition-all duration-200">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
                     </div>
                 </div>
                 <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">

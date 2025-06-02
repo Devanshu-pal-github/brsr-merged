@@ -37,28 +37,50 @@ const DynamicEntityDetails = () => {
     }, [tabs, activeTab]);
 
     // Find the current submodule
-    const currentSubmodule = submodules.find(sub => sub.submodule_name === activeTab);
-
-    // Fetch answers for all questions in the selected submodule
-    const [getQuestionResponses, { data: answers, isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation();
-
-    useEffect(() => {
-        if (currentSubmodule && Array.isArray(currentSubmodule.question_categories)) {
-            // Gather all question IDs for this submodule
-            const questionIds = currentSubmodule.question_categories
-                .flatMap(cat => Array.isArray(cat.questions) ? cat.questions.map(q => q.question_id) : []);
-            if (questionIds.length > 0) {
-                getQuestionResponses(questionIds)
-                    .unwrap()
-                    .then(res => {
-                        console.log('Fetched answers:', res);
-                    })
-                    .catch(err => {
+    const currentSubmodule = submodules.find(sub => sub.submodule_name === activeTab);    // Fetch answers for all questions in the selected submodule
+    const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation();    useEffect(() => {
+        const fetchAnswersForSubmodule = async () => {
+            if (currentSubmodule && Array.isArray(currentSubmodule.question_categories)) {
+                // Gather all question IDs for this submodule, excluding table type questions
+                const questionIds = currentSubmodule.question_categories
+                    .flatMap(cat => Array.isArray(cat.questions) ? 
+                        cat.questions
+                            .filter(q => q.type !== 'table') // Exclude table type questions
+                            .map(q => q.question_id) 
+                        : []);
+                
+                if (questionIds.length > 0) {
+                    try {
+                        const responses = await getQuestionResponses(questionIds).unwrap();
+                        console.log('Fetched answers:', responses);
+                        
+                        // Handle both array and object response formats
+                        const newAnswers = {};
+                        if (Array.isArray(responses)) {
+                            responses.forEach(response => {
+                                if (response && response.question_id) {
+                                    newAnswers[response.question_id] = response;
+                                }
+                            });
+                        } else if (responses && typeof responses === 'object') {
+                            Object.entries(responses).forEach(([questionId, response]) => {
+                                if (response) {
+                                    newAnswers[questionId] = response;
+                                }
+                            });
+                        }
+                        setAnswers(prev => ({...prev, ...newAnswers}));
+                    } catch (err) {
                         console.error('Error fetching answers:', err);
-                    });
+                    }
+                }
             }
+        };
+
+        if (currentSubmodule) {
+            fetchAnswersForSubmodule();
         }
-    }, [currentSubmodule, getQuestionResponses]);
+    }, [currentSubmodule]);
 
     // Collapsible state for each category
     const [openCategories, setOpenCategories] = useState({});
@@ -78,36 +100,33 @@ const DynamicEntityDetails = () => {
 
     // Modal state for editing answers
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
-    const renderEditModal = (question, answers, setEditModalQuestionId) => {
-        const initialValues = answers?.[question.question_id] || {};
-        const handleSubmit = (response) => {
-            // TODO: Integrate with actual update logic
-            setEditModalQuestionId(null);
-        };
-        // Table question type rendering
-        if (question.question_type === "table" && question.table_metadata) {
-            return (
-                <TableQuestionFormPopup
-                    questionData={question}
-                    onSubmit={handleSubmit}
-                    onClose={() => setEditModalQuestionId(null)}
-                    initialValues={initialValues}
-                />
-            );
+    const [answers, setAnswers] = useState({});    const fetchAnswers = async (questionId) => {
+        try {
+            // Use the same mutation we use for bulk fetching
+            const response = await getQuestionResponses([questionId]).unwrap();
+            if (response && response.length > 0) {
+                setAnswers((prev) => ({ ...prev, [questionId]: response[0] }));
+            }
+        } catch (error) {
+            console.error("Error fetching answer:", error);
         }
-        // Default: subjective/other question types
-        return (
-            <QuestionFormPopup
-                questionData={question}
-                onSubmit={handleSubmit}
-                onClose={() => setEditModalQuestionId(null)}
-                initialValues={initialValues}
-            />
-        );
     };
 
-    // AI Chat state
-    const [aiChatOpen, setAiChatOpen] = useState(false);
+    const handleEditSubmit = async (questionId, updatedData) => {
+        try {
+            await api.post(`/questions/${questionId}/answers`, updatedData);
+            
+            // After successful submission, fetch fresh data for this question
+            const response = await getQuestionResponses([questionId]).unwrap();
+            if (response && response.length > 0) {
+                setAnswers((prev) => ({ ...prev, [questionId]: response[0] }));
+            }
+            
+            setEditModalQuestionId(null); // Close the edit modal
+        } catch (error) {
+            console.error("Error submitting answer:", error);
+        }
+    };
 
     // Render all question categories and their questions
     const renderSubmodule = (submodule) => {
@@ -118,23 +137,7 @@ const DynamicEntityDetails = () => {
                 </div>
             );
         }
-        // Log all questions and their current answers for view-only mode
-        submodule.question_categories.forEach(category => {
-            if (Array.isArray(category.questions)) {
-                category.questions.forEach(question => {
-                    const answer = answers?.[question.question_id];
-                    // Log for subjective and table questions
-                    if (question.question_type === "table" && question.table_metadata) {
-                        console.log('[DynamicEntityDetails][View][Table] Question:', question);
-                        console.log('[DynamicEntityDetails][View][Table] Input (table_metadata):', question.table_metadata);
-                        console.log('[DynamicEntityDetails][View][Table] Output (answer):', answer);
-                    } else {
-                        console.log('[DynamicEntityDetails][View] Question:', question);
-                        console.log('[DynamicEntityDetails][View] Answer:', answer);
-                    }
-                });
-            }
-        });
+        // For each question, use the metadata from the question object, but use the response from the answers API for view mode
         return (
             <div className="flex flex-col gap-4">
                 {submodule.question_categories.map((category) => (
@@ -152,150 +155,73 @@ const DynamicEntityDetails = () => {
                         {openCategories[category.id] && (
                             <div className="flex flex-col gap-2 px-0.5 m-4 mt-2">
                                 {Array.isArray(category.questions) && category.questions.length > 0 ? (
-                                    category.questions.map((question) => (
-                                        <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mt-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[30px]">
-                                            <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
-                                                {/* Question text, wraps before Edit button */}
-                                                <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2">
-                                                    {question.question}
+                                    category.questions.map((question) => {                                        const answer = answers[question.question_id];
+
+                                        return (
+                                            <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mt-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[30px]">
+                                                <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
+                                                    <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2">
+                                                        {question.question}
+                                                    </div>
+                                                    <button
+                                                        className="absolute right-2 top-0 bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
+                                                        onClick={() => setEditModalQuestionId(question.question_id)}
+                                                        aria-label="Edit"
+                                                        style={{ marginLeft: 'auto' }}
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </div>                                                {/* Answer display in view mode */}                                                <div className="mt-2 pl-2">
+                                                    {answer ? (
+                                                        <div className="space-y-2">
+                                                            {answer.string_value && (
+                                                                <div className="text-[13px] text-gray-600 pr-[60px] break-words">
+                                                                    <span className="font-medium">Response:</span> {answer.string_value}
+                                                                </div>
+                                                            )}
+                                                            {answer.decimal_value !== undefined && (
+                                                                <div className="text-[13px] text-gray-600 pr-[60px] break-words">
+                                                                    <span className="font-medium">Value:</span> {answer.decimal_value}
+                                                                </div>
+                                                            )}
+                                                            {answer.bool_value !== undefined && (
+                                                                <div className="text-[13px] text-gray-600 pr-[60px] break-words">
+                                                                    <span className="font-medium">Yes/No:</span> {answer.bool_value ? "Yes" : "No"}
+                                                                </div>
+                                                            )}
+                                                            {answer.link && (
+                                                                <div className="text-[13px] pr-[60px] break-words">
+                                                                    <a href={answer.link} target="_blank" rel="noopener noreferrer" 
+                                                                       className="text-blue-600 hover:underline">
+                                                                        View Document
+                                                                    </a>
+                                                                </div>
+                                                            )}
+                                                            {answer.note && (
+                                                                <div className="text-[13px] text-gray-600 pr-[60px] break-words">
+                                                                    <span className="font-medium">Note:</span> {answer.note}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="text-[13px] text-gray-600">
+                                                            No response provided yet
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                {/* Edit button absolutely positioned, always top right, aligned with top of question */}
-                                                <button
-                                                    className="absolute right-2 top-0 bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
-                                                    onClick={() => setEditModalQuestionId(question.question_id)}
-                                                    aria-label="Edit"
-                                                    style={{ marginLeft: 'auto' }}
-                                                >
-                                                    Edit
-                                                </button>
-                                                {editModalQuestionId === question.question_id && renderEditModal(question, answers, setEditModalQuestionId)}
+
+                                                {/* Popup in edit mode */}
+                                                {editModalQuestionId === question.question_id && (
+                                                    <QuestionFormPopup
+                                                        questionData={question}
+                                                        initialValues={answer || {}}
+                                                        onSubmit={(updatedData) => handleEditSubmit(question.question_id, updatedData)}
+                                                        onClose={() => setEditModalQuestionId(null)}
+                                                    />
+                                                )}
                                             </div>
-                                            {/* ANSWER DISPLAY ROW: prevent overlap with Edit button, show all fields clearly */}
-                                            <div className="flex flex-col gap-1 min-w-0 max-w-full break-words pl-2 relative">
-                                                {(() => {
-                                                    const answer = answers?.[question.question_id];
-                                                    // Table question view rendering
-                                                    if (question.question_type === "table" && question.table_metadata) {
-                                                        // Log input/output for table view
-                                                        console.log('[DynamicEntityDetails][View][Table] Rendering Table View for:', question);
-                                                        console.log('[DynamicEntityDetails][View][Table] Input (table_metadata):', question.table_metadata);
-                                                        console.log('[DynamicEntityDetails][View][Table] Output (answer):', answer);
-                                                        // Render table view
-                                                        if (!question.table_metadata || !Array.isArray(question.table_metadata.rows) || !Array.isArray(question.table_metadata.headers)) {
-                                                            return <span className="italic text-gray-400 font-roboto">No table metadata.</span>;
-                                                        }
-                                                        // Build a map for quick lookup: { rowName: { colLabel: value } }
-                                                        let tableMap = {};
-                                                        if (answer && answer.response && Array.isArray(answer.response.table)) {
-                                                            answer.response.table.forEach(cell => {
-                                                                if (!tableMap[cell.row]) tableMap[cell.row] = {};
-                                                                tableMap[cell.row][cell.col] = cell.value;
-                                                            });
-                                                        }
-                                                        return (
-                                                            <div className="overflow-x-auto">
-                                                                <table className="min-w-[400px] border border-gray-200 rounded-[6px] text-xs">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th className="bg-gray-50 text-left px-2 py-1 font-semibold text-[#1A2341]">Row</th>
-                                                                            {question.table_metadata.headers.map(header => (
-                                                                                <th key={header.label} className="bg-gray-50 text-left px-2 py-1 font-semibold text-[#1A2341]">{header.label}</th>
-                                                                            ))}
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {question.table_metadata.rows.map(row => (
-                                                                            <tr key={row.name}>
-                                                                                <td className="px-2 py-1 font-medium text-[#1A2341] bg-gray-50">{row.name}</td>
-                                                                                {question.table_metadata.headers.map(header => {
-                                                                                    const value = tableMap?.[row.name]?.[header.label] ?? '';
-                                                                                    return (
-                                                                                        <td key={header.label} className="px-2 py-1 align-top text-[#1A2341]">{value !== '' ? value : <span className="italic text-gray-400">-</span>}</td>
-                                                                                    );
-                                                                                })}
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        );
-                                                    }
-                                                    // Default: subjective/other question types
-                                                    const topRowItems = [];
-                                                    const bottomItems = [];
-
-                                                    // 1. Boolean and String value - Side by side on the top row
-                                                    if (typeof answer?.bool_value === 'boolean' || (answer && answer.string_value)) {
-                                                        const boolSpan = typeof answer?.bool_value === 'boolean' ? (
-                                                            <span key="bool" className={`font-semibold font-roboto ${answer.bool_value ? 'text-green-600' : 'text-red-600'} mr-2`}>
-                                                                {answer.bool_value ? 'Yes' : 'No'}
-                                                            </span>
-                                                        ) : null;
-
-                                                        const stringSpan = answer && answer.string_value ? (
-                                                            <span
-                                                                key="string"
-                                                                className="font-roboto"
-                                                                title={answer.string_value.length > 150 ? answer.string_value : undefined}
-                                                            >
-                                                                {answer.string_value.length > 150 ? `${answer.string_value.slice(0, 150)}...` : answer.string_value}
-                                                            </span>
-                                                        ) : null;
-
-                                                        if (boolSpan || stringSpan) {
-                                                            topRowItems.push(
-                                                                <span key="bool-string" className="flex items-center flex-wrap gap-2">
-                                                                    {boolSpan}
-                                                                    {stringSpan}
-                                                                </span>
-                                                            );
-                                                        }
-                                                    }
-
-                                                    // 2. Decimal value - Add to the top row
-                                                    if (answer && typeof answer.decimal_value !== 'undefined') {
-                                                        topRowItems.push(
-                                                            <span key="decimal" className=" font-roboto ml-2">
-                                                                <span className="font-semibold not-italic font-roboto">Value:</span> {answer.decimal_value}
-                                                            </span>
-                                                        );
-                                                    }
-
-                                                    // 3. Note - On the next line
-                                                    if (answer && answer.note) {
-                                                        bottomItems.push(
-                                                            <span key="note" className="font-roboto">
-                                                                <span className="font-semibold font-roboto"></span>{' '}
-                                                                <span className="italic text-sm text-gray-600">{answer.note}</span>
-                                                            </span>
-                                                        );
-                                                    }
-
-                                                    // 4. Link - In the bottom right corner
-                                                    if (answer && answer.link) {
-                                                        bottomItems.push(
-                                                            <span key="link" className="absolute bottom-1 right-40  font-roboto">
-                                                                <a href={answer.link} className="text-blue-600 underline break-all font-roboto" target="_blank" rel="noopener noreferrer">{answer.link}</a>
-                                                            </span>
-                                                        );
-                                                    }
-
-                                                    if (topRowItems.length === 0 && bottomItems.length === 0) {
-                                                        return <span className="italic text-gray-400 font-roboto">No answer provided.</span>;
-                                                    }
-
-                                                    return (
-                                                        <>
-                                                            <div className="flex items-center flex-wrap gap-2">{topRowItems}</div>
-                                                            <div className="relative mt-1">{bottomItems.map((item, idx) => (
-                                                                <div key={item.key || idx}>{item}</div>
-                                                            ))}</div>
-                                                        </>
-                                                    );
-                                                })()}
-                                            </div>
-                                        </div>
-                                    ))
+                                        );
+                                    })
                                 ) : (
                                     <div className="text-gray-500 italic text-xs">No questions in this category.</div>
                                 )}
@@ -404,7 +330,7 @@ const DynamicEntityDetails = () => {
                 >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M8 15c1.333-2 6.667-2 8 0" /><path d="M9 9h.01" /><path d="M15 9h.01" /></svg>
                 </button>
-                {aiChatOpen && (
+                {/* {aiChatOpen && (
                     <div className="fixed inset-0 z-[130] flex items-end justify-end bg-black bg-opacity-40">
                         <div className="w-full h-full absolute top-0 left-0" onClick={() => setAiChatOpen(false)} />
                         <div className="relative z-10 w-full max-w-md m-8">
@@ -413,29 +339,7 @@ const DynamicEntityDetails = () => {
                             </div>
                         </div>
                     </div>
-                )}
-                {/* Edit Modal Overlay (UI improved) */}
-                {editModalQuestionId && (
-                    <div className="fixed inset-0 z-[140] flex items-center justify-center bg-black bg-opacity-40">
-                        <div className="bg-white rounded-[6px] shadow-2xl max-w-2xl w-full p-0 overflow-hidden border border-gray-200 relative animate-fadeIn">
-                            <button
-                                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none transition-colors duration-200"
-                                onClick={() => setEditModalQuestionId(null)}
-                                aria-label="Close"
-                            >
-                                ×
-                            </button>
-                            <div className="p-0">
-                                <img
-                                    src="https://files.oaiusercontent.com/file-1b1e2e2e-6e2e-4e2e-8e2e-1e2e2e2e2e2e.png"
-                                    alt="Edit Answer Placeholder"
-                                    className="w-full rounded-t-[6px]"
-                                />
-                                <div className="p-6 text-center text-gray-700 text-base font-medium border-t border-gray-100">Edit popup placeholder for: <span className="font-semibold">{(currentSubmodule?.question_categories.flatMap(cat => cat.questions).find(q => q.question_id === editModalQuestionId)?.question) || ''}</span></div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                )} */}                {/* Edit modal is now handled by QuestionFormPopup component */}
             </div>
         </Layout>
     );
