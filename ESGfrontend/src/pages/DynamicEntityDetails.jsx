@@ -12,7 +12,7 @@ import QuestionnaireItem from '../components/QuestionItem';
 import ProgressCard from '../components/ProgressCard';
 import AIAssistant from '../components/WorkforceAi';
 import AIAssisstantChat from '../components/AIAssisstantChat';
-import QuestionFormPopup from "../components/QuestionFormPopup";
+import QuestionEditPopup from "../components/QuestionEditPopup";
 import TableQuestionFormPopup from "../components/TableQuestionFormPopup";
 
 const getBestAnswerValue = (answerObj) => {
@@ -100,41 +100,34 @@ const DynamicEntityDetails = () => {
     }, [currentSubmodule]);
     const toggleCategory = (catId) => {
         setOpenCategories(prev => ({ ...prev, [catId]: !prev[catId] }));
-    };    // Modal state for editing answers
+    };    // Modal states for editing answers
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
+    const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);
     const [answers, setAnswers] = useState({});
     
     // RTK Query mutations
-    const [submitAnswer] = useSubmitQuestionAnswerMutation();    const handleEditSubmit = async (questionId, updatedData) => {
-        try {
-            if (!questionId || !updatedData) {
-                console.error("Missing required data:", { questionId, updatedData });
-                return;
-            }
-
-            // Restructure the data to match the API's expected format
-            const answerData = updatedData.response || {};
-            console.log("Submitting answer:", { questionId, answerData });
-            
-            const result = await submitAnswer({
-                questionId,
-                answerData
-            }).unwrap();
-            
-            // After successful submission, fetch fresh data for this question
-            const response = await getQuestionResponses([questionId]).unwrap();
-            
-            // Handle different response formats
-            if (Array.isArray(response) && response.length > 0) {
-                setAnswers(prev => ({ ...prev, [questionId]: response[0] }));
-            } else if (response && typeof response === 'object') {
-                setAnswers(prev => ({ ...prev, [questionId]: response[questionId] }));
-            }
-            
-            setEditModalQuestionId(null); // Close the edit modal
-        } catch (error) {
-            console.error("Error submitting answer:", error);
+    const [submitAnswer] = useSubmitQuestionAnswerMutation();
+    
+    const handleEditClick = (question) => {
+        if (question.type === 'table') {
+            setEditModalTableQuestion(question);
+        } else {
+            setEditModalQuestionId(question.question_id);
         }
+    };
+    
+    const handleEditClose = () => {
+        setEditModalQuestionId(null);
+        setEditModalTableQuestion(null);
+    };
+    
+    const handleEditSuccess = (questionId, result) => {
+        // Update local state with the new answer
+        setAnswers(prev => ({
+            ...prev,
+            [questionId]: result
+        }));
+        handleEditClose();
     };
 
     // Render all question categories and their questions
@@ -174,13 +167,15 @@ const DynamicEntityDetails = () => {
                                                     </div>
                                                     <button
                                                         className="absolute right-2 top-0 bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
-                                                        onClick={() => setEditModalQuestionId(question.question_id)}
+                                                        onClick={() => handleEditClick(question)}
                                                         aria-label="Edit"
                                                         style={{ marginLeft: 'auto' }}
                                                     >
                                                         Edit
                                                     </button>
-                                                </div>                                                {/* Answer display in view mode */}                                                <div className="mt-2 pl-2">
+                                                </div>
+                                                {/* Answer display in view mode */}
+                                                <div className="mt-2 pl-2">
                                                     {answer ? (
                                                         <div className="space-y-2">
                                                             {answer.string_value && (
@@ -218,14 +213,21 @@ const DynamicEntityDetails = () => {
                                                         </div>
                                                     )}
                                                 </div>
-
                                                 {/* Popup in edit mode */}
                                                 {editModalQuestionId === question.question_id && (
-                                                    <QuestionFormPopup
+                                                    <QuestionEditPopup
+                                                        question={question}
+                                                        initialAnswer={answer}
+                                                        onClose={handleEditClose}
+                                                        onSuccess={handleEditSuccess}
+                                                    />
+                                                )}
+                                                {editModalTableQuestion?.question_id === question.question_id && (
+                                                    <TableQuestionFormPopup
                                                         questionData={question}
-                                                        initialValues={answer || {}}
-                                                        onSubmit={(updatedData) => handleEditSubmit(question.question_id, updatedData)}
-                                                        onClose={() => setEditModalQuestionId(null)}
+                                                        onClose={handleEditClose}
+                                                        onSubmit={(response) => handleEditSuccess(question.question_id, response)}
+                                                        initialValues={answer?.response?.table}
                                                     />
                                                 )}
                                             </div>

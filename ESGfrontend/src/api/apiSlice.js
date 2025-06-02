@@ -234,19 +234,10 @@ export const apiSlice = createApi({
           throw new Error('Missing required context: company_id, plant_id, or financial_year');
         }
 
-        // Create the response object according to QuestionResponse model
-        const response = {};
-        // Safely extract values with type checking
-        if (typeof answerData.string_value === 'string') response.string_value = answerData.string_value;
-        if (typeof answerData.decimal_value === 'number') response.decimal_value = answerData.decimal_value;
-        if (typeof answerData.bool_value === 'boolean') response.bool_value = answerData.bool_value;
-        if (typeof answerData.link === 'string') response.link = answerData.link;
-        if (typeof answerData.note === 'string') response.note = answerData.note;
-
-        // Format the data according to the QuestionUpdate model
+        // The answer already has the correct structure, just create the update array
         const questionUpdate = {
           question_id: questionId,
-          response: response // Nest the response object as required by the API
+          response: answerData
         };
 
         return {
