@@ -5,6 +5,8 @@ import Login from './pages/LoginPage';
 import DynamicModulePage from './components/DynamicModulePage';
 import CreateEmployee from './pages/createEmployee';
 import DynamicEntityDetails from './pages/DynamicEntityDetails';
+import Chatbot from './features/modules/Chatbot';
+import TestHarness from './features/temp';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/:moduleName" element={<DynamicModulePage />} />
         <Route path="/createEmployee" element={<CreateEmployee />} />
         <Route path="/module/:moduleId" element={<DynamicEntityDetails />} />
+        <Route path="/chatbot" element={<Chatbot />} />
+        <Route path="/testHarness" element={<TestHarness />} />
       </Routes>
     </Router>
   );

@@ -146,14 +146,14 @@ const DynamicEntityDetails = () => {
                         >
                             <span className="flex items-center pl-[8px] h-full">{category.category_name || 'Unnamed Category'}</span>
                             <span className={`transition-transform duration-300 ${openCategories[category.id] ? 'rotate-180' : ''}`}>
-                                <svg width="20" height="20" fill="none" stroke="#20305D" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                                <svg width="20" height="20" fill="none" stroke="#20305D" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>
                             </span>
                         </button>
                         {openCategories[category.id] && (
-                            <div className="flex flex-col gap-2 px-0.5 pb-1 pt-0.5">
+                            <div className="flex flex-col gap-2 px-0.5 m-4 mt-2">
                                 {Array.isArray(category.questions) && category.questions.length > 0 ? (
                                     category.questions.map((question) => (
-                                        <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[36px]">
+                                        <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mt-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[30px]">
                                             <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
                                                 {/* Question text, wraps before Edit button */}
                                                 <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2">
@@ -171,114 +171,128 @@ const DynamicEntityDetails = () => {
                                                 {editModalQuestionId === question.question_id && renderEditModal(question, answers, setEditModalQuestionId)}
                                             </div>
                                             {/* ANSWER DISPLAY ROW: prevent overlap with Edit button, show all fields clearly */}
-                                            <div className="flex flex-row flex-wrap items-start justify-between gap-2 pr-[60px] relative mt-2">
-                                                <div className="flex flex-col gap-0.5 min-w-0 max-w-full break-words pl-2">
-                                                    {(() => {
-                                                        const answer = answers?.[question.question_id];
-                                                        // Table question view rendering
-                                                        if (question.question_type === "table" && question.table_metadata) {
-                                                            // Log input/output for table view
-                                                            console.log('[DynamicEntityDetails][View][Table] Rendering Table View for:', question);
-                                                            console.log('[DynamicEntityDetails][View][Table] Input (table_metadata):', question.table_metadata);
-                                                            console.log('[DynamicEntityDetails][View][Table] Output (answer):', answer);
-                                                            // Render table view
-                                                            if (!question.table_metadata || !Array.isArray(question.table_metadata.rows) || !Array.isArray(question.table_metadata.headers)) {
-                                                                return <span className="italic text-gray-400 font-roboto">No table metadata.</span>;
-                                                            }
-                                                            // Build a map for quick lookup: { rowName: { colLabel: value } }
-                                                            let tableMap = {};
-                                                            if (answer && answer.response && Array.isArray(answer.response.table)) {
-                                                                answer.response.table.forEach(cell => {
-                                                                    if (!tableMap[cell.row]) tableMap[cell.row] = {};
-                                                                    tableMap[cell.row][cell.col] = cell.value;
-                                                                });
-                                                            }
-                                                            return (
-                                                                <div className="overflow-x-auto">
-                                                                    <table className="min-w-[400px] border border-gray-200 rounded-[6px] text-xs">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th className="bg-gray-50 text-left px-2 py-1 font-semibold text-[#1A2341]">Row</th>
-                                                                                {question.table_metadata.headers.map(header => (
-                                                                                    <th key={header.label} className="bg-gray-50 text-left px-2 py-1 font-semibold text-[#1A2341]">{header.label}</th>
-                                                                                ))}
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            {question.table_metadata.rows.map(row => (
-                                                                                <tr key={row.name}>
-                                                                                    <td className="px-2 py-1 font-medium text-[#1A2341] bg-gray-50">{row.name}</td>
-                                                                                    {question.table_metadata.headers.map(header => {
-                                                                                        const value = tableMap?.[row.name]?.[header.label] ?? '';
-                                                                                        return (
-                                                                                            <td key={header.label} className="px-2 py-1 align-top text-[#1A2341]">{value !== '' ? value : <span className="italic text-gray-400">-</span>}</td>
-                                                                                        );
-                                                                                    })}
-                                                                                </tr>
+                                            <div className="flex flex-col gap-1 min-w-0 max-w-full break-words pl-2 relative">
+                                                {(() => {
+                                                    const answer = answers?.[question.question_id];
+                                                    // Table question view rendering
+                                                    if (question.question_type === "table" && question.table_metadata) {
+                                                        // Log input/output for table view
+                                                        console.log('[DynamicEntityDetails][View][Table] Rendering Table View for:', question);
+                                                        console.log('[DynamicEntityDetails][View][Table] Input (table_metadata):', question.table_metadata);
+                                                        console.log('[DynamicEntityDetails][View][Table] Output (answer):', answer);
+                                                        // Render table view
+                                                        if (!question.table_metadata || !Array.isArray(question.table_metadata.rows) || !Array.isArray(question.table_metadata.headers)) {
+                                                            return <span className="italic text-gray-400 font-roboto">No table metadata.</span>;
+                                                        }
+                                                        // Build a map for quick lookup: { rowName: { colLabel: value } }
+                                                        let tableMap = {};
+                                                        if (answer && answer.response && Array.isArray(answer.response.table)) {
+                                                            answer.response.table.forEach(cell => {
+                                                                if (!tableMap[cell.row]) tableMap[cell.row] = {};
+                                                                tableMap[cell.row][cell.col] = cell.value;
+                                                            });
+                                                        }
+                                                        return (
+                                                            <div className="overflow-x-auto">
+                                                                <table className="min-w-[400px] border border-gray-200 rounded-[6px] text-xs">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th className="bg-gray-50 text-left px-2 py-1 font-semibold text-[#1A2341]">Row</th>
+                                                                            {question.table_metadata.headers.map(header => (
+                                                                                <th key={header.label} className="bg-gray-50 text-left px-2 py-1 font-semibold text-[#1A2341]">{header.label}</th>
                                                                             ))}
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            );
-                                                        }
-                                                        // Default: subjective/other question types
-                                                        const displayItems = [];
-                                                        if (answer && answer.link) {
-                                                            displayItems.push(
-                                                                <span key="link" className="flex items-center flex-wrap italic font-roboto">
-                                                                    <a href={answer.link} className="text-blue-600 underline break-all font-roboto" target="_blank" rel="noopener noreferrer">{answer.link}</a>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {question.table_metadata.rows.map(row => (
+                                                                            <tr key={row.name}>
+                                                                                <td className="px-2 py-1 font-medium text-[#1A2341] bg-gray-50">{row.name}</td>
+                                                                                {question.table_metadata.headers.map(header => {
+                                                                                    const value = tableMap?.[row.name]?.[header.label] ?? '';
+                                                                                    return (
+                                                                                        <td key={header.label} className="px-2 py-1 align-top text-[#1A2341]">{value !== '' ? value : <span className="italic text-gray-400">-</span>}</td>
+                                                                                    );
+                                                                                })}
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        );
+                                                    }
+                                                    // Default: subjective/other question types
+                                                    const topRowItems = [];
+                                                    const bottomItems = [];
+
+                                                    // 1. Boolean and String value - Side by side on the top row
+                                                    if (typeof answer?.bool_value === 'boolean' || (answer && answer.string_value)) {
+                                                        const boolSpan = typeof answer?.bool_value === 'boolean' ? (
+                                                            <span key="bool" className={`font-semibold font-roboto ${answer.bool_value ? 'text-green-600' : 'text-red-600'} mr-2`}>
+                                                                {answer.bool_value ? 'Yes' : 'No'}
+                                                            </span>
+                                                        ) : null;
+
+                                                        const stringSpan = answer && answer.string_value ? (
+                                                            <span
+                                                                key="string"
+                                                                className="font-roboto"
+                                                                title={answer.string_value.length > 150 ? answer.string_value : undefined}
+                                                            >
+                                                                {answer.string_value.length > 150 ? `${answer.string_value.slice(0, 150)}...` : answer.string_value}
+                                                            </span>
+                                                        ) : null;
+
+                                                        if (boolSpan || stringSpan) {
+                                                            topRowItems.push(
+                                                                <span key="bool-string" className="flex items-center flex-wrap gap-2">
+                                                                    {boolSpan}
+                                                                    {stringSpan}
                                                                 </span>
                                                             );
                                                         }
-                                                        if (typeof answer?.bool_value === 'boolean') {
-                                                            displayItems.push(
-                                                                <span key="bool" className="text-[#002A85] font-semibold italic font-roboto">
-                                                                    {answer.bool_value ? 'Yes' : 'No'}
-                                                                </span>
-                                                            );
-                                                        }
-                                                        if (answer && answer.string_value) {
-                                                            const isLongResponse = answer.string_value.length > 200;
-                                                            displayItems.push(
-                                                                <span
-                                                                    key="string"
-                                                                    className="italic font-roboto"
-                                                                    title={isLongResponse ? answer.string_value : undefined} // Add hover dialog for long responses
-                                                                >
-                                                                    {isLongResponse ? `${answer.string_value.slice(0, 200)}....` : answer.string_value}
-                                                                </span>
-                                                            );
-                                                        }
-                                                        if (answer && typeof answer.decimal_value !== 'undefined') {
-                                                            displayItems.push(
-                                                                <span key="decimal" className="italic font-roboto">
-                                                                    <span className="font-semibold not-italic font-roboto">Value:</span> {answer.decimal_value}
-                                                                </span>
-                                                            );
-                                                        }
-                                                        if (answer && answer.note) {
-                                                            displayItems.push(
-                                                                <span key="note" className="font-roboto">
-                                                                    <span className="font-semibold font-roboto">Note:</span> {answer.note}
-                                                                </span>
-                                                            );
-                                                        }
-                                                        if (displayItems.length === 0) {
-                                                            return <span className="italic text-gray-400 font-roboto">No answer provided.</span>;
-                                                        }
-                                                        // If both link and bool, show them together on top row, else each on its own line
-                                                        if (displayItems.length > 1 && displayItems[0].key === 'link' && displayItems[1].key === 'bool') {
-                                                            return (
-                                                                <>
-                                                                    <div className="flex flex-row flex-wrap items-center gap-2">{displayItems[0]}{displayItems[1]}</div>
-                                                                    {displayItems.slice(2).map((item, idx) => <div key={item.key || idx}>{item}</div>)}
-                                                                </>
-                                                            );
-                                                        }
-                                                        // Otherwise, all on their own lines
-                                                        return displayItems.map((item, idx) => <div key={item.key || idx}>{item}</div>);
-                                                    })()}
-                                                </div>
+                                                    }
+
+                                                    // 2. Decimal value - Add to the top row
+                                                    if (answer && typeof answer.decimal_value !== 'undefined') {
+                                                        topRowItems.push(
+                                                            <span key="decimal" className=" font-roboto ml-2">
+                                                                <span className="font-semibold not-italic font-roboto">Value:</span> {answer.decimal_value}
+                                                            </span>
+                                                        );
+                                                    }
+
+                                                    // 3. Note - On the next line
+                                                    if (answer && answer.note) {
+                                                        bottomItems.push(
+                                                            <span key="note" className="font-roboto">
+                                                                <span className="font-semibold font-roboto"></span>{' '}
+                                                                <span className="italic text-sm text-gray-600">{answer.note}</span>
+                                                            </span>
+                                                        );
+                                                    }
+
+                                                    // 4. Link - In the bottom right corner
+                                                    if (answer && answer.link) {
+                                                        bottomItems.push(
+                                                            <span key="link" className="absolute bottom-1 right-40  font-roboto">
+                                                                <a href={answer.link} className="text-blue-600 underline break-all font-roboto" target="_blank" rel="noopener noreferrer">{answer.link}</a>
+                                                            </span>
+                                                        );
+                                                    }
+
+                                                    if (topRowItems.length === 0 && bottomItems.length === 0) {
+                                                        return <span className="italic text-gray-400 font-roboto">No answer provided.</span>;
+                                                    }
+
+                                                    return (
+                                                        <>
+                                                            <div className="flex items-center flex-wrap gap-2">{topRowItems}</div>
+                                                            <div className="relative mt-1">{bottomItems.map((item, idx) => (
+                                                                <div key={item.key || idx}>{item}</div>
+                                                            ))}</div>
+                                                        </>
+                                                    );
+                                                })()}
                                             </div>
                                         </div>
                                     ))
@@ -388,7 +402,7 @@ const DynamicEntityDetails = () => {
                     onClick={() => setAiChatOpen(true)}
                     aria-label="Open AI Assistant Chat"
                 >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 15c1.333-2 6.667-2 8 0"/><path d="M9 9h.01"/><path d="M15 9h.01"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M8 15c1.333-2 6.667-2 8 0" /><path d="M9 9h.01" /><path d="M15 9h.01" /></svg>
                 </button>
                 {aiChatOpen && (
                     <div className="fixed inset-0 z-[130] flex items-end justify-end bg-black bg-opacity-40">
