@@ -49,8 +49,8 @@ const TableQuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues
 
     useEffect(() => {
         setIsVisible(true);
-        // Initialize form data from initialValues or defaults
-        if (metadata) {
+        // Initialize form data from initialValues or defaults only if not already set
+        if (metadata && Object.keys(formData).length === 0) {
             const newFormData = {};
             metadata.rows.forEach(row => {
                 getFlattenedHeaders(metadata.headers).forEach(header => {
@@ -137,18 +137,18 @@ const TableQuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues
 
     // Render nested header row
     const renderHeaderRow = (headers, level = 0) => (
-        <tr>
+        <tr key={"header-row-" + level}>
             {level === 0 && <th rowSpan={getMaxHeaderDepth(metadata.headers)} className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341]">Row</th>}
-            {headers.map(header => {
+            {headers.map((header, idx) => {
                 const colSpan = getColSpan(header);
                 const style = {
                     minWidth: header.min_width || metadata.min_col_width,
                     maxWidth: header.max_width || metadata.max_col_width,
                 };
-                
+                // Use label + level + idx for unique key
                 return (
                     <th 
-                        key={header.label} 
+                        key={header.label + "-" + level + "-" + idx}
                         colSpan={colSpan}
                         rowSpan={header.headers ? 1 : getMaxHeaderDepth(metadata.headers) - level}
                         style={style}

@@ -12,7 +12,7 @@ import {
     Menu,
     X
 } from 'lucide-react';
-import { useGetModuleAccessQuery, useGetModuleDetailsMutation, useGetSubmodulesByModuleIdQuery } from '../api/apiSlice';
+import { useGetModuleAccessQuery, useGetModuleDetailsMutation, useGetSubmodulesByModuleIdQuery, useGetQuestionResponsesMutation } from '../api/apiSlice';
 
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +20,7 @@ const Sidebar = () => {
     const [selectedModuleId, setSelectedModuleId] = useState(null);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [getQuestionResponses] = useGetQuestionResponsesMutation();
 
     // Get module access first
     const { data: moduleAccess, isSuccess: moduleAccessSuccess, isError: moduleAccessError, error: moduleAccessErrorDetails } = useGetModuleAccessQuery();
@@ -82,6 +83,39 @@ const Sidebar = () => {
             console.log('Submodules data:', submodules);
         }
     }, [submodules, selectedModuleId]);
+
+    // Always open the first submodule when submodules change or on refresh
+    useEffect(() => {
+        if (
+            submodules &&
+            Array.isArray(submodules) &&
+            submodules.length > 0 &&
+            selectedModuleId
+        ) {
+            const firstValidSubmodule = submodules.find(
+                (sub) => Array.isArray(sub.question_categories) && sub.question_categories.length > 0
+            ) || submodules[0];
+            if (firstValidSubmodule && firstValidSubmodule.submodule_id) {
+                const expectedPath = `/module/${selectedModuleId}/submodule/${firstValidSubmodule.submodule_id}`;
+                if (window.location.pathname !== expectedPath) {
+                    navigate(expectedPath, { replace: true });
+                }
+            }
+            if (firstValidSubmodule.question_categories) {
+                const questionIds = firstValidSubmodule.question_categories
+                    .flatMap(cat => Array.isArray(cat.questions) ? cat.questions.map(q => q.question_id) : []);
+                if (questionIds.length > 0) {
+                    getQuestionResponses(questionIds);
+                }
+            }
+        }
+    }, [submodules, getQuestionResponses, selectedModuleId, navigate]);
+
+    // Always open the first submodule when a module is clicked
+    const handleModuleClick = (moduleAccessId) => {
+        setSelectedModuleId(moduleAccessId);
+        closeSidebar();
+    };
 
     // Map icon names to Lucide React components
     const iconMap = {
@@ -148,7 +182,6 @@ const Sidebar = () => {
 
                             {/* Dynamic Modules */}
                             {modules.map((module) => {
-                                // Use the moduleAccessId (the one from module access, not _id)
                                 const moduleAccessId = module.id || module._id;
                                 const IconComponent = iconMap[module.icon] || FileText;
                                 return (
@@ -162,11 +195,7 @@ const Sidebar = () => {
                                                         : 'text-[#E5E7EB] hover:bg-[#20305D] hover:text-white'
                                                 }`
                                             }
-                                            onClick={() => {
-                                                setSelectedModuleId(moduleAccessId);
-                                                console.log('Selected module ID for submodules:', moduleAccessId);
-                                                closeSidebar();
-                                            }}
+                                            onClick={() => handleModuleClick(moduleAccessId)}
                                         >
                                             <IconComponent className="w-4 h-4 flex-shrink-0" />
                                             <span className="text-left">{module.module_name}</span>

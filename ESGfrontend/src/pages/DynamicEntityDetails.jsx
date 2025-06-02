@@ -180,7 +180,41 @@ const DynamicEntityDetails = () => {
                                                     {answer ? (
                                                         <div className="space-y-2">
                                                             <div className="flex flex-row gap-4 items-start">
-                                                                {answer.bool_value !== undefined && (
+                                                                {question.type === 'table' && Array.isArray(question.table_metadata?.headers) && Array.isArray(question.table_metadata?.rows) ? (
+  <div className="overflow-x-auto mt-2">
+    <table className="min-w-full border border-gray-200 rounded-[6px] text-sm">
+      <thead>
+        <tr>
+          <th className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341]">Row</th>
+          {question.table_metadata.headers.map((header, idx) => (
+            <th key={header.label + '-' + idx} className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341] border-b border-gray-200">
+              {header.label}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {question.table_metadata.rows.map((row, rowIdx) => (
+          <tr key={row.name + '-' + rowIdx}>
+            <td className="px-3 py-2 text-sm font-medium text-[#1A2341] bg-gray-50">{row.name}</td>
+            {question.table_metadata.headers.map((header, colIdx) => {
+              let cellValue = '';
+              if (answer && answer.response && Array.isArray(answer.response.table)) {
+                const cell = answer.response.table.find(cell => cell.row === row.name && cell.col === header.label);
+                cellValue = cell?.value ?? '';
+              }
+              return (
+                <td key={header.label + '-' + colIdx} className="px-3 py-2 text-sm text-gray-600">
+                  {cellValue}
+                </td>
+              );
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+) : answer && answer.bool_value !== undefined && (
                                                                     <div className={`text-[13px] font-medium break-words min-w-[30px] ${answer.bool_value ? 'text-green-600' : 'text-red-600'}`}>
                                                                         {answer.bool_value ? "Yes" : "No"}
                                                                     </div>
