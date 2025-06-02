@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { 
-    useGetSubmodulesByModuleIdQuery, 
+import {
+    useGetSubmodulesByModuleIdQuery,
     useGetQuestionResponsesMutation,
-    useSubmitQuestionAnswerMutation 
+    useSubmitQuestionAnswerMutation
 } from '../api/apiSlice';
 import Layout from '../components/Layout';
 import Breadcrumb from '../components/Breadcrumb';
@@ -42,22 +42,22 @@ const DynamicEntityDetails = () => {
 
     // Find the current submodule
     const currentSubmodule = submodules.find(sub => sub.submodule_name === activeTab);    // Fetch answers for all questions in the selected submodule
-    const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation();    useEffect(() => {
+    const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation(); useEffect(() => {
         const fetchAnswersForSubmodule = async () => {
             if (currentSubmodule && Array.isArray(currentSubmodule.question_categories)) {
                 // Gather all question IDs for this submodule, excluding table type questions
                 const questionIds = currentSubmodule.question_categories
-                    .flatMap(cat => Array.isArray(cat.questions) ? 
+                    .flatMap(cat => Array.isArray(cat.questions) ?
                         cat.questions
                             .filter(q => q.type !== 'table') // Exclude table type questions
-                            .map(q => q.question_id) 
+                            .map(q => q.question_id)
                         : []);
-                
+
                 if (questionIds.length > 0) {
                     try {
                         const responses = await getQuestionResponses(questionIds).unwrap();
                         console.log('Fetched answers:', responses);
-                        
+
                         // Handle both array and object response formats
                         const newAnswers = {};
                         if (Array.isArray(responses)) {
@@ -73,7 +73,7 @@ const DynamicEntityDetails = () => {
                                 }
                             });
                         }
-                        setAnswers(prev => ({...prev, ...newAnswers}));
+                        setAnswers(prev => ({ ...prev, ...newAnswers }));
                     } catch (err) {
                         console.error('Error fetching answers:', err);
                     }
@@ -104,10 +104,10 @@ const DynamicEntityDetails = () => {
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
     const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);
     const [answers, setAnswers] = useState({});
-    
+
     // RTK Query mutations
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
-    
+
     const handleEditClick = (question) => {
         if (question.type === 'table') {
             setEditModalTableQuestion(question);
@@ -115,12 +115,12 @@ const DynamicEntityDetails = () => {
             setEditModalQuestionId(question.question_id);
         }
     };
-    
+
     const handleEditClose = () => {
         setEditModalQuestionId(null);
         setEditModalTableQuestion(null);
     };
-    
+
     const handleEditSuccess = (questionId, result) => {
         // Update local state with the new answer
         setAnswers(prev => ({
@@ -157,7 +157,8 @@ const DynamicEntityDetails = () => {
                         {openCategories[category.id] && (
                             <div className="flex flex-col gap-2 px-0.5 m-4 mt-2">
                                 {Array.isArray(category.questions) && category.questions.length > 0 ? (
-                                    category.questions.map((question) => {                                        const answer = answers[question.question_id];
+                                    category.questions.map((question) => {
+                                        const answer = answers[question.question_id];
 
                                         return (
                                             <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mt-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[30px]">
@@ -175,35 +176,43 @@ const DynamicEntityDetails = () => {
                                                     </button>
                                                 </div>
                                                 {/* Answer display in view mode */}
-                                                <div className="mt-2 pl-2">
+                                                <div className="mt-2 pl-2 relative">
                                                     {answer ? (
                                                         <div className="space-y-2">
-                                                            {answer.string_value && (
-                                                                <div className="text-[13px] text-gray-600 pr-[60px] break-words">
-                                                                    <span className="font-medium">Response:</span> {answer.string_value}
+                                                            <div className="flex flex-row gap-4 items-start">
+                                                                {answer.bool_value !== undefined && (
+                                                                    <div className={`text-[13px] font-medium break-words min-w-[30px] ${answer.bool_value ? 'text-green-600' : 'text-red-600'}`}>
+                                                                        {answer.bool_value ? "Yes" : "No"}
+                                                                    </div>
+                                                                )}
+                                                                <div className="flex-1 flex flex-row gap-4 items-start overflow-hidden">
+                                                                    {answer.string_value && (
+                                                                        <div className="text-[13px] text-gray-600 break-words flex-1 ">
+                                                                            
+                                                                            <span className="line-clamp-3">{answer.string_value}</span>
+                                                                            {answer.string_value.split(' ').length > 50 && (
+                                                                                <button className="text-blue-600 hover:underline text-[11px] mt-1">Show more...</button>
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                                    {answer.decimal_value !== undefined && (
+                                                                        <div className="text-[13px] text-gray-600 whitespace-nowrap pr-42">
+                                                                            <span className="font-medium">Value:</span> {answer.decimal_value}
+                                                                        </div>
+                                                                    )}
                                                                 </div>
-                                                            )}
-                                                            {answer.decimal_value !== undefined && (
-                                                                <div className="text-[13px] text-gray-600 pr-[60px] break-words">
-                                                                    <span className="font-medium">Value:</span> {answer.decimal_value}
-                                                                </div>
-                                                            )}
-                                                            {answer.bool_value !== undefined && (
-                                                                <div className="text-[13px] text-gray-600 pr-[60px] break-words">
-                                                                    <span className="font-medium">Yes/No:</span> {answer.bool_value ? "Yes" : "No"}
+                                                            </div>
+                                                            {answer.note && (
+                                                                <div className="text-[10px] text-gray-600 pr-[60px] break-words italic">
+                                                                    <span className="font-medium not-italic"></span> {answer.note}
                                                                 </div>
                                                             )}
                                                             {answer.link && (
-                                                                <div className="text-[13px] pr-[60px] break-words">
-                                                                    <a href={answer.link} target="_blank" rel="noopener noreferrer" 
-                                                                       className="text-blue-600 hover:underline">
+                                                                <div className="text-[13px] absolute bottom-0 right-2 pr-36">
+                                                                    <a href={answer.link} target="_blank" rel="noopener noreferrer"
+                                                                        className="text-blue-600 hover:underline">
                                                                         View Document
                                                                     </a>
-                                                                </div>
-                                                            )}
-                                                            {answer.note && (
-                                                                <div className="text-[13px] text-gray-600 pr-[60px] break-words">
-                                                                    <span className="font-medium">Note:</span> {answer.note}
                                                                 </div>
                                                             )}
                                                         </div>
