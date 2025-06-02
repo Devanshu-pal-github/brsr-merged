@@ -11,13 +11,13 @@ import SubHeader from '../components/SubHeader';
 import QuestionnaireItem from '../components/QuestionItem';
 import ProgressCard from '../components/ProgressCard';
 import AIAssistant from '../components/WorkforceAi';
-import AIAssisstantChat from '../components/AIAssisstantChat';
 import QuestionEditPopup from "../components/QuestionEditPopup";
 import TableQuestionFormPopup from "../components/TableQuestionFormPopup";
+import ChatbotWindow from '../AICHATBOT/ChatbotWindow';
+import { AppProvider } from '../AICHATBOT/AppProvider';
 
 const getBestAnswerValue = (answerObj) => {
     if (!answerObj) return '';
-    // Prefer string_value, then decimal_value, then bool_value, then link, then note
     if (typeof answerObj.string_value !== 'undefined') return answerObj.string_value;
     if (typeof answerObj.decimal_value !== 'undefined') return answerObj.decimal_value;
     if (typeof answerObj.bool_value !== 'undefined') return answerObj.bool_value;
@@ -31,25 +31,23 @@ const DynamicEntityDetails = () => {
     const { moduleId } = useParams();
     const { data: submodules = [], isLoading, isError, error } = useGetSubmodulesByModuleIdQuery(moduleId);
 
-    // Tabs: submodule names
     const tabs = submodules.map(sub => sub.submodule_name);
     const [activeTab, setActiveTab] = useState('');
 
-    // Set default active tab when submodules load
     useEffect(() => {
         if (tabs.length > 0 && !activeTab) setActiveTab(tabs[0]);
     }, [tabs, activeTab]);
 
-    // Find the current submodule
-    const currentSubmodule = submodules.find(sub => sub.submodule_name === activeTab);    // Fetch answers for all questions in the selected submodule
-    const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation(); useEffect(() => {
+    const currentSubmodule = submodules.find(sub => sub.submodule_name === activeTab);
+
+    const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation();
+    useEffect(() => {
         const fetchAnswersForSubmodule = async () => {
             if (currentSubmodule && Array.isArray(currentSubmodule.question_categories)) {
-                // Gather all question IDs for this submodule, excluding table type questions
                 const questionIds = currentSubmodule.question_categories
                     .flatMap(cat => Array.isArray(cat.questions) ?
                         cat.questions
-                            .filter(q => q.type !== 'table') // Exclude table type questions
+                            .filter(q => q.type !== 'table')
                             .map(q => q.question_id)
                         : []);
 
@@ -58,7 +56,6 @@ const DynamicEntityDetails = () => {
                         const responses = await getQuestionResponses(questionIds).unwrap();
                         console.log('Fetched answers:', responses);
 
-                        // Handle both array and object response formats
                         const newAnswers = {};
                         if (Array.isArray(responses)) {
                             responses.forEach(response => {
@@ -86,10 +83,8 @@ const DynamicEntityDetails = () => {
         }
     }, [currentSubmodule]);
 
-    // Collapsible state for each category
     const [openCategories, setOpenCategories] = useState({});
     useEffect(() => {
-        // Reset open state when submodule changes
         if (currentSubmodule) {
             const initial = {};
             currentSubmodule.question_categories?.forEach(cat => {
@@ -100,12 +95,17 @@ const DynamicEntityDetails = () => {
     }, [currentSubmodule]);
     const toggleCategory = (catId) => {
         setOpenCategories(prev => ({ ...prev, [catId]: !prev[catId] }));
-    };    // Modal states for editing answers
+    };
+
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
     const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);
     const [answers, setAnswers] = useState({});
+    const [aiChatOpen, setAiChatOpen] = useState(false);
 
-    // RTK Query mutations
+    useEffect(() => {
+        console.log('aiChatOpen state changed:', aiChatOpen);
+    }, [aiChatOpen]);
+
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
 
     const handleEditClick = (question) => {
@@ -122,7 +122,6 @@ const DynamicEntityDetails = () => {
     };
 
     const handleEditSuccess = (questionId, result) => {
-        // Update local state with the new answer
         setAnswers(prev => ({
             ...prev,
             [questionId]: result
@@ -130,7 +129,6 @@ const DynamicEntityDetails = () => {
         handleEditClose();
     };
 
-    // Render all question categories and their questions
     const renderSubmodule = (submodule) => {
         if (!submodule || !Array.isArray(submodule.question_categories)) {
             return (
@@ -139,7 +137,6 @@ const DynamicEntityDetails = () => {
                 </div>
             );
         }
-        // For each question, use the metadata from the question object, but use the response from the answers API for view mode
         return (
             <div className="flex flex-col gap-4">
                 {submodule.question_categories.map((category) => (
@@ -175,7 +172,6 @@ const DynamicEntityDetails = () => {
                                                         Edit
                                                     </button>
                                                 </div>
-                                                {/* Answer display in view mode */}
                                                 <div className="mt-2 pl-2 relative">
                                                     {answer ? (
                                                         <div className="space-y-2">
@@ -222,7 +218,6 @@ const DynamicEntityDetails = () => {
                                                                 <div className="flex-1 flex flex-row gap-4 items-start overflow-hidden">
                                                                     {answer.string_value && (
                                                                         <div className="text-[13px] text-gray-600 break-words flex-1 ">
-                                                                            
                                                                             <span className="line-clamp-3">{answer.string_value}</span>
                                                                             {answer.string_value.split(' ').length > 50 && (
                                                                                 <button className="text-blue-600 hover:underline text-[11px] mt-1">Show more...</button>
@@ -256,7 +251,6 @@ const DynamicEntityDetails = () => {
                                                         </div>
                                                     )}
                                                 </div>
-                                                {/* Popup in edit mode */}
                                                 {editModalQuestionId === question.question_id && (
                                                     <QuestionEditPopup
                                                         question={question}
@@ -288,114 +282,108 @@ const DynamicEntityDetails = () => {
     };
 
     return (
-        <Layout>
-            <div className="relative flex w-full h-screen">
-                {/* Main Content Area */}
-                <section className="flex-1 flex flex-col min-w-0 max-w-[70vw] mx-auto bg-transparent px-[2vw] pt-0 pb-0">
-                    {/* Fixed Header: Breadcrumb + SubHeader */}
-                    <div className="sticky top-0 z-30 pt-[2vh] pb-[1vh] border-b border-gray-200">
-                        <div className="w-full max-w-[70vw] mx-auto px-0 sm:px-[1vw] md:px-0">
-                            <Breadcrumb section="Entity Details" activeTab={activeTab} />
+        <AppProvider>
+            <Layout>
+                <div className="relative flex w-full h-screen">
+                    <section className="flex-1 flex flex-col min-w-0 max-w-[70vw] mx-auto bg-transparent px-[2vw] pt-0 pb-0">
+                        <div className="sticky top-0 z-30 pt-[2vh] pb-[1vh] border-b border-gray-200">
+                            <div className="w-full max-w-[70vw] mx-auto px-0 sm:px-[1vw] md:px-0">
+                                <Breadcrumb section="Entity Details" activeTab={activeTab} />
+                            </div>
+                            <div className="w-full max-w-[70vw] mx-auto px-0 sm:px-[1vw] md:px-0 mt-[1vh]">
+                                <SubHeader
+                                    tabs={tabs}
+                                    activeTab={activeTab}
+                                    onTabChange={setActiveTab}
+                                />
+                            </div>
                         </div>
-                        <div className="w-full max-w-[70vw] mx-auto px-0 sm:px-[1vw] md:px-0 mt-[1vh]">
-                            <SubHeader
-                                tabs={tabs}
-                                activeTab={activeTab}
-                                onTabChange={setActiveTab}
-                            />
+                        <div className="flex-1 overflow-y-auto min-h-0 py-[2vh] pr-[1vw] custom-scrollbar flex flex-col gap-[2vh] scroll-smooth hover:scroll-auto transition-all duration-500 scrollbar-hide">
+                            {isLoading && (
+                                <div className="flex items-center justify-center min-h-[30vh] text-gray-500 text-base">Loading submodules...</div>
+                            )}
+                            {isError && (
+                                <div className="flex items-center justify-center min-h-[30vh] text-red-500 text-base">Error loading submodules: {error?.error || 'Unknown error'}</div>
+                            )}
+                            {!isLoading && !isError && (
+                                currentSubmodule
+                                    ? renderSubmodule(currentSubmodule)
+                                    : <div className="flex items-center justify-center min-h-[30vh] text-gray-500 text-base">Select a submodule to view content</div>
+                            )}
                         </div>
-                    </div>
-                    {/* Scrollable Content Area */}
-                    <div className="flex-1 overflow-y-auto min-h-0 py-[2vh] pr-[1vw] custom-scrollbar flex flex-col gap-[2vh] scroll-smooth hover:scroll-auto transition-all duration-500 scrollbar-hide">
-                        {isLoading && (
-                            <div className="flex items-center justify-center min-h-[30vh] text-gray-500 text-base">Loading submodules...</div>
-                        )}
-                        {isError && (
-                            <div className="flex items-center justify-center min-h-[30vh] text-red-500 text-base">Error loading submodules: {error?.error || 'Unknown error'}</div>
-                        )}
-                        {!isLoading && !isError && (
-                            currentSubmodule
-                                ? renderSubmodule(currentSubmodule)
-                                : <div className="flex items-center justify-center min-h-[30vh] text-gray-500 text-base">Select a submodule to view content</div>
-                        )}
-                    </div>
-                </section>
-                {/* Right Sidebar: Progress + AI Assistant */}
-                <aside className="hidden lg:flex flex-col mt-[3vh] mr-[30px] gap-[1.2vh] px-[0.7vw] pt-[1.2vh] pb-[1.2vh] bg-white border-l border-gray-200 shadow-lg min-w-[16vw] max-w-[18vw] w-full sticky top-0 h-[82vh] z-20 items-center justify-start rounded-[4px] transition-all duration-500">
-                    {/* Progress Circle */}
-                    <div className="flex flex-col items-center mb-[0.7vh]">
-                        <svg width="6vw" height="6vw" viewBox="0 0 120 120">
-                            <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="8" />
-                            <circle cx="60" cy="60" r="50" fill="none" stroke="#4F46E5" strokeWidth="8" strokeDasharray="314" strokeDashoffset="60" strokeLinecap="round" />
-                        </svg>
-                        <div className="mt-[0.7vh] text-gray-700 font-semibold text-[11px]">38 of 50 questions completed</div>
-                    </div>
-                    {/* Course Sections */}
-                    <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.7vh]">
-                        <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Course Sections</div>
-                        <div className="flex flex-col gap-[0.3vh]">
-                            <div>
-                                <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 1: Introduction</div>
-                                <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
-                                    <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '80%' }}></div>
+                    </section>
+                    <aside className="hidden lg:flex flex-col mt-[3vh] mr-[30px] gap-[1.2vh] px-[0.7vw] pt-[1.2vh] pb-[1.2vh] bg-white border-l border-gray-200 shadow-lg min-w-[16vw] max-w-[18vw] w-full sticky top-0 h-[82vh] z-20 items-center justify-start rounded-[4px] transition-all duration-500">
+                        <div className="flex flex-col items-center mb-[0.7vh]">
+                            <svg width="6vw" height="6vw" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="8" />
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#4F46E5" strokeWidth="8" strokeDasharray="314" strokeDashoffset="60" strokeLinecap="round" />
+                            </svg>
+                            <div className="mt-[0.7vh] text-gray-700 font-semibold text-[11px]">38 of 50 questions completed</div>
+                        </div>
+                        <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.7vh]">
+                            <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Course Sections</div>
+                            <div className="flex flex-col gap-[0.3vh]">
+                                <div>
+                                    <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 1: Introduction</div>
+                                    <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
+                                        <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '80%' }}></div>
+                                    </div>
+                                    <div className="text-[9px] text-gray-500">8 of 10 completed</div>
                                 </div>
-                                <div className="text-[9px] text-gray-500">8 of 10 completed</div>
-                            </div>
-                            <div>
-                                <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 2: Fundamentals</div>
-                                <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
-                                    <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '60%' }}></div>
+                                <div>
+                                    <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 2: Fundamentals</div>
+                                    <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
+                                        <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '60%' }}></div>
+                                    </div>
+                                    <div className="text-[9px] text-gray-500">6 of 10 completed</div>
                                 </div>
-                                <div className="text-[9px] text-gray-500">6 of 10 completed</div>
-                            </div>
-                            <div>
-                                <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 3: Advanced Topics</div>
-                                <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
-                                    <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '40%' }}></div>
+                                <div>
+                                    <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 3: Advanced Topics</div>
+                                    <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
+                                        <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '40%' }}></div>
+                                    </div>
+                                    <div className="text-[9px] text-gray-500">4 of 10 completed</div>
                                 </div>
-                                <div className="text-[9px] text-gray-500">4 of 10 completed</div>
-                            </div>
-                            <div>
-                                <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 4: Practice</div>
-                                <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
-                                    <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '20%' }}></div>
+                                <div>
+                                    <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 4: Practice</div>
+                                    <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
+                                        <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '20%' }}></div>
+                                    </div>
+                                    <div className="text-[9px] text-gray-500">2 of 10 completed</div>
                                 </div>
-                                <div className="text-[9px] text-gray-500">2 of 10 completed</div>
                             </div>
                         </div>
-                    </div>
-                    {/* Category Overview */}
-                    <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.3vh]">
-                        <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Category Overview</div>
-                        <div className="flex flex-col gap-[0.15vh]">
-                            <div className="flex justify-between text-[10px]"><span>Fundamentals</span><span>15/20 questions</span></div>
-                            <div className="flex justify-between text-[10px]"><span>Theory</span><span>12/15 questions</span></div>
-                            <div className="flex justify-between text-[10px]"><span>Practical Examples</span><span>8/10 questions</span></div>
-                            <div className="flex justify-between text-[10px]"><span>Assessments</span><span>3/5 questions</span></div>
-                        </div>
-                    </div>
-                </aside>
-                {/* Floating AI Button and Overlay Chat */}
-                <button
-                    className="fixed z-[120] bottom-[3vh] right-[3vw] w-[6vw] h-[6vw] min-w-[48px] min-h-[48px] max-w-[80px] max-h-[80px] rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-xl flex items-center justify-center hover:scale-110 transition-transform border-4 border-white focus:outline-none"
-                    style={{ boxShadow: '0 8px 32px 0 rgba(10,46,135,0.25)' }}
-                    onClick={() => setAiChatOpen(true)}
-                    aria-label="Open AI Assistant Chat"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M8 15c1.333-2 6.667-2 8 0" /><path d="M9 9h.01" /><path d="M15 9h.01" /></svg>
-                </button>
-                {/* {aiChatOpen && (
-                    <div className="fixed inset-0 z-[130] flex items-end justify-end bg-black bg-opacity-40">
-                        <div className="w-full h-full absolute top-0 left-0" onClick={() => setAiChatOpen(false)} />
-                        <div className="relative z-10 w-full max-w-md m-8">
-                            <div className="bg-white rounded-[6px] shadow-2xl p-0 overflow-hidden border border-gray-200">
-                                <AIAssisstantChat onClose={() => setAiChatOpen(false)} />
+                        <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.3vh]">
+                            <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Category Overview</div>
+                            <div className="flex flex-col gap-[0.15vh]">
+                                <div className="flex justify-between text-[10px]"><span>Fundamentals</span><span>15/20 questions</span></div>
+                                <div className="flex justify-between text-[10px]"><span>Theory</span><span>12/15 questions</span></div>
+                                <div className="flex justify-between text-[10px]"><span>Practical Examples</span><span>8/10 questions</span></div>
+                                <div className="flex justify-between text-[10px]"><span>Assessments</span><span>3/5 questions</span></div>
                             </div>
                         </div>
-                    </div>
-                )} */}                {/* Edit modal is now handled by QuestionFormPopup component */}
-            </div>
-        </Layout>
+                    </aside>
+                    <button
+                        className="fixed z-[120] bottom-[3vh] right-[3vw] w-[6vw] h-[6vw] min-w-[48px] min-h-[48px] max-w-[80px] max-h-[80px] rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-xl flex items-center justify-center hover:scale-110 transition-transform border-4 border-white focus:outline-none"
+                        style={{ boxShadow: '0 8px 32px 0 rgba(10,46,135,0.25)' }}
+                        onClick={() => setAiChatOpen(true)}
+                        aria-label="Open AI Assistant Chat"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M8 15c1.333-2 6.667-2 8 0" /><path d="M9 9h.01" /><path d="M15 9h.01" /></svg>
+                    </button>
+                    {aiChatOpen && (
+                        <div className="fixed inset-0 z-[1000] flex items-end justify-end bg-opacity-50 transition-opacity duration-300">
+                            <div className="w-full h-full absolute top-0 left-0" onClick={() => setAiChatOpen(false)} />
+                            <div className="relative z-10 w-full max-w-md m-4 md:m-8 animate-slide-up">
+                                <div className="bg-white rounded-lg shadow-2xl p-0 overflow-hidden border border-gray-200">
+                                    <ChatbotWindow onClose={() => setAiChatOpen(false)} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </Layout>
+        </AppProvider>
     );
 };
 

@@ -5,22 +5,25 @@ import Login from './pages/LoginPage';
 import DynamicModulePage from './components/DynamicModulePage';
 import CreateEmployee from './pages/createEmployee';
 import DynamicEntityDetails from './pages/DynamicEntityDetails';
-// import Chatbot from './features/modules/Chatbot';
 import TestHarness from './features/temp';
+import ChatbotButton from './AICHATBOT/ChatbotButton'; // Corrected import
+import { AppProvider } from './AICHATBOT/AppProvider'; // Import AppProvider
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/:moduleName" element={<DynamicModulePage />} />
-        <Route path="/createEmployee" element={<CreateEmployee />} />
-        <Route path="/module/:moduleId" element={<DynamicEntityDetails />} />
-        {/* <Route path="/chatbot" element={<Chatbot />} /> */}
-        <Route path="/testHarness" element={<TestHarness />} />
-      </Routes>
-    </Router>
+    <AppProvider> {/* Wrap the app with AppProvider */}
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/:moduleName" element={<DynamicModulePage />} />
+          <Route path="/createEmployee" element={<CreateEmployee />} />
+          <Route path="/module/:moduleId" element={<DynamicEntityDetails />} />
+          <Route path="/testHarness" element={<TestHarness />} />
+          <Route path="/chatbot" element={<ChatbotButton />} />
+        </Routes>
+      </Router>
+    </AppProvider>
   );
 }
 
