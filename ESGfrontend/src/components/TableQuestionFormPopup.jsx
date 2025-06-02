@@ -4,10 +4,41 @@ import { X, AlertCircle } from "lucide-react";
 // Helper to get column type (per-column or global)
 const getColumnType = (header, globalType) => header.cell_type || globalType || "string";
 
+// Helper to calculate column span for nested headers
+const getColSpan = (header) => {
+    if (!header.headers || header.headers.length === 0) return 1;
+    return header.headers.reduce((sum, h) => sum + getColSpan(h), 0);
+};
+
+// Helper to get flattened headers for data cells
+const getFlattenedHeaders = (headers) => {
+    return headers.reduce((flat, header) => {
+        if (!header.headers || header.headers.length === 0) {
+            return [...flat, header];
+        }
+        return [...flat, ...getFlattenedHeaders(header.headers)];
+    }, []);
+};
+
 // Helper to get initial cell value
 const getInitialCellValue = (row, header, initialValues) => {
     const key = `${row.name}__${header.label}`;
     return initialValues?.[key] ?? header.default_value ?? row.default_value ?? "";
+};
+
+// Get maximum depth of nested headers
+const getMaxHeaderDepth = (headers) => {
+    let maxDepth = 1;
+    const getDepth = (headers, currentDepth = 1) => {
+        headers.forEach(header => {
+            if (header.headers?.length) {
+                maxDepth = Math.max(maxDepth, currentDepth + 1);
+                getDepth(header.headers, currentDepth + 1);
+            }
+        });
+    };
+    getDepth(headers);
+    return maxDepth;
 };
 
 const TableQuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues = {} }) => {
@@ -22,7 +53,7 @@ const TableQuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues
         if (metadata) {
             const newFormData = {};
             metadata.rows.forEach(row => {
-                metadata.headers.forEach(header => {
+                getFlattenedHeaders(metadata.headers).forEach(header => {
                     const key = `${row.name}__${header.label}`;
                     newFormData[key] = getInitialCellValue(row, header, initialValues);
                 });
@@ -74,7 +105,7 @@ const TableQuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues
         let hasErrors = false;
         const newErrors = {};
         metadata.rows.forEach(row => {
-            metadata.headers.forEach(header => {
+            getFlattenedHeaders(metadata.headers).forEach(header => {
                 const key = `${row.name}__${header.label}`;
                 const { isValid, errorMessage } = validateCell(formData[key], header, row);
                 if (!isValid) hasErrors = true;
@@ -87,7 +118,7 @@ const TableQuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues
         // Build response object: { question_id, response: { table: [{ row, col, value }] } }
         const tableResponse = [];
         metadata.rows.forEach(row => {
-            metadata.headers.forEach(header => {
+            getFlattenedHeaders(metadata.headers).forEach(header => {
                 const key = `${row.name}__${header.label}`;
                 tableResponse.push({
                     row: row.name,
@@ -104,34 +135,74 @@ const TableQuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues
         onClose();
     };
 
-    // Render table headers (single-level for simplicity; extend for multi-level if needed)
-    const renderTableHeaders = () => (
+    // Render nested header row
+    const renderHeaderRow = (headers, level = 0) => (
         <tr>
-            <th className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341]">Row</th>
-            {metadata.headers.map(header => (
-                <th key={header.label} className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341]">
-                    {header.label}
-                    {(header.required || header.help_text) && (
-                        <span className="ml-1 text-red-500 text-xs">{header.required ? "*" : ""}</span>
-                    )}
-                    {header.help_text && (
-                        <span className="ml-1 text-gray-400 text-xs" title={header.help_text}>?</span>
-                    )}
-                </th>
-            ))}
+            {level === 0 && <th rowSpan={getMaxHeaderDepth(metadata.headers)} className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341]">Row</th>}
+            {headers.map(header => {
+                const colSpan = getColSpan(header);
+                const style = {
+                    minWidth: header.min_width || metadata.min_col_width,
+                    maxWidth: header.max_width || metadata.max_col_width,
+                };
+                
+                return (
+                    <th 
+                        key={header.label} 
+                        colSpan={colSpan}
+                        rowSpan={header.headers ? 1 : getMaxHeaderDepth(metadata.headers) - level}
+                        style={style}
+                        className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341] border-b border-gray-200"
+                    >
+                        {header.label}
+                        {(header.required || header.help_text) && (
+                            <span className="ml-1 text-red-500 text-xs">{header.required ? "*" : ""}</span>
+                        )}
+                        {header.help_text && (
+                            <span className="ml-1 text-gray-400 text-xs cursor-help" title={header.help_text}>?</span>
+                        )}
+                    </th>
+                );
+            })}
         </tr>
     );
+
+    // Render all header rows
+    const renderTableHeaders = () => {
+        const headerRows = [];
+        
+        const generateRows = (headers, level = 0) => {
+            if (headers.some(h => h.headers?.length)) {
+                headerRows[level] = renderHeaderRow(headers, level);
+                headers.forEach(header => {
+                    if (header.headers?.length) {
+                        generateRows(header.headers, level + 1);
+                    }
+                });
+            } else if (level === 0) {
+                headerRows[0] = renderHeaderRow(headers, 0);
+            }
+        };
+        
+        generateRows(metadata.headers);
+        return headerRows;
+    };
 
     // Render table rows
     const renderTableRows = () => (
         metadata.rows.map(row => (
             <tr key={row.name}>
                 <td className="px-3 py-2 text-sm font-medium text-[#1A2341] bg-gray-50">{row.name}</td>
-                {metadata.headers.map(header => {
+                {getFlattenedHeaders(metadata.headers).map(header => {
                     const key = `${row.name}__${header.label}`;
                     const type = getColumnType(header, metadata.cell_type);
                     const value = formData[key] || "";
                     const error = errors[key];
+                    const style = {
+                        minWidth: header.min_width || metadata.min_col_width,
+                        maxWidth: header.max_width || metadata.max_col_width,
+                    };
+                    
                     // Render input based on type and allowed_values
                     let inputEl = null;
                     if (header.allowed_values) {
@@ -186,7 +257,7 @@ const TableQuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues
                         );
                     }
                     return (
-                        <td key={header.label} className="px-3 py-2 align-top">
+                        <td key={header.label} className="px-3 py-2 align-top" style={style}>
                             {inputEl}
                             {error && (
                                 <div className="flex items-center gap-1 text-red-600 text-xs mt-1">
@@ -217,16 +288,18 @@ const TableQuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues
                         </button>
                     </div>
                 </div>
-                <div className="p-6 overflow-x-auto">
+                <div className="p-6">
                     <form onSubmit={handleSubmit}>
-                        <table className="min-w-full border border-gray-200 rounded-[6px]">
-                            <thead>
-                                {renderTableHeaders()}
-                            </thead>
-                            <tbody>
-                                {renderTableRows()}
-                            </tbody>
-                        </table>
+                        <div className={`${metadata.horizontal_scroll_threshold && getFlattenedHeaders(metadata.headers).length > metadata.horizontal_scroll_threshold ? 'overflow-x-auto' : ''}`}>
+                            <table className="min-w-full border border-gray-200 rounded-[6px]">
+                                <thead>
+                                    {renderTableHeaders()}
+                                </thead>
+                                <tbody>
+                                    {renderTableRows()}
+                                </tbody>
+                            </table>
+                        </div>
                         <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200 mt-6">
                             <button
                                 type="button"
