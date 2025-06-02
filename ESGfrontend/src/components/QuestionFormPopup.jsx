@@ -50,16 +50,24 @@ const QuestionFormPopup = ({ questionData, onSubmit, onClose, initialValues = {}
         if (hasErrors || requiredFields.length > 0) {
             setErrors((prev) => ({ ...prev, form: requiredFields.join(" ") }));
             return;
-        }
+        }        // Prepare the response object according to QuestionResponse model
+        const questionResponse = {
+            string_value: questionData.has_string_value ? formData.string_value : undefined,
+            decimal_value: questionData.has_decimal_value ? Number.parseFloat(formData.decimal_value) : undefined,
+            bool_value: questionData.has_boolean_value ? formData.boolean_value : undefined,
+            link: questionData.has_link ? formData.link : undefined,
+            note: questionData.has_note ? formData.note : undefined
+        };
+
+        // Clean up undefined values
+        Object.keys(questionResponse).forEach(key => 
+            questionResponse[key] === undefined && delete questionResponse[key]
+        );
+        
+        // Format the response according to QuestionUpdate model
         const response = {
             question_id: questionData.question_id,
-            response: {
-                ...(questionData.has_string_value && formData.string_value && { string_value: formData.string_value }),
-                ...(questionData.has_decimal_value && formData.decimal_value && { decimal_value: Number.parseFloat(formData.decimal_value) }),
-                ...(questionData.has_boolean_value && formData.boolean_value !== undefined && { bool_value: formData.boolean_value }),
-                ...(questionData.has_link && formData.link && { link: formData.link }),
-                ...(questionData.has_note && formData.note && { note: formData.note }),
-            },
+            response: questionResponse // Nest under 'response' as required by the API
         };
         console.log('[QuestionFormPopup] onSubmit response:', response);
         onSubmit(response);

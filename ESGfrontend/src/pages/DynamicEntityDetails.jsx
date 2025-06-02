@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGetSubmodulesByModuleIdQuery, useGetQuestionResponsesMutation } from '../api/apiSlice';
+import { 
+    useGetSubmodulesByModuleIdQuery, 
+    useGetQuestionResponsesMutation,
+    useSubmitQuestionAnswerMutation 
+} from '../api/apiSlice';
 import Layout from '../components/Layout';
 import Breadcrumb from '../components/Breadcrumb';
 import SubHeader from '../components/SubHeader';
@@ -96,30 +100,35 @@ const DynamicEntityDetails = () => {
     }, [currentSubmodule]);
     const toggleCategory = (catId) => {
         setOpenCategories(prev => ({ ...prev, [catId]: !prev[catId] }));
-    };
-
-    // Modal state for editing answers
+    };    // Modal state for editing answers
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
-    const [answers, setAnswers] = useState({});    const fetchAnswers = async (questionId) => {
+    const [answers, setAnswers] = useState({});
+    
+    // RTK Query mutations
+    const [submitAnswer] = useSubmitQuestionAnswerMutation();    const handleEditSubmit = async (questionId, updatedData) => {
         try {
-            // Use the same mutation we use for bulk fetching
-            const response = await getQuestionResponses([questionId]).unwrap();
-            if (response && response.length > 0) {
-                setAnswers((prev) => ({ ...prev, [questionId]: response[0] }));
+            if (!questionId || !updatedData) {
+                console.error("Missing required data:", { questionId, updatedData });
+                return;
             }
-        } catch (error) {
-            console.error("Error fetching answer:", error);
-        }
-    };
 
-    const handleEditSubmit = async (questionId, updatedData) => {
-        try {
-            await api.post(`/questions/${questionId}/answers`, updatedData);
+            // Restructure the data to match the API's expected format
+            const answerData = updatedData.response || {};
+            console.log("Submitting answer:", { questionId, answerData });
+            
+            const result = await submitAnswer({
+                questionId,
+                answerData
+            }).unwrap();
             
             // After successful submission, fetch fresh data for this question
             const response = await getQuestionResponses([questionId]).unwrap();
-            if (response && response.length > 0) {
-                setAnswers((prev) => ({ ...prev, [questionId]: response[0] }));
+            
+            // Handle different response formats
+            if (Array.isArray(response) && response.length > 0) {
+                setAnswers(prev => ({ ...prev, [questionId]: response[0] }));
+            } else if (response && typeof response === 'object') {
+                setAnswers(prev => ({ ...prev, [questionId]: response[questionId] }));
             }
             
             setEditModalQuestionId(null); // Close the edit modal

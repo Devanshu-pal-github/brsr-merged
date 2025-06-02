@@ -220,6 +220,59 @@ export const apiSlice = createApi({
         }
       }),
     }),
+    submitQuestionAnswer: builder.mutation({
+      query: ({ questionId, answerData }) => {
+        if (!questionId) throw new Error('Question ID is required');
+        if (!answerData || typeof answerData !== 'object') throw new Error('Answer data is required and must be an object');
+        
+        // Get the context data from localStorage
+        const company_id = localStorage.getItem("company_id");
+        const plant_id = localStorage.getItem("plant_id");
+        const financial_year = localStorage.getItem("financial_year");
+
+        if (!company_id || !plant_id || !financial_year) {
+          throw new Error('Missing required context: company_id, plant_id, or financial_year');
+        }
+
+        // Create the response object according to QuestionResponse model
+        const response = {};
+        // Safely extract values with type checking
+        if (typeof answerData.string_value === 'string') response.string_value = answerData.string_value;
+        if (typeof answerData.decimal_value === 'number') response.decimal_value = answerData.decimal_value;
+        if (typeof answerData.bool_value === 'boolean') response.bool_value = answerData.bool_value;
+        if (typeof answerData.link === 'string') response.link = answerData.link;
+        if (typeof answerData.note === 'string') response.note = answerData.note;
+
+        // Format the data according to the QuestionUpdate model
+        const questionUpdate = {
+          question_id: questionId,
+          response: response // Nest the response object as required by the API
+        };
+
+        return {
+          url: `/company/${company_id}/plants/${plant_id}/reportsNew/${financial_year}`,
+          method: 'PATCH',
+          body: [questionUpdate], // The API expects an array of updates
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        };
+      },
+      // Add error handling and transformResponse
+      transformResponse: (response) => {
+        console.log('📥 Answer submission response:', response);
+        return response;
+      },
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          console.log('✅ Answer submitted successfully:', data);
+        } catch (error) {
+          console.error('❌ Error submitting answer:', error);
+          throw error;
+        }
+      }
+    }),
   }),
 });
 
@@ -232,4 +285,5 @@ export const {
   useCreateEmployeeMutation,
   useGetSubmodulesByModuleIdQuery,
   useGetQuestionResponsesMutation,
+  useSubmitQuestionAnswerMutation,
 } = apiSlice;
