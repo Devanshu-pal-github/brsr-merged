@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { FaTimes, FaUser, FaRobot, FaPaperPlane, FaClipboard, FaPen, FaQuestionCircle, FaListAlt, FaBookOpen, FaSearch, FaChartLine } from 'react-icons/fa';
+import { FaTimes, FaUser, FaRobot, FaPaperPlane, FaClipboard, FaPen, FaQuestionCircle, FaListAlt, FaBookOpen, FaSearch, FaChartLine, FaUndo } from 'react-icons/fa';
 import { BiCheckDouble } from 'react-icons/bi';
 import axios from 'axios';
 import { AppContext } from './AppProvider';
@@ -9,6 +9,14 @@ import { INACTIVITY_TIMEOUTS_CHATBOT, DEFAULT_API_KEY_MESSAGE } from './constant
 import { renderMarkdown } from './renderMarkdown';
 
 const ChatbotHeader = ({ onClose, activeQuestion, isApiKeyAvailable }) => {
+    const context = useContext(AppContext);
+    const { dispatch } = context;
+
+    const handleClearContext = () => {
+        dispatch({ type: 'SET_ACTIVE_QUESTION', payload: null });
+        localStorage.removeItem('questionData');
+    };
+
     return (
         <div className="bg-gradient-to-r from-slate-50/90 to-indigo-50/90 p-3 border-b border-slate-200/30 rounded-b-2xl shadow-sm animate-fade-in">
             <div className="flex items-center justify-between">
@@ -35,12 +43,23 @@ const ChatbotHeader = ({ onClose, activeQuestion, isApiKeyAvailable }) => {
                         </div>
                     </div>
                 </div>
-                <div
-                    onClick={onClose}
-                    className="p-1 rounded-md bg-slate-100/50 hover:bg-indigo-100/50 text-slate-600 hover:text-indigo-700 cursor-pointer transition-all duration-200 animate-slide-up"
-                    aria-label="Close Assistant"
-                >
-                    <FaTimes className="w-4 h-4" />
+                <div className="flex gap-2">
+                    {activeQuestion && (
+                        <div
+                            onClick={handleClearContext}
+                            className="p-1 rounded-md bg-slate-100/50 hover:bg-indigo-100/50 text-slate-600 hover:text-indigo-700 cursor-pointer transition-all duration-200 animate-slide-up"
+                            aria-label="Clear Context"
+                        >
+                            <FaUndo className="w-4 h-4" />
+                        </div>
+                    )}
+                    <div
+                        onClick={onClose}
+                        className="p-1 rounded-md bg-slate-100/50 hover:bg-indigo-100/50 text-slate-600 hover:text-indigo-700 cursor-pointer transition-all duration-200 animate-slide-up"
+                        aria-label="Close Assistant"
+                    >
+                        <FaTimes className="w-4 h-4" />
+                    </div>
                 </div>
             </div>
             {activeQuestion && (
@@ -97,7 +116,11 @@ const ChatbotMessages = ({ messages, handleCopyMessage, copiedMessageId, isLoadi
             {messages.map((msg, index) => (
                 <div
                     key={msg.id}
-                    className={`flex flex-col animate-message-appear ${msg.sender === "user" ? "items-end" : "items-start"
+                    className={`flex flex-col animate-message-appear ${
+                        
+                        
+                        
+                        msg.sender === "user" ? "items-end" : "items-start"
                         }`}
                     style={{ animationDelay: `${index * 0.05}s` }}
                 >
@@ -301,6 +324,20 @@ const ChatbotWindow = ({ onClose }) => {
     const inputRef = useRef(null);
     const eventSourceRef = useRef(null);
 
+    // Helper function to format answer summary
+    const formatAnswerSummary = (answer) => {
+        if (!answer) return '';
+        
+        const parts = [];
+        if (answer.string_value) parts.push(answer.string_value);
+        if (answer.decimal_value !== undefined) parts.push(`Value: ${answer.decimal_value}`);
+        if (answer.bool_value !== undefined) parts.push(`Boolean: ${answer.bool_value}`);
+        if (answer.link) parts.push(`Reference: ${answer.link}`);
+        if (answer.note) parts.push(`Additional note: ${answer.note}`);
+        
+        return parts.join(' | ');
+    };
+
     // Check localStorage for stored question data
     useEffect(() => {
         const storedData = JSON.parse(localStorage.getItem('questionData') || '{}');
@@ -320,6 +357,7 @@ const ChatbotWindow = ({ onClose }) => {
     }, [state.isChatbotOpen]); // Check whenever chatbot is opened
 
     const activeQuestion = storedQuestionData || state.questions?.find(q => q.question_id === state.activeQuestionId);
+    console.log('Active question:', activeQuestion);
 
     const geminiService = {
         isApiKeyAvailable: () => true,
@@ -398,7 +436,13 @@ const ChatbotWindow = ({ onClose }) => {
                     ...activeQuestion.metadata,
                     question_text: activeQuestion.metadata?.question_text || activeQuestion.question_text
                 },
-                answer: activeQuestion.answer || state.answers[activeQuestion.question_id || activeQuestion.id] || ''
+                answer: activeQuestion.currentAnswer ? {
+                    ...activeQuestion.currentAnswer,
+                    summary: formatAnswerSummary(activeQuestion.currentAnswer)
+                } : {
+                    ...state.answers[activeQuestion.question_id || activeQuestion.id] || {},
+                    summary: formatAnswerSummary(state.answers[activeQuestion.question_id || activeQuestion.id])
+                }
             } : null;
 
             console.log('Sending message with context:', questionContext);
