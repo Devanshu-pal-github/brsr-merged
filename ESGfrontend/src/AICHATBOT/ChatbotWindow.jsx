@@ -14,14 +14,25 @@ const ChatbotHeader = ({ onClose, activeQuestion, isApiKeyAvailable }) => {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <div className="relative w-5 h-5 bg-white/90 rounded-md flex items-center justify-center border border-slate-200/30 animate-pulse-gentle">
-                        <div className="w-2.5 h-2.5 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-sm"></div>
-                        <div className="absolute -top-0.5 -right-0.5 w-1 h-1 bg-emerald-400 rounded-full border border-white/80"></div>
+                        {activeQuestion && activeQuestion.metadata ? (
+                            <span className="text-sm">💡</span>
+                        ) : (
+                            <div className="w-2.5 h-2.5 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-sm"></div>
+                        )}
+                        <div className={`absolute -top-0.5 -right-0.5 w-1 h-1 ${activeQuestion && activeQuestion.metadata ? 'bg-blue-400' : 'bg-emerald-400'} rounded-full border border-white/80`}></div>
                     </div>
                     <div>
-                        <h2 className="text-sm font-medium text-slate-800">AI Assistant</h2>
+                        <div className="flex items-center gap-2">
+                            <h2 className="text-sm font-medium text-slate-800">AI Assistant</h2>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                                activeQuestion && activeQuestion.metadata ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
+                            }`}>
+                                {activeQuestion && activeQuestion.metadata ? 'Question Mode' : 'Generic Mode'}
+                            </span>
+                        </div>
                         <div className="flex items-center gap-1 text-[11px] text-slate-600">
-                            <div className="w-1 h-1 bg-emerald-400 rounded-full animate-pulse"></div>
-                            <span>Active</span>
+                            <div className={`w-1 h-1 ${activeQuestion && activeQuestion.metadata ? 'bg-blue-400' : 'bg-emerald-400'} rounded-full animate-pulse`}></div>
+                            <span>{activeQuestion && activeQuestion.metadata ? 'Question Context Active' : 'Generic Assistant'}</span>
                         </div>
                     </div>
                 </div>
@@ -33,25 +44,34 @@ const ChatbotHeader = ({ onClose, activeQuestion, isApiKeyAvailable }) => {
                     <FaTimes className="w-4 h-4" />
                 </div>
             </div>
-            <div className="mt-2 text-[11px] text-slate-700 animate-slide-up border-t border-slate-200/40 pt-1">
-                {activeQuestion ? (
-                    <div className="flex items-center gap-1">
-                        <div className="w-1 h-1 bg-indigo-400 rounded-full animate-pulse"></div>
-                        <span className="truncate max-w-[200px]">{activeQuestion.question_text.substring(0, 30)}...</span>
+            {activeQuestion && (
+                <div className="mt-2 text-[11px] text-slate-700 animate-slide-up border-t border-slate-200/40 pt-1">
+                    <div className="flex flex-col gap-1">
+                        {activeQuestion.metadata ? (
+                            <>
+                                <div className="flex items-center gap-1">
+                                    <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse"></div>
+                                    <span className="font-medium">Current Question:</span>
+                                </div>
+                                <div className="bg-blue-50 text-blue-700 p-2 rounded-md line-clamp-2">
+                                    {activeQuestion.metadata.question_text}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex items-center gap-1">
+                                <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse"></div>
+                                <span className="truncate max-w-[200px]">{activeQuestion.question_text}</span>
+                            </div>
+                        )}
                     </div>
-                ) : (
-                    <div className="flex items-center gap-1">
-                        <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse"></div>
-                        <span>BRSR Assistant Mode</span>
-                    </div>
-                )}
-                {!isApiKeyAvailable && (
-                    <div className="flex items-center gap-1 mt-1 text-amber-600">
-                        <div className="w-1 h-1 bg-amber-400 rounded-full animate-pulse"></div>
-                        <span>API Config Needed</span>
-                    </div>
-                )}
-            </div>
+                </div>
+            )}
+            {!isApiKeyAvailable && (
+                <div className="flex items-center gap-1 mt-1 text-amber-600">
+                    <div className="w-1 h-1 bg-amber-400 rounded-full animate-pulse"></div>
+                    <span>API Config Needed</span>
+                </div>
+            )}
         </div>
     );
 };
@@ -194,50 +214,33 @@ const ChatbotMessages = ({ messages, handleCopyMessage, copiedMessageId, isLoadi
 };
 
 
-const ChatbotInput = ({
-  input,
-  setInput,
-  handleSendMessage,
-  isLoading,
-  isWaitingForTerm,
-  isApiKeyAvailable,
-  inputRef,
-}) => {
-  const sendMessage = () => {
-    if (!input.trim() || isLoading) return;
-    handleSendMessage();
-    setTimeout(() => {
-      setInput("");
-      if (inputRef?.current) inputRef.current.focus();
-    }, 10);
-  };
 
-  return (
-    <div className="p-2 bg-gradient-to-r from-slate-50/90 to-indigo-50/90 border-t border-slate-200/30 animate-fade-in">
-      <div className="flex items-center gap-1.5">
-        <input
-          ref={inputRef}
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder={isWaitingForTerm ? "Enter term..." : "Type message..."}
-          className="flex-1 px-2.5 py-1.5 rounded-lg text-sm bg-white/90 text-slate-800 placeholder-slate-400/70 border border-slate-200/30 focus:outline-none focus:ring-1 focus:ring-indigo-400/50 disabled:opacity-50 transition-all duration-200"
-          disabled={isLoading || !isApiKeyAvailable}
-        />
-        <div
-          onClick={sendMessage}
-          className="p-1.5 rounded-lg bg-slate-100/50 hover:bg-indigo-100/50 text-slate-600 hover:text-indigo-700 disabled:opacity-40 cursor-pointer transition-all duration-200 animate-slide-up"
-          aria-label="Send message"
-        >
-          <FaPaperPlane className="w-3 h-3" />
+// Component 3: ChatbotInput
+const ChatbotInput = ({ input, setInput, handleSendMessage, isLoading, isWaitingForTerm, isApiKeyAvailable, inputRef }) => {
+    return (
+        <div className="p-2 bg-gradient-to-r from-slate-50/90 to-indigo-50/90 border-t border-slate-200/30 animate-fade-in">
+            <div className="flex items-center gap-1.5">
+                <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && !isLoading && handleSendMessage()}
+                    placeholder={isWaitingForTerm ? "Enter term..." : "Type message..."}
+                    className="flex-1 px-2.5 py-1.5 rounded-lg text-sm bg-white/90 text-slate-800 placeholder-slate-400/70 border border-slate-200/30 focus:outline-none focus:ring-1 focus:ring-indigo-400/50 disabled:opacity-50 transition-all duration-200"
+                    disabled={isLoading || !isApiKeyAvailable}
+                />
+                <div
+                    onClick={handleSendMessage}
+                    className="p-1.5 rounded-lg bg-slate-100/50 hover:bg-indigo-100/50 text-slate-600 hover:text-indigo-700 disabled:opacity-40 cursor-pointer transition-all duration-200 animate-slide-up"
+                    aria-label="Send message"
+                >
+                    <FaPaperPlane className="w-3 h-3" />
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
-
-
 
 // Component 4: ChatbotQuickActions
 const ChatbotQuickActions = ({ quickActions, handleAction, isLoading, isApiKeyAvailable, activeQuestion }) => {
@@ -297,10 +300,29 @@ const ChatbotWindow = ({ onClose }) => {
     const [error, setError] = useState(null);
     const [isWaitingForTerm, setIsWaitingForTerm] = useState(false);
     const [copiedMessageId, setCopiedMessageId] = useState(null);
+    const [storedQuestionData, setStoredQuestionData] = useState(null);
     const inputRef = useRef(null);
     const eventSourceRef = useRef(null);
 
-    const activeQuestion = state.questions?.find(q => q.question_id === state.activeQuestionId);
+    // Check localStorage for stored question data
+    useEffect(() => {
+        const storedData = JSON.parse(localStorage.getItem('questionData') || '{}');
+        // Get the most recently edited question
+        const latestQuestion = Object.entries(storedData)
+            .sort((a, b) => new Date(b[1].timestamp) - new Date(a[1].timestamp))[0];
+        
+        if (latestQuestion) {
+            const [questionId, data] = latestQuestion;
+            setStoredQuestionData({
+                id: questionId,
+                ...data
+            });
+        } else {
+            setStoredQuestionData(null);
+        }
+    }, [state.isChatbotOpen]); // Check whenever chatbot is opened
+
+    const activeQuestion = storedQuestionData || state.questions?.find(q => q.question_id === state.activeQuestionId);
 
     const geminiService = {
         isApiKeyAvailable: () => true,
@@ -358,104 +380,88 @@ const ChatbotWindow = ({ onClose }) => {
             });
     };
 
-const handleSendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+    const handleSendMessage = async () => {
+        if (!input.trim() || isLoading) return;
 
-    const currentInput = input;
-    addMessage('user', currentInput);
-    setInput(''); // Clear input immediately
-    setIsLoading(true);
-    setError(null);
+        const currentInput = input;
+        addMessage('user', currentInput);
+        setInput('');
+        setIsLoading(true);
+        setError(null);
 
-    try {
-        let responseText = '';
-        const messageId = Date.now().toString() + Math.random().toString(36).substring(2, 7);
-        eventSourceRef.current = new EventSource(
-            `http://localhost:8000/api/messages/stream?message=${encodeURIComponent(currentInput)}`
-        );
+        try {
+            let responseText = '';
+            const messageId = Date.now().toString() + Math.random().toString(36).substring(2, 7);
+            eventSourceRef.current = new EventSource(
+                `http://localhost:8000/api/messages/stream?message=${encodeURIComponent(currentInput)}`
+            );
 
-        eventSourceRef.current.onmessage = (event) => {
-            if (event.data) {
-                responseText += event.data;
+            eventSourceRef.current.onmessage = (event) => {
+                if (event.data) {
+                    responseText += event.data;
+                    setMessages((prev) => {
+                        const updated = [...prev];
+                        const aiMessageIndex = updated.findIndex((msg) => msg.id === messageId);
+                        const followUpActions = ['DEEP_DIVE', 'SUGGEST_USER_FOLLOWUPS', 'DEFINE_TERM'];
+                        if (aiMessageIndex === -1) {
+                            updated.push({
+                                id: messageId,
+                                sender: 'ai',
+                                text: responseText,
+                                timestamp: new Date().toISOString(),
+                                isMarkdown: true,
+                                followUpActions,
+                                originalUserMessage: currentInput,
+                            });
+                        } else {
+                            updated[aiMessageIndex].text = responseText;
+                        }
+                        return updated;
+                    });
+                }
+            };
+
+            eventSourceRef.current.addEventListener('complete', async () => {
+                eventSourceRef.current?.close();
+                eventSourceRef.current = null;
+
+                await axios.post('http://localhost:8000/api/messages', { message: currentInput });
+
+                const carouselPayload = await convertToCarouselPayload(responseText, geminiService, 150);
+                const finalText = carouselPayload
+                    ? `✨ **Comprehensive Response Ready** ✨\n\nI've prepared a detailed ${carouselPayload.slides.length}-slide presentation covering all aspects of your request. Use the carousel below to navigate through the structured content.`
+                    : responseText;
+
                 setMessages((prev) => {
                     const updated = [...prev];
                     const aiMessageIndex = updated.findIndex((msg) => msg.id === messageId);
-                    const followUpActions = ['DEEP_DIVE', 'SUGGEST_USER_FOLLOWUPS', 'DEFINE_TERM'];
-                    if (aiMessageIndex === -1) {
-                        updated.push({
-                            id: messageId,
-                            sender: 'ai',
-                            text: responseText,
-                            timestamp: new Date().toISOString(),
-                            isMarkdown: true,
-                            followUpActions,
-                            originalUserMessage: currentInput,
-                        });
-                    } else {
-                        updated[aiMessageIndex].text = responseText;
+                    if (aiMessageIndex !== -1) {
+                        updated[aiMessageIndex].text = finalText;
+                        updated[aiMessageIndex].carouselPayload = carouselPayload;
                     }
                     return updated;
                 });
-            }
-        };
 
-        eventSourceRef.current.addEventListener('complete', async () => {
-            eventSourceRef.current?.close();
-            eventSourceRef.current = null;
-
-            await axios.post('http://localhost:8000/api/messages', { message: currentInput });
-
-            const carouselPayload = await convertToCarouselPayload(responseText, geminiService, 150);
-            const finalText = carouselPayload
-                ? `✨ **Comprehensive Response Ready** ✨\n\nI've prepared a detailed ${carouselPayload.slides.length}-slide presentation covering all aspects of your request. Use the carousel below to navigate through the structured content.`
-                : responseText;
-
-            setMessages((prev) => {
-                const updated = [...prev];
-                const aiMessageIndex = updated.findIndex((msg) => msg.id === messageId);
-                if (aiMessageIndex !== -1) {
-                    updated[aiMessageIndex].text = finalText;
-                    updated[aiMessageIndex].carouselPayload = carouselPayload;
-                }
-                return updated;
+                setIsLoading(false);
+                inputRef.current?.focus();
             });
 
+            eventSourceRef.current.onerror = (err) => {
+                console.error('Stream error:', err);
+                setError('Failed to stream AI response. Check console for details.');
+                eventSourceRef.current?.close();
+                eventSourceRef.current = null;
+                setIsLoading(false);
+                inputRef.current?.focus();
+            };
+        } catch (err) {
+            console.error('Chatbot send message error:', err);
+            setError('An error occurred.');
+            addMessage('system', 'An error occurred.', false);
             setIsLoading(false);
-            // Use a slight delay to ensure DOM is updated before focusing
-            setTimeout(() => {
-                if (inputRef.current) {
-                    inputRef.current.focus();
-                    inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-            }, 100);
-        });
-
-        eventSourceRef.current.onerror = (err) => {
-            console.error('Stream error:', err);
-            setError('Failed to stream AI response. Check console for details.');
-            eventSourceRef.current?.close();
-            eventSourceRef.current = null;
-            setIsLoading(false);
-            setTimeout(() => {
-                if (inputRef.current) {
-                    inputRef.current.focus();
-                    inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-            }, 100);
-        };
-    } catch (err) {
-        console.error('Chatbot send message error:', err);
-        setError('An error occurred.');
-        addMessage('system', 'An error occurred.', false);
-        setIsLoading(false);
-        setTimeout(() => {
-            if (inputRef.current) {
-                inputRef.current.focus();
-                inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }, 100);
-    }
-};
+            inputRef.current?.focus();
+        }
+    };
 
     const requiresActiveQuestion = [
         'DRAFT_ANSWER', 'EXPLAIN_QUESTION', 'SUGGEST_INPUT_ELEMENTS', 'SHOW_EXAMPLE_ANSWER',

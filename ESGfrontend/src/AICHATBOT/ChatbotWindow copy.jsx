@@ -14,14 +14,25 @@ const ChatbotHeader = ({ onClose, activeQuestion, isApiKeyAvailable }) => {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <div className="relative w-5 h-5 bg-white/90 rounded-md flex items-center justify-center border border-slate-200/30 animate-pulse-gentle">
-                        <div className="w-2.5 h-2.5 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-sm"></div>
-                        <div className="absolute -top-0.5 -right-0.5 w-1 h-1 bg-emerald-400 rounded-full border border-white/80"></div>
+                        {activeQuestion && activeQuestion.metadata ? (
+                            <span className="text-sm">💡</span>
+                        ) : (
+                            <div className="w-2.5 h-2.5 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-sm"></div>
+                        )}
+                        <div className={`absolute -top-0.5 -right-0.5 w-1 h-1 ${activeQuestion && activeQuestion.metadata ? 'bg-blue-400' : 'bg-emerald-400'} rounded-full border border-white/80`}></div>
                     </div>
                     <div>
-                        <h2 className="text-sm font-medium text-slate-800">AI Assistant</h2>
+                        <div className="flex items-center gap-2">
+                            <h2 className="text-sm font-medium text-slate-800">AI Assistant</h2>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                                activeQuestion && activeQuestion.metadata ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
+                            }`}>
+                                {activeQuestion && activeQuestion.metadata ? 'Question Mode' : 'Generic Mode'}
+                            </span>
+                        </div>
                         <div className="flex items-center gap-1 text-[11px] text-slate-600">
-                            <div className="w-1 h-1 bg-emerald-400 rounded-full animate-pulse"></div>
-                            <span>Active</span>
+                            <div className={`w-1 h-1 ${activeQuestion && activeQuestion.metadata ? 'bg-blue-400' : 'bg-emerald-400'} rounded-full animate-pulse`}></div>
+                            <span>{activeQuestion && activeQuestion.metadata ? 'Question Context Active' : 'Generic Assistant'}</span>
                         </div>
                     </div>
                 </div>
@@ -33,25 +44,34 @@ const ChatbotHeader = ({ onClose, activeQuestion, isApiKeyAvailable }) => {
                     <FaTimes className="w-4 h-4" />
                 </div>
             </div>
-            <div className="mt-2 text-[11px] text-slate-700 animate-slide-up border-t border-slate-200/40 pt-1">
-                {activeQuestion ? (
-                    <div className="flex items-center gap-1">
-                        <div className="w-1 h-1 bg-indigo-400 rounded-full animate-pulse"></div>
-                        <span className="truncate max-w-[200px]">{activeQuestion.question_text.substring(0, 30)}...</span>
+            {activeQuestion && (
+                <div className="mt-2 text-[11px] text-slate-700 animate-slide-up border-t border-slate-200/40 pt-1">
+                    <div className="flex flex-col gap-1">
+                        {activeQuestion.metadata ? (
+                            <>
+                                <div className="flex items-center gap-1">
+                                    <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse"></div>
+                                    <span className="font-medium">Current Question:</span>
+                                </div>
+                                <div className="bg-blue-50 text-blue-700 p-2 rounded-md line-clamp-2">
+                                    {activeQuestion.metadata.question_text}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex items-center gap-1">
+                                <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse"></div>
+                                <span className="truncate max-w-[200px]">{activeQuestion.question_text}</span>
+                            </div>
+                        )}
                     </div>
-                ) : (
-                    <div className="flex items-center gap-1">
-                        <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse"></div>
-                        <span>BRSR Assistant Mode</span>
-                    </div>
-                )}
-                {!isApiKeyAvailable && (
-                    <div className="flex items-center gap-1 mt-1 text-amber-600">
-                        <div className="w-1 h-1 bg-amber-400 rounded-full animate-pulse"></div>
-                        <span>API Config Needed</span>
-                    </div>
-                )}
-            </div>
+                </div>
+            )}
+            {!isApiKeyAvailable && (
+                <div className="flex items-center gap-1 mt-1 text-amber-600">
+                    <div className="w-1 h-1 bg-amber-400 rounded-full animate-pulse"></div>
+                    <span>API Config Needed</span>
+                </div>
+            )}
         </div>
     );
 };
@@ -280,10 +300,29 @@ const ChatbotWindow = ({ onClose }) => {
     const [error, setError] = useState(null);
     const [isWaitingForTerm, setIsWaitingForTerm] = useState(false);
     const [copiedMessageId, setCopiedMessageId] = useState(null);
+    const [storedQuestionData, setStoredQuestionData] = useState(null);
     const inputRef = useRef(null);
     const eventSourceRef = useRef(null);
 
-    const activeQuestion = state.questions?.find(q => q.question_id === state.activeQuestionId);
+    // Check localStorage for stored question data
+    useEffect(() => {
+        const storedData = JSON.parse(localStorage.getItem('questionData') || '{}');
+        // Get the most recently edited question
+        const latestQuestion = Object.entries(storedData)
+            .sort((a, b) => new Date(b[1].timestamp) - new Date(a[1].timestamp))[0];
+        
+        if (latestQuestion) {
+            const [questionId, data] = latestQuestion;
+            setStoredQuestionData({
+                id: questionId,
+                ...data
+            });
+        } else {
+            setStoredQuestionData(null);
+        }
+    }, [state.isChatbotOpen]); // Check whenever chatbot is opened
+
+    const activeQuestion = storedQuestionData || state.questions?.find(q => q.question_id === state.activeQuestionId);
 
     const geminiService = {
         isApiKeyAvailable: () => true,

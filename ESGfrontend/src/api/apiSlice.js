@@ -264,6 +264,51 @@ export const apiSlice = createApi({
         }
       }
     }),
+    // New endpoint to manage question data
+    storeQuestionData: builder.mutation({
+      query: ({ moduleId, questionId, metadata, answer }) => ({
+        url: '/questionData',
+        method: 'POST',
+        body: {
+          moduleId,
+          questionId,
+          metadata,
+          answer,
+        }
+      }),
+      async onQueryStarted({ moduleId, questionId, metadata, answer }, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          console.log('✅ Stored question data:', data);
+          
+          // Update local storage with question data
+          const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
+          storedQuestions[questionId] = {
+            moduleId,
+            metadata,
+            answer,
+            timestamp: new Date().toISOString()
+          };
+          localStorage.setItem('questionData', JSON.stringify(storedQuestions));
+          
+        } catch (error) {
+          console.error('❌ Error storing question data:', error);
+        }
+      }
+    }),
+    
+    // Get stored question data
+    getStoredQuestions: builder.query({
+      query: () => '/questionData',
+      transformResponse: (response) => {
+        // Also check localStorage for any stored questions
+        const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
+        return {
+          ...response,
+          ...storedQuestions
+        };
+      }
+    }),
   }),
 });
 
@@ -277,4 +322,6 @@ export const {
   useGetSubmodulesByModuleIdQuery,
   useGetQuestionResponsesMutation,
   useSubmitQuestionAnswerMutation,
+  useStoreQuestionDataMutation,
+  useGetStoredQuestionsQuery,
 } = apiSlice;

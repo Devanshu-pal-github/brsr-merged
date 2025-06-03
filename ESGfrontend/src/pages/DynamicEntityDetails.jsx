@@ -106,9 +106,48 @@ const DynamicEntityDetails = () => {
         console.log('aiChatOpen state changed:', aiChatOpen);
     }, [aiChatOpen]);
 
-    const [submitAnswer] = useSubmitQuestionAnswerMutation();
+    const [submitAnswer] = useSubmitQuestionAnswerMutation();    const handleEditClick = (question) => {
+        // Get current answer for this question from state
+        const currentAnswer = answers[question.question_id] || {};
+        
+        // Get question metadata when edit is clicked
+        const metadata = {
+            question_text: question.question,
+            has_string_value: question.has_string_value,
+            has_decimal_value: question.has_decimal_value,
+            has_boolean_value: question.has_boolean_value,
+            has_link: question.has_link,
+            has_note: question.has_note,
+            string_value_required: question.string_value_required,
+            decimal_value_required: question.decimal_value_required,
+            boolean_value_required: question.boolean_value_required,
+            link_required: question.link_required,
+            note_required: question.note_required,
+            type: question.type
+        };
 
-    const handleEditClick = (question) => {
+        // Store the current question data
+        const questionData = {
+            metadata,
+            currentAnswer: {
+                string_value: currentAnswer.string_value,
+                decimal_value: currentAnswer.decimal_value,
+                bool_value: currentAnswer.bool_value,
+                link: currentAnswer.link,
+                note: currentAnswer.note,
+                table: currentAnswer.table
+            },
+            timestamp: new Date().toISOString(),
+            editCount: 1
+        };
+
+        // Store in localStorage
+        const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
+        storedQuestions[question.question_id] = questionData;
+        localStorage.setItem('questionData', JSON.stringify(storedQuestions));
+        console.log('Stored question data:', questionData);
+
+        // Update state for modal
         if (question.type === 'table') {
             setEditModalTableQuestion(question);
         } else {
@@ -119,13 +158,38 @@ const DynamicEntityDetails = () => {
     const handleEditClose = () => {
         setEditModalQuestionId(null);
         setEditModalTableQuestion(null);
-    };
+    };    const handleEditSuccess = (questionId, result) => {
+        // Update stored question data with the new answer while preserving history
+        const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
+        if (storedQuestions[questionId]) {
+            const currentTimestamp = new Date().toISOString();
+            
+            // Store previous answer in history
+            const history = storedQuestions[questionId].history || [];
+            history.push({
+                previousAnswer: storedQuestions[questionId].currentAnswer,
+                timestamp: storedQuestions[questionId].timestamp,
+                editCount: storedQuestions[questionId].editCount
+            });
 
-    const handleEditSuccess = (questionId, result) => {
+            storedQuestions[questionId] = {
+                ...storedQuestions[questionId],
+                currentAnswer: result,
+                previousAnswer: storedQuestions[questionId].currentAnswer, // Keep immediate previous answer
+                lastUpdated: currentTimestamp,
+                history: history.slice(-5) // Keep last 5 changes
+            };
+            
+            localStorage.setItem('questionData', JSON.stringify(storedQuestions));
+            console.log('Updated question data after submit:', storedQuestions[questionId]);
+        }
+
+        // Update answers state
         setAnswers(prev => ({
             ...prev,
             [questionId]: result
         }));
+        
         handleEditClose();
     };
 

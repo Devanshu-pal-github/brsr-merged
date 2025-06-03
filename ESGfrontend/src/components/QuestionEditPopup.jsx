@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { X, CheckCircle, AlertCircle, LinkIcon, FileText, Hash, Type } from "lucide-react";
-import { useSubmitQuestionAnswerMutation } from "../api/apiSlice";
+import { useSubmitQuestionAnswerMutation, useStoreQuestionDataMutation } from "../api/apiSlice";
 
-const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess }) => {
+const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, moduleId }) => {
     const [formData, setFormData] = useState(initialAnswer || {});
     const [errors, setErrors] = useState({});
     const [isVisible, setIsVisible] = useState(false);
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
+    const [storeQuestionData] = useStoreQuestionDataMutation();
 
     useEffect(() => { 
         setIsVisible(true);
@@ -69,32 +70,40 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess }) => {
                 }
             };
 
-            // Clean up undefined values from the nested response object
+            // Clean up undefined values
             Object.keys(response.response).forEach(key => 
                 response.response[key] === undefined && delete response.response[key]
-            );            const payload = {
-                questionId: question.question_id,
-                answerData: {
-                    question_id: question.question_id,
-                    string_value: formData.string_value || null,
-                    decimal_value: formData.decimal_value ? Number(formData.decimal_value) : null,
-                    bool_value: formData.boolean_value || null,
-                    link: formData.link || null,
-                    note: formData.note || null
-                }
-            };
-
-            // Clean up nulls
-            Object.keys(payload.answerData).forEach(key => 
-                payload.answerData[key] === null && delete payload.answerData[key]
             );
 
-            console.log('📥 Submitting answer:', payload);
-            const result = await submitAnswer(payload).unwrap();
+            console.log('📥 Submitting answer:', response);
+            const result = await submitAnswer({
+                questionId: question.question_id,
+                answerData: response.response
+            }).unwrap();
             console.log('✅ Answer submitted successfully:', result);
+
+            // Store question data including metadata and answer
+            await storeQuestionData({
+                moduleId,
+                questionId: question.question_id,
+                metadata: {
+                    question_text: question.question,
+                    has_string_value: question.has_string_value,
+                    has_decimal_value: question.has_decimal_value,
+                    has_boolean_value: question.has_boolean_value,
+                    has_link: question.has_link,
+                    has_note: question.has_note,
+                    string_value_required: question.string_value_required,
+                    decimal_value_required: question.decimal_value_required,
+                    boolean_value_required: question.boolean_value_required,
+                    link_required: question.link_required,
+                    note_required: question.note_required
+                },
+                answer: response.response
+            });
             
             // Pass back the updated data
-            onSuccess?.(question.question_id, payload.answerData);
+            onSuccess?.(question.question_id, response.response);
             onClose();
         } catch (error) {
             console.error('Error submitting answer:', error);
