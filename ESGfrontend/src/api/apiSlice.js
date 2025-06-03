@@ -274,25 +274,17 @@ export const apiSlice = createApi({
           questionId,
           metadata,
           answer,
+        },
+        headers: {
+          'Content-Type': 'application/json',
         }
       }),
       async onQueryStarted({ moduleId, questionId, metadata, answer }, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          console.log('✅ Stored question data:', data);
-          
-          // Update local storage with question data
-          const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
-          storedQuestions[questionId] = {
-            moduleId,
-            metadata,
-            answer,
-            timestamp: new Date().toISOString()
-          };
-          localStorage.setItem('questionData', JSON.stringify(storedQuestions));
-          
+          console.log('✅ Stored question data in backend:', data);
         } catch (error) {
-          console.error('❌ Error storing question data:', error);
+          console.error('❌ Error storing question data in backend:', error);
         }
       }
     }),
