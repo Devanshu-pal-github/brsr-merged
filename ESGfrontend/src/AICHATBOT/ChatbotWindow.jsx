@@ -326,8 +326,6 @@ const ChatbotWindow = ({ onClose }) => {
         generateText: async (prompt, config = {}) => {
             const response = await axios.post('http://localhost:8000/api/messages', {
                 message: prompt,
-                context: config.context,
-                actionType: config.actionType,
                 ...config,
             });
             return response.data.reply;
@@ -390,25 +388,31 @@ const ChatbotWindow = ({ onClose }) => {
 
         try {
             let responseText = '';
-            const messageId = Date.now().toString() + Math.random().toString(36).substring(2, 7);
-
-            // Prepare the question context
+            const messageId = Date.now().toString() + Math.random().toString(36).substring(2, 7);            // Prepare the question context
             const questionContext = activeQuestion ? {
-                questionId: activeQuestion.id,
-                questionText: activeQuestion.question_text,
-                guidanceText: activeQuestion.guidance_text,
-                metadata: activeQuestion.metadata,
-                answer: activeQuestion.answer || state.answers[activeQuestion.id]
+                questionId: activeQuestion.question_id || activeQuestion.id,
+                questionText: activeQuestion.metadata?.question_text || activeQuestion.question_text,
+                guidanceText: activeQuestion.metadata?.guidance_text || activeQuestion.guidance_text,
+                metadata: {
+                    type: activeQuestion.metadata?.type || 'general',
+                    ...activeQuestion.metadata,
+                    question_text: activeQuestion.metadata?.question_text || activeQuestion.question_text
+                },
+                answer: activeQuestion.answer || state.answers[activeQuestion.question_id || activeQuestion.id] || ''
             } : null;
 
-            // Create URL with parameters
-            const params = new URLSearchParams({
+            console.log('Sending message with context:', questionContext);
+            // First, make a POST request to create the stream
+            const streamResponse = await axios.post('http://localhost:8000/api/messages/stream', {
                 message: currentInput,
-                ...(questionContext && { context: JSON.stringify(questionContext) })
+                context: questionContext
             });
 
+
+
+            const streamId = streamResponse.data.streamId;
             eventSourceRef.current = new EventSource(
-                `http://localhost:8000/api/messages/stream?${params.toString()}`
+                `http://localhost:8000/api/messages/stream/${streamId}`
             );
 
             eventSourceRef.current.onmessage = (event) => {
@@ -418,7 +422,6 @@ const ChatbotWindow = ({ onClose }) => {
                         const updated = [...prev];
                         const aiMessageIndex = updated.findIndex((msg) => msg.id === messageId);
                         const followUpActions = ['DEEP_DIVE', 'SUGGEST_USER_FOLLOWUPS', 'DEFINE_TERM'];
-                        
                         if (aiMessageIndex === -1) {
                             updated.push({
                                 id: messageId,
@@ -428,7 +431,6 @@ const ChatbotWindow = ({ onClose }) => {
                                 isMarkdown: true,
                                 followUpActions,
                                 originalUserMessage: currentInput,
-                                questionContext // Store the context with the message
                             });
                         } else {
                             updated[aiMessageIndex].text = responseText;
@@ -436,13 +438,10 @@ const ChatbotWindow = ({ onClose }) => {
                         return updated;
                     });
                 }
-            };
-
-            eventSourceRef.current.addEventListener('complete', async () => {
+            }; eventSourceRef.current.addEventListener('complete', async () => {
                 eventSourceRef.current?.close();
                 eventSourceRef.current = null;
 
-                // Send the final message with context
                 await axios.post('http://localhost:8000/api/messages', {
                     message: currentInput,
                     context: questionContext
@@ -500,28 +499,12 @@ const ChatbotWindow = ({ onClose }) => {
         setIsWaitingForTerm(false);
         if (inputRef.current && isWaitingForTerm) inputRef.current.placeholder = 'Type your message...';
 
-        // Prepare question context
-        const questionContext = activeQuestion ? {
-            questionId: activeQuestion.id,
-            questionText: activeQuestion.question_text,
-            guidanceText: activeQuestion.guidance_text,
-            metadata: activeQuestion.metadata,
-            answer: activeQuestion.answer || state.answers[activeQuestion.id]
-        } : null;
-
         addMessage('user', `Action: ${action}${relatedText ? ` (related to: "${relatedText.substring(0, 50)}...")` : ''}`);
 
         try {
             let prompt = '';
             let responseText = '';
             const followUpActions = ['DEEP_DIVE', 'SUGGEST_USER_FOLLOWUPS', 'DEFINE_TERM'];
-            
-            // Include context in API call
-            const apiConfig = {
-                context: questionContext,
-                actionType: action
-            };
-
             const commonPromptSuffix = 'Structure your response with clear headers for main ideas and use bullet points for lists or key details where appropriate. Respond in well-formatted markdown.';
             const qText = activeQuestion?.question_text || 'the current BRSR topic';
             const qGuidance = activeQuestion?.guidance_text || 'None provided.';
@@ -545,25 +528,25 @@ const ChatbotWindow = ({ onClose }) => {
                         ? (messages[messages.length - 1]?.originalUserMessage || lastUserMessage || 'the last AI response')
                         : relatedText || 'the last AI response';
                     prompt = `Provide a comprehensive and detailed explanation on the topic: "${deepDiveTopic}". Include background information, key concepts, practical applications, and relevant examples. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     break;
                 case 'EXPLAIN_QUESTION':
                     prompt = `Provide a comprehensive explanation of BRSR question: "${qText}" (Guidance: "${qGuidance}"). Cover its purpose, regulatory context, what constitutes a good answer, key components to include, common challenges, and its importance in ESG reporting. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     break;
                 case 'DRAFT_ANSWER':
                     prompt = `Draft a comprehensive, professional, report-ready BRSR answer for question: "${qText}". Guidance: "${qGuidance}". Current user draft (if any): "${answerText}". Include relevant metrics, frameworks, and best practices where applicable. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     dispatch({ type: 'UPDATE_ANSWER', payload: { question_id: activeQuestion.question_id, text_value: responseText } });
                     responseText += '\n\n**📝 Answer Draft Created**\n\nI\'ve drafted a comprehensive answer and pre-filled it in your form. You can ask to *Explain this Draft*, **Improve this Draft**, or do a **Deep Dive** for more details.';
                     break;
                 case 'EXPLAIN_DRAFT':
                     prompt = `Question: "${qText}". Draft answer: "${answerText}". Provide a detailed explanation of this draft answer, including its strengths, how it addresses the question requirements, key components covered, and areas where it excels. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     break;
                 case 'IMPROVE_DRAFT':
                     prompt = `Question: "${qText}". Draft answer: "${answerText}". Analyze this draft comprehensively and suggest specific improvements. Consider completeness, clarity, compliance requirements, industry best practices, and ESG frameworks. Provide a detailed "Revised Version:" at the end. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     const improvementMarker = 'revised version:';
                     const markerIndex = responseText.toLowerCase().indexOf(improvementMarker);
                     if (markerIndex !== -1) {
@@ -576,15 +559,15 @@ const ChatbotWindow = ({ onClose }) => {
                     break;
                 case 'SUGGEST_INPUT_ELEMENTS':
                     prompt = `For BRSR question: "${qText}" (Guidance: "${qGuidance}"), provide a comprehensive list of 5-8 key elements, data points, or components that should be included in a thorough answer. Explain why each element is important and how it contributes to compliance. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     break;
                 case 'SHOW_EXAMPLE_ANSWER':
                     prompt = `Provide a detailed, high-quality example answer for a BRSR question like: "${qText}". Guidance: "${qGuidance}". Include industry-specific examples, relevant metrics, frameworks, and best practices that demonstrate comprehensive ESG reporting. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     break;
                 case 'SUGGEST_FOLLOW_UP':
                     prompt = `Based on BRSR question: "${qText}", suggest 4-6 detailed follow-up considerations, related questions, implementation steps, or complementary actions that organizations should consider. Explain the rationale for each suggestion. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     break;
                 case 'DEFINE_TERM':
                     responseText = 'Please type the BRSR or ESG term you\'d like me to define in detail.';
@@ -593,7 +576,7 @@ const ChatbotWindow = ({ onClose }) => {
                     break;
                 case 'EXPLORE_EXAMPLES':
                     prompt = `Provide 3-4 comprehensive, diverse examples of common BRSR disclosures across different categories (environmental, social, governance). For each example, include context, typical metrics, reporting frameworks, and best practices. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     break;
                 case 'SUMMARIZE_CHAT':
                     if (messages.length <= 2) {
@@ -604,20 +587,20 @@ const ChatbotWindow = ({ onClose }) => {
                             .map(m => `${m.sender}: ${m.text}`)
                             .join('\n');
                         prompt = `Provide a comprehensive summary of the following conversation, including key topics discussed, main insights shared, actions taken, and important conclusions reached. Organize into clear sections with bullet points for easy reference:\n\n${chatHistory}\n\n${commonPromptSuffix}`;
-                        responseText = await geminiService.generateText(prompt, apiConfig);
+                        responseText = await geminiService.generateText(prompt);
                     }
                     break;
                 case 'SUGGEST_USER_FOLLOWUPS':
                     const lastAiMessage = messages.slice().reverse().find(m => m.sender === 'ai');
                     prompt = `Based on the last AI response ("${lastAiMessage?.text || relatedText || 'previous topic'}"), suggest 4-6 relevant, specific questions the user might want to ask next. Include both clarifying questions and deeper exploration topics. Frame as a detailed bulleted list with explanations for why each question would be valuable. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     break;
                 case 'DRAFT_KEY_METRICS_LIST':
                     const metricsContext = activeQuestion
                         ? `BRSR question: "${qText}" (Guidance: "${qGuidance}")`
                         : `general context "${relatedText || 'ESG reporting'}"`;
                     prompt = `For the ${metricsContext}, draft a comprehensive list of 6-10 relevant key performance indicators (KPIs) and metrics to track. For each metric, include measurement methodology, reporting frequency, industry benchmarks where applicable, and alignment with ESG frameworks. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt, apiConfig);
+                    responseText = await geminiService.generateText(prompt);
                     break;
                 default:
                     responseText = 'Action not recognized. Please try one of the available quick actions.';
