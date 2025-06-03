@@ -5,6 +5,7 @@ import {
     useGetQuestionResponsesMutation,
     useSubmitQuestionAnswerMutation
 } from '../api/apiSlice';
+import { BarChart3, X } from 'lucide-react';
 import Layout from '../components/Layout';
 import Breadcrumb from '../components/Breadcrumb';
 import SubHeader from '../components/SubHeader';
@@ -40,21 +41,24 @@ const DynamicEntityDetails = () => {
 
     const currentSubmodule = submodules.find(sub => sub.submodule_name === activeTab);
 
-    const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation();
-    useEffect(() => {
-        const fetchAnswersForSubmodule = async () => {
-            if (currentSubmodule && Array.isArray(currentSubmodule.question_categories)) {
-                const questionIds = currentSubmodule.question_categories
-                    .flatMap(cat => Array.isArray(cat.questions) ?
-                        cat.questions
-                            .filter(q => q.type !== 'table')
-                            .map(q => q.question_id)
-                        : []);
+    const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation();    useEffect(() => {
+        const fetchAllAnswers = async () => {
+            if (submodules && submodules.length > 0) {
+                // Get all question IDs from all submodules
+                const questionIds = submodules.flatMap(submodule => 
+                    submodule.question_categories?.flatMap(cat => 
+                        Array.isArray(cat.questions) ?
+                            cat.questions
+                                .filter(q => q.type !== 'table')
+                                .map(q => q.question_id)
+                            : []
+                    ) || []
+                );
 
                 if (questionIds.length > 0) {
                     try {
                         const responses = await getQuestionResponses(questionIds).unwrap();
-                        console.log('Fetched answers:', responses);
+                        console.log('Fetched all answers:', responses);
 
                         const newAnswers = {};
                         if (Array.isArray(responses)) {
@@ -73,15 +77,12 @@ const DynamicEntityDetails = () => {
                         setAnswers(prev => ({ ...prev, ...newAnswers }));
                     } catch (err) {
                         console.error('Error fetching answers:', err);
-                    }
-                }
+                    }                }
             }
         };
 
-        if (currentSubmodule) {
-            fetchAnswersForSubmodule();
-        }
-    }, [currentSubmodule]);
+        fetchAllAnswers();
+    }, [submodules]); // Only depend on submodules, so it runs once when submodules are loaded
 
     const [openCategories, setOpenCategories] = useState({});
     useEffect(() => {
@@ -98,18 +99,18 @@ const DynamicEntityDetails = () => {
     };
 
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
-    const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);
-    const [answers, setAnswers] = useState({});
+    const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);    const [answers, setAnswers] = useState({});
     const [aiChatOpen, setAiChatOpen] = useState(false);
+    const [showMobileProgress, setShowMobileProgress] = useState(false);
 
     useEffect(() => {
         console.log('aiChatOpen state changed:', aiChatOpen);
     }, [aiChatOpen]);
 
-    const [submitAnswer] = useSubmitQuestionAnswerMutation();    const handleEditClick = (question) => {
+    const [submitAnswer] = useSubmitQuestionAnswerMutation(); const handleEditClick = (question) => {
         // Get current answer for this question from state
         const currentAnswer = answers[question.question_id] || {};
-        
+
         // Get question metadata when edit is clicked
         const metadata = {
             question_text: question.question,
@@ -158,12 +159,12 @@ const DynamicEntityDetails = () => {
     const handleEditClose = () => {
         setEditModalQuestionId(null);
         setEditModalTableQuestion(null);
-    };    const handleEditSuccess = (questionId, result) => {
+    }; const handleEditSuccess = (questionId, result) => {
         // Update stored question data with the new answer while preserving history
         const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
         if (storedQuestions[questionId]) {
             const currentTimestamp = new Date().toISOString();
-            
+
             // Store previous answer in history
             const history = storedQuestions[questionId].history || [];
             history.push({
@@ -179,7 +180,7 @@ const DynamicEntityDetails = () => {
                 lastUpdated: currentTimestamp,
                 history: history.slice(-5) // Keep last 5 changes
             };
-            
+
             localStorage.setItem('questionData', JSON.stringify(storedQuestions));
             console.log('Updated question data after submit:', storedQuestions[questionId]);
         }
@@ -189,7 +190,7 @@ const DynamicEntityDetails = () => {
             ...prev,
             [questionId]: result
         }));
-        
+
         handleEditClose();
     };
 
@@ -241,40 +242,40 @@ const DynamicEntityDetails = () => {
                                                         <div className="space-y-2">
                                                             <div className="flex flex-row gap-4 items-start">
                                                                 {question.type === 'table' && Array.isArray(question.table_metadata?.headers) && Array.isArray(question.table_metadata?.rows) ? (
-  <div className="overflow-x-auto mt-2">
-    <table className="min-w-full border border-gray-200 rounded-[6px] text-sm">
-      <thead>
-        <tr>
-          <th className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341]">Row</th>
-          {question.table_metadata.headers.map((header, idx) => (
-            <th key={header.label + '-' + idx} className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341] border-b border-gray-200">
-              {header.label}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {question.table_metadata.rows.map((row, rowIdx) => (
-          <tr key={row.name + '-' + rowIdx}>
-            <td className="px-3 py-2 text-sm font-medium text-[#1A2341] bg-gray-50">{row.name}</td>
-            {question.table_metadata.headers.map((header, colIdx) => {
-              let cellValue = '';
-              if (answer && answer.response && Array.isArray(answer.response.table)) {
-                const cell = answer.response.table.find(cell => cell.row === row.name && cell.col === header.label);
-                cellValue = cell?.value ?? '';
-              }
-              return (
-                <td key={header.label + '-' + colIdx} className="px-3 py-2 text-sm text-gray-600">
-                  {cellValue}
-                </td>
-              );
-            })}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-) : answer && answer.bool_value !== undefined && (
+                                                                    <div className="overflow-x-auto mt-2">
+                                                                        <table className="min-w-full border border-gray-200 rounded-[6px] text-sm">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341]">Row</th>
+                                                                                    {question.table_metadata.headers.map((header, idx) => (
+                                                                                        <th key={header.label + '-' + idx} className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341] border-b border-gray-200">
+                                                                                            {header.label}
+                                                                                        </th>
+                                                                                    ))}
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {question.table_metadata.rows.map((row, rowIdx) => (
+                                                                                    <tr key={row.name + '-' + rowIdx}>
+                                                                                        <td className="px-3 py-2 text-sm font-medium text-[#1A2341] bg-gray-50">{row.name}</td>
+                                                                                        {question.table_metadata.headers.map((header, colIdx) => {
+                                                                                            let cellValue = '';
+                                                                                            if (answer && answer.response && Array.isArray(answer.response.table)) {
+                                                                                                const cell = answer.response.table.find(cell => cell.row === row.name && cell.col === header.label);
+                                                                                                cellValue = cell?.value ?? '';
+                                                                                            }
+                                                                                            return (
+                                                                                                <td key={header.label + '-' + colIdx} className="px-3 py-2 text-sm text-gray-600">
+                                                                                                    {cellValue}
+                                                                                                </td>
+                                                                                            );
+                                                                                        })}
+                                                                                    </tr>
+                                                                                ))}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                ) : answer && answer.bool_value !== undefined && (
                                                                     <div className={`text-[13px] font-medium break-words min-w-[30px] ${answer.bool_value ? 'text-green-600' : 'text-red-600'}`}>
                                                                         {answer.bool_value ? "Yes" : "No"}
                                                                     </div>
@@ -376,56 +377,91 @@ const DynamicEntityDetails = () => {
                             )}
                         </div>
                     </section>
-                    <aside className="hidden lg:flex flex-col mt-[3vh] mr-[30px] gap-[1.2vh] px-[0.7vw] pt-[1.2vh] pb-[1.2vh] bg-white border-l border-gray-200 shadow-lg min-w-[16vw] max-w-[18vw] w-full sticky top-0 h-[82vh] z-20 items-center justify-start rounded-[4px] transition-all duration-500">
-                        <div className="flex flex-col items-center mb-[0.7vh]">
-                            <svg width="6vw" height="6vw" viewBox="0 0 120 120">
-                                <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="8" />
-                                <circle cx="60" cy="60" r="50" fill="none" stroke="#4F46E5" strokeWidth="8" strokeDasharray="314" strokeDashoffset="60" strokeLinecap="round" />
-                            </svg>
-                            <div className="mt-[0.7vh] text-gray-700 font-semibold text-[11px]">38 of 50 questions completed</div>
+
+                            
+                    <aside className="hidden lg:flex flex-col mt-[7vh] mr-[30px] gap-[1.2vh] px-[0.7vw] pt-[1.2vh] pb-[1.2vh] bg-white border-l border-gray-200 shadow-lg min-w-[16vw] max-w-[18vw] w-full sticky top-0 h-[82vh] z-20 items-center justify-start rounded-[4px] transition-all duration-500">
+                        {/* Overall Progress Circle */}                        <div className="flex flex-col items-center mb-[0.7vh]">
+                            <div className="font-semibold text-[13px] mb-[1vh] text-[#000D30]">Module Progress</div>
+                            {submodules.length > 0 && (
+                                <>
+                                    <svg width="6vw" height="6vw" viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="8" />
+                                        <circle
+                                            cx="60"
+                                            cy="60"
+                                            r="50"
+                                            fill="none"
+                                            stroke="#4F46E5"
+                                            strokeWidth="8"
+                                            strokeDasharray="314"                                            strokeDashoffset={314 * (1 - (Object.values(answers).filter(a => a !== null && a !== undefined).length) / submodules.reduce((total, sub) =>
+                                                total + (sub.question_categories?.reduce((catTotal, cat) =>
+                                                    catTotal + (cat.questions?.length || 0), 0) || 0), 0))}
+                                            strokeLinecap="round"
+                                        />
+                                    </svg>
+                                    <div className="mt-[0.7vh] text-gray-700 font-semibold text-[11px]">
+                                        {Object.values(answers).filter(a => a !== null && a !== undefined).length} of {submodules.reduce((total, sub) =>
+                                            total + (sub.question_categories?.reduce((catTotal, cat) =>
+                                                catTotal + (cat.questions?.length || 0), 0) || 0), 0)} questions completed
+                                    </div>
+                                </>
+                            )}
                         </div>
+
+                        {/* Submodules Progress */}
                         <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.7vh]">
-                            <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Course Sections</div>
+                            <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Submodules Progress</div>
                             <div className="flex flex-col gap-[0.3vh]">
-                                <div>
-                                    <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 1: Introduction</div>
-                                    <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
-                                        <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '80%' }}></div>
-                                    </div>
-                                    <div className="text-[9px] text-gray-500">8 of 10 completed</div>
-                                </div>
-                                <div>
-                                    <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 2: Fundamentals</div>
-                                    <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
-                                        <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '60%' }}></div>
-                                    </div>
-                                    <div className="text-[9px] text-gray-500">6 of 10 completed</div>
-                                </div>
-                                <div>
-                                    <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 3: Advanced Topics</div>
-                                    <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
-                                        <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '40%' }}></div>
-                                    </div>
-                                    <div className="text-[9px] text-gray-500">4 of 10 completed</div>
-                                </div>
-                                <div>
-                                    <div className="text-[11px] font-medium text-[#000D30] mb-0.5">Section 4: Practice</div>
-                                    <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
-                                        <div className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700" style={{ width: '20%' }}></div>
-                                    </div>
-                                    <div className="text-[9px] text-gray-500">2 of 10 completed</div>
-                                </div>
+                                {submodules.map(submodule => {
+                                    const totalQuestions = submodule.question_categories?.reduce((total, cat) =>
+                                        total + (cat.questions?.length || 0), 0) || 0;
+                                    const answeredQuestions = submodule.question_categories?.reduce((total, cat) =>
+                                        total + (cat.questions?.filter(q => answers[q.question_id])?.length || 0), 0) || 0;
+                                    const completionPercentage = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
+
+                                    return (
+                                        <div key={submodule.submodule_id}>
+                                            <div className="text-[11px] font-medium text-[#000D30] mb-0.5">{submodule.submodule_name}</div>
+                                            <div className="w-full h-1 bg-gray-200 rounded-full mb-0.5">
+                                                <div
+                                                    className="h-1 bg-[#4F46E5] rounded-full transition-all duration-700"
+                                                    style={{ width: `${completionPercentage}%` }}
+                                                />
+                                            </div>
+                                            <div className="text-[9px] text-gray-500">{answeredQuestions} of {totalQuestions} completed</div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
-                        <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.3vh]">
-                            <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Category Overview</div>
-                            <div className="flex flex-col gap-[0.15vh]">
-                                <div className="flex justify-between text-[10px]"><span>Fundamentals</span><span>15/20 questions</span></div>
-                                <div className="flex justify-between text-[10px]"><span>Theory</span><span>12/15 questions</span></div>
-                                <div className="flex justify-between text-[10px]"><span>Practical Examples</span><span>8/10 questions</span></div>
-                                <div className="flex justify-between text-[10px]"><span>Assessments</span><span>3/5 questions</span></div>
+
+                        {/* Category Overview for Current Submodule */}
+                        {currentSubmodule && (
+                            <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.3vh]">
+                                <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Category Overview</div>
+                                <div className="flex flex-col gap-[0.15vh]">                                    {currentSubmodule.question_categories?.map(category => {
+                                        const totalQuestions = category.questions?.length || 0;
+                                        const answeredQuestions = category.questions?.filter(q => answers[q.question_id])?.length || 0;
+                                        const categoryName = category.category_name || 'Unnamed Category';
+                                        const truncatedName = categoryName.length > 15 
+                                            ? categoryName.substring(0, 15) + '...' 
+                                            : categoryName;
+
+                                        return (
+                                            <div key={category.id} className="flex justify-between text-[10px]">
+                                                <span 
+                                                    className="hover:cursor-help truncate max-w-[120px]" 
+                                                    title={categoryName}
+                                                >
+                                                    {truncatedName}
+                                                </span>
+                                                <span>{answeredQuestions}/{totalQuestions} questions</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </aside>
                     <button
                         className="fixed z-[120] bottom-[3vh] right-[3vw] w-[6vw] h-[6vw] min-w-[48px] min-h-[48px] max-w-[80px] max-h-[80px] rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-xl flex items-center justify-center hover:scale-110 transition-transform border-4 border-white focus:outline-none"
@@ -441,6 +477,89 @@ const DynamicEntityDetails = () => {
                             <div className="relative z-10 w-full max-w-md m-4 md:m-8 animate-slide-up">
                                 <div className="bg-white rounded-lg shadow-2xl p-0 overflow-hidden border border-gray-200">
                                     <ChatbotWindow onClose={() => setAiChatOpen(false)} />
+                                </div>                            </div>
+                        </div>
+                    )}
+
+                    {/* Mobile Progress Button */}
+                    <button
+                        onClick={() => setShowMobileProgress(true)}
+                        className="fixed z-[120] bottom-[20vh] right-[3vw] w-[6vw] h-[6vw] min-w-[48px] min-h-[48px] max-w-[80px] max-h-[80px] rounded-full bg-gradient-to-br from-[#4F46E5] to-[#0A2E87] shadow-xl flex items-center justify-center hover:scale-110 transition-transform border-4 border-white focus:outline-none lg:hidden"
+                        style={{ boxShadow: '0 8px 32px 0 rgba(79,70,229,0.25)' }}
+                    >
+                        <BarChart3 className="w-6 h-6 text-white" />
+                    </button>
+
+                    {/* Mobile Progress Modal */}
+                    {showMobileProgress && (
+                        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-opacity-50 transition-opacity duration-300 lg:hidden">
+                            <div className="w-full h-full absolute top-0 left-0" onClick={() => setShowMobileProgress(false)} />
+                            <div className="relative z-10 w-[90%] max-w-md m-4 animate-slide-up">
+                                <div className="bg-white rounded-lg shadow-2xl p-4 overflow-hidden border border-gray-200">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h2 className="text-lg font-semibold text-[#000D30]">Progress Overview</h2>
+                                        <button 
+                                            onClick={() => setShowMobileProgress(false)}
+                                            className="p-1 hover:bg-gray-100 rounded-full"
+                                        >
+                                            <X className="w-5 h-5 text-gray-500" />
+                                        </button>
+                                    </div>
+                                    
+                                    {/* Progress Content */}
+                                    <div className="flex flex-col gap-4">
+                                        {/* Module Progress */}
+                                        <div className="flex flex-col items-center">
+                                            <div className="font-semibold text-[13px] mb-[1vh] text-[#000D30]">Module Progress</div>
+                                            {submodules.length > 0 && (
+                                                <>
+                                                    <svg width="80" height="80" viewBox="0 0 120 120">
+                                                        <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="8" />
+                                                        <circle
+                                                            cx="60" cy="60" r="50" fill="none"
+                                                            stroke="#4F46E5" strokeWidth="8" strokeDasharray="314"
+                                                            strokeDashoffset={314 * (1 - (Object.values(answers).filter(a => a !== null && a !== undefined).length) / submodules.reduce((total, sub) =>
+                                                                total + (sub.question_categories?.reduce((catTotal, cat) =>
+                                                                    catTotal + (cat.questions?.length || 0), 0) || 0), 0))}
+                                                            strokeLinecap="round"
+                                                        />
+                                                    </svg>
+                                                    <div className="mt-2 text-gray-700 font-semibold text-sm">
+                                                        {Object.values(answers).filter(a => a !== null && a !== undefined).length} of {submodules.reduce((total, sub) =>
+                                                            total + (sub.question_categories?.reduce((catTotal, cat) =>
+                                                                catTotal + (cat.questions?.length || 0), 0) || 0), 0)} questions completed
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                        
+                                        {/* Submodules Progress */}
+                                        <div className="bg-[#F8FAFC] rounded-lg p-3 border border-gray-100">
+                                            <div className="font-semibold text-sm mb-2 text-[#000D30]">Submodules Progress</div>
+                                            <div className="flex flex-col gap-2">
+                                                {submodules.map(submodule => {
+                                                    const totalQuestions = submodule.question_categories?.reduce((total, cat) =>
+                                                        total + (cat.questions?.length || 0), 0) || 0;
+                                                    const answeredQuestions = submodule.question_categories?.reduce((total, cat) =>
+                                                        total + (cat.questions?.filter(q => answers[q.question_id])?.length || 0), 0) || 0;
+                                                    const completionPercentage = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
+
+                                                    return (
+                                                        <div key={submodule.submodule_id} className="mb-2">
+                                                            <div className="text-sm font-medium text-[#000D30] mb-1">{submodule.submodule_name}</div>
+                                                            <div className="w-full h-2 bg-gray-200 rounded-full">
+                                                                <div
+                                                                    className="h-2 bg-[#4F46E5] rounded-full transition-all duration-700"
+                                                                    style={{ width: `${completionPercentage}%` }}
+                                                                />
+                                                            </div>
+                                                            <div className="text-xs text-gray-500 mt-1">{answeredQuestions} of {totalQuestions} completed</div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
