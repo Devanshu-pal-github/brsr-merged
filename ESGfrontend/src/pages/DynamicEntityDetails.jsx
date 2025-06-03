@@ -569,13 +569,11 @@ const DynamicEntityDetails = () => {
                         style={{ boxShadow: '0 8px 32px 0 rgba(79,70,229,0.25)' }}
                     >
                         <BarChart3 className="w-6 h-6 text-white" />
-                    </button>
-
-                    {/* Mobile Progress Modal */}
+                    </button>                    {/* Mobile Progress Modal */}
                     {showMobileProgress && (
-                        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-opacity-50 transition-opacity duration-300 lg:hidden">
+                        <div className="fixed inset-0 z-[1000] flex items-end justify-end bg-opacity-50 transition-opacity duration-300 lg:hidden">
                             <div className="w-full h-full absolute top-0 left-0" onClick={() => setShowMobileProgress(false)} />
-                            <div className="relative z-10 w-[90%] max-w-md m-4 animate-slide-up">
+                            <div className="relative z-10 w-full max-w-md m-4 md:m-8 animate-slide-up" style={{ marginBottom: 'calc(20vh + 80px)' }}>
                                 <div className="bg-white rounded-lg shadow-2xl p-4 overflow-hidden border border-gray-200">
                                     <div className="flex justify-between items-center mb-4">
                                         <h2 className="text-lg font-semibold text-[#000D30]">Progress Overview</h2>

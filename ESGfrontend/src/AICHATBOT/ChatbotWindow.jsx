@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { FaTimes,FaUser,FaRobot, FaPaperPlane, FaClipboard, FaPen, FaQuestionCircle, FaListAlt, FaBookOpen, FaSearch, FaChartLine } from 'react-icons/fa';
+import { FaTimes, FaUser, FaRobot, FaPaperPlane, FaClipboard, FaPen, FaQuestionCircle, FaListAlt, FaBookOpen, FaSearch, FaChartLine } from 'react-icons/fa';
 import { BiCheckDouble } from 'react-icons/bi';
 import axios from 'axios';
 import { AppContext } from './AppProvider';
@@ -24,9 +24,8 @@ const ChatbotHeader = ({ onClose, activeQuestion, isApiKeyAvailable }) => {
                     <div>
                         <div className="flex items-center gap-2">
                             <h2 className="text-sm font-medium text-slate-800">AI Assistant</h2>
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                                activeQuestion && activeQuestion.metadata ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
-                            }`}>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeQuestion && activeQuestion.metadata ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
+                                }`}>
                                 {activeQuestion && activeQuestion.metadata ? 'Question Mode' : 'Generic Mode'}
                             </span>
                         </div>
@@ -78,139 +77,138 @@ const ChatbotHeader = ({ onClose, activeQuestion, isApiKeyAvailable }) => {
 
 // Component 2: ChatbotMessages
 const ChatbotMessages = ({ messages, handleCopyMessage, copiedMessageId, isLoading, error, handleAction, formatTimestamp }) => {
-  const messagesEndRef = useRef(null);
+    const messagesEndRef = useRef(null);
 
-  // Find index of last AI message to show follow-up actions only there
-  const lastAiIndex = messages
-    .map((msg, i) => (msg.sender === "ai" ? i : -1))
-    .filter((i) => i !== -1)
-    .pop();
+    // Find index of last AI message to show follow-up actions only there
+    const lastAiIndex = messages
+        .map((msg, i) => (msg.sender === "ai" ? i : -1))
+        .filter((i) => i !== -1)
+        .pop();
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
 
- return (
-    <div
-      className="flex-1 px-6 py-2.5 overflow-y-auto bg-gradient-to-br from-slate-50/50 to-indigo-50/50 space-y-2 scrollbar-none"
-      style={{ scrollbarWidth: "none" }}
-    >
-      {messages.map((msg, index) => (
+    return (
         <div
-          key={msg.id}
-          className={`flex flex-col animate-message-appear ${
-            msg.sender === "user" ? "items-end" : "items-start"
-          }`}
-          style={{ animationDelay: `${index * 0.05}s` }}
+            className="flex-1 px-6 py-2.5 overflow-y-auto bg-gradient-to-br from-slate-50/50 to-indigo-50/50 space-y-2 scrollbar-none"
+            style={{ scrollbarWidth: "none" }}
         >
-          {/* AI Message */}
-          {msg.sender === "ai" && (
-            <div className="flex items-end max-w-[80%] group relative">
-              <div className="mr-2 flex-shrink-0">
-                <FaRobot className="w-4 h-4 text-indigo-400" />
-              </div>
-              <div
-                className="px-2.5 py-1.5 rounded-lg text-sm bg-white/80 text-slate-800 rounded-bl-none border border-slate-200/30 relative"
-              >
-                {msg.isMarkdown && !msg.carouselPayload
-                  ? renderMarkdown(msg.text)
-                  : (
-                    <p className="whitespace-pre-wrap">{msg.text}</p>
-                  )}
+            {messages.map((msg, index) => (
+                <div
+                    key={msg.id}
+                    className={`flex flex-col animate-message-appear ${msg.sender === "user" ? "items-end" : "items-start"
+                        }`}
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                    {/* AI Message */}
+                    {msg.sender === "ai" && (
+                        <div className="flex items-end max-w-[80%] group relative">
+                            <div className="mr-2 flex-shrink-0">
+                                <FaRobot className="w-4 h-4 text-indigo-400" />
+                            </div>
+                            <div
+                                className="px-2.5 py-1.5 rounded-lg text-sm bg-white/80 text-slate-800 rounded-bl-none border border-slate-200/30 relative"
+                            >
+                                {msg.isMarkdown && !msg.carouselPayload
+                                    ? renderMarkdown(msg.text)
+                                    : (
+                                        <p className="whitespace-pre-wrap">{msg.text}</p>
+                                    )}
 
-                {!msg.carouselPayload && (
-                  <div
-                    onClick={() => handleCopyMessage(msg.text, msg.id)}
-                    className="absolute top-1 right-1 p-1 text-slate-400 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded-md hover:bg-indigo-50/50 cursor-pointer animate-slide-up"
-                  >
-                    {copiedMessageId === msg.id ? (
-                      <span className="text-[10px] text-indigo-600">✓</span>
-                    ) : (
-                      <FaClipboard className="w-3 h-3" />
+                                {!msg.carouselPayload && (
+                                    <div
+                                        onClick={() => handleCopyMessage(msg.text, msg.id)}
+                                        className="absolute top-1 right-1 p-1 text-slate-400 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded-md hover:bg-indigo-50/50 cursor-pointer animate-slide-up"
+                                    >
+                                        {copiedMessageId === msg.id ? (
+                                            <span className="text-[10px] text-indigo-600">✓</span>
+                                        ) : (
+                                            <FaClipboard className="w-3 h-3" />
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     )}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
 
-          {/* User Message */}
-          {msg.sender === "user" && (
-            <div className="flex items-end max-w-[80%] group">
-              {/* User message bubble first */}
-              <div
-                className="px-2.5 py-1.5 rounded-lg text-sm bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-br-none border border-indigo-400/30"
-              >
-                {msg.isMarkdown && !msg.carouselPayload
-                  ? renderMarkdown(msg.text)
-                  : <p className="whitespace-pre-wrap">{msg.text}</p>}
-              </div>
+                    {/* User Message */}
+                    {msg.sender === "user" && (
+                        <div className="flex items-end max-w-[80%] group">
+                            {/* User message bubble first */}
+                            <div
+                                className="px-2.5 py-1.5 rounded-lg text-sm bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-br-none border border-indigo-400/30"
+                            >
+                                {msg.isMarkdown && !msg.carouselPayload
+                                    ? renderMarkdown(msg.text)
+                                    : <p className="whitespace-pre-wrap">{msg.text}</p>}
+                            </div>
 
-              {/* User icon on right with spacing */}
-              <div className="mb-0.5 ml-2 flex-shrink-0">
-                <FaUser className="w-3 h-3 text-indigo-300" />
-              </div>
-            </div>
-          )}
+                            {/* User icon on right with spacing */}
+                            <div className="mb-0.5 ml-2 flex-shrink-0">
+                                <FaUser className="w-3 h-3 text-indigo-300" />
+                            </div>
+                        </div>
+                    )}
 
-          {msg.carouselPayload && (
-            <div className="w-full mt-1 animate-slide-up">
-              <ExplanationCarousel
-                payload={msg.carouselPayload}
-                onAction={handleAction}
-              />
-            </div>
-          )}
+                    {msg.carouselPayload && (
+                        <div className="w-full mt-1 animate-slide-up">
+                            <ExplanationCarousel
+                                payload={msg.carouselPayload}
+                                onAction={handleAction}
+                            />
+                        </div>
+                    )}
 
-          {/* Follow-up actions for latest AI message only */}
-          {msg.sender === "ai" &&
-            msg.followUpActions &&
-            index === lastAiIndex && (
-              <div className="mt-1 max-w-[80%] ml-6 flex flex-wrap gap-1 animate-slide-up">
-                {msg.followUpActions.map((action, actionIndex) => (
-                  <div
-                    key={action}
-                    onClick={() =>
-                      handleAction(
-                        action,
-                        msg.carouselPayload ? "Carousel content" : msg.text
-                      )
-                    }
-                    className="px-2 py-0.5 text-[10px] text-slate-600 hover:text-indigo-600 bg-slate-100/50 hover:bg-indigo-50/50 rounded-md cursor-pointer transition-all duration-200"
-                    style={{ animationDelay: `${actionIndex * 0.1}s` }}
-                  >
-                    {action.replace(/_/g, " ").toLowerCase()}
-                  </div>
-                ))}
-              </div>
+                    {/* Follow-up actions for latest AI message only */}
+                    {msg.sender === "ai" &&
+                        msg.followUpActions &&
+                        index === lastAiIndex && (
+                            <div className="mt-1 max-w-[80%] ml-6 flex flex-wrap gap-1 animate-slide-up">
+                                {msg.followUpActions.map((action, actionIndex) => (
+                                    <div
+                                        key={action}
+                                        onClick={() =>
+                                            handleAction(
+                                                action,
+                                                msg.carouselPayload ? "Carousel content" : msg.text
+                                            )
+                                        }
+                                        className="px-2 py-0.5 text-[10px] text-slate-600 hover:text-indigo-600 bg-slate-100/50 hover:bg-indigo-50/50 rounded-md cursor-pointer transition-all duration-200"
+                                        style={{ animationDelay: `${actionIndex * 0.1}s` }}
+                                    >
+                                        {action.replace(/_/g, " ").toLowerCase()}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                </div>
+            ))}
+
+            <div ref={messagesEndRef} />
+
+            {isLoading && (
+                <div className="flex justify-center py-2 animate-fade-in">
+                    <div className="flex items-center gap-1.5 bg-white/80 rounded-lg px-2.5 py-1 border border-slate-200/30">
+                        <div className="flex space-x-1">
+                            <div className="w-1 h-1 bg-indigo-400 rounded-full animate-bounce"></div>
+                            <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce delay-75"></div>
+                            <div className="w-1 h-1 bg-indigo-400 rounded-full animate-bounce delay-150"></div>
+                        </div>
+                        <span className="text-[10px] text-slate-600">Processing</span>
+                    </div>
+                </div>
+            )}
+
+            {error && (
+                <div className="flex justify-center py-1.5 animate-shake">
+                    <div className="px-2.5 py-1 bg-red-50/80 rounded-lg border border-red-200/30 text-[10px] text-red-600">
+                        ⚠️ {error}
+                    </div>
+                </div>
             )}
         </div>
-      ))}
-
-      <div ref={messagesEndRef} />
-
-      {isLoading && (
-        <div className="flex justify-center py-2 animate-fade-in">
-          <div className="flex items-center gap-1.5 bg-white/80 rounded-lg px-2.5 py-1 border border-slate-200/30">
-            <div className="flex space-x-1">
-              <div className="w-1 h-1 bg-indigo-400 rounded-full animate-bounce"></div>
-              <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce delay-75"></div>
-              <div className="w-1 h-1 bg-indigo-400 rounded-full animate-bounce delay-150"></div>
-            </div>
-            <span className="text-[10px] text-slate-600">Processing</span>
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div className="flex justify-center py-1.5 animate-shake">
-          <div className="px-2.5 py-1 bg-red-50/80 rounded-lg border border-red-200/30 text-[10px] text-red-600">
-            ⚠️ {error}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    );
 };
 
 
@@ -268,11 +266,10 @@ const ChatbotQuickActions = ({ quickActions, handleAction, isLoading, isApiKeyAv
                     <div
                         key={action}
                         onClick={() => handleAction(action)}
-                        className={`group relative flex items-center gap-1 px-2 py-0.5 text-[10px] text-slate-600 hover:text-indigo-600 rounded-md transition-all duration-200 cursor-pointer animate-slide-up ${
-                            (requiresActiveQuestion.includes(action) && !activeQuestion) || !isApiKeyAvailable || isLoading
+                        className={`group relative flex items-center gap-1 px-2 py-0.5 text-[10px] text-slate-600 hover:text-indigo-600 rounded-md transition-all duration-200 cursor-pointer animate-slide-up ${(requiresActiveQuestion.includes(action) && !activeQuestion) || !isApiKeyAvailable || isLoading
                                 ? 'bg-slate-100/30 text-slate-400/70 cursor-not-allowed'
                                 : 'bg-slate-100/50 hover:bg-indigo-50/50'
-                        }`}
+                            }`}
                         style={{ animationDelay: `${index * 0.05}s` }}
                     >
                         <span className="text-indigo-500">{actionConfig[action]?.icon}</span>
@@ -310,7 +307,7 @@ const ChatbotWindow = ({ onClose }) => {
         // Get the most recently edited question
         const latestQuestion = Object.entries(storedData)
             .sort((a, b) => new Date(b[1].timestamp) - new Date(a[1].timestamp))[0];
-        
+
         if (latestQuestion) {
             const [questionId, data] = latestQuestion;
             setStoredQuestionData({
@@ -329,6 +326,8 @@ const ChatbotWindow = ({ onClose }) => {
         generateText: async (prompt, config = {}) => {
             const response = await axios.post('http://localhost:8000/api/messages', {
                 message: prompt,
+                context: config.context,
+                actionType: config.actionType,
                 ...config,
             });
             return response.data.reply;
@@ -392,8 +391,24 @@ const ChatbotWindow = ({ onClose }) => {
         try {
             let responseText = '';
             const messageId = Date.now().toString() + Math.random().toString(36).substring(2, 7);
+
+            // Prepare the question context
+            const questionContext = activeQuestion ? {
+                questionId: activeQuestion.id,
+                questionText: activeQuestion.question_text,
+                guidanceText: activeQuestion.guidance_text,
+                metadata: activeQuestion.metadata,
+                answer: activeQuestion.answer || state.answers[activeQuestion.id]
+            } : null;
+
+            // Create URL with parameters
+            const params = new URLSearchParams({
+                message: currentInput,
+                ...(questionContext && { context: JSON.stringify(questionContext) })
+            });
+
             eventSourceRef.current = new EventSource(
-                `http://localhost:8000/api/messages/stream?message=${encodeURIComponent(currentInput)}`
+                `http://localhost:8000/api/messages/stream?${params.toString()}`
             );
 
             eventSourceRef.current.onmessage = (event) => {
@@ -403,6 +418,7 @@ const ChatbotWindow = ({ onClose }) => {
                         const updated = [...prev];
                         const aiMessageIndex = updated.findIndex((msg) => msg.id === messageId);
                         const followUpActions = ['DEEP_DIVE', 'SUGGEST_USER_FOLLOWUPS', 'DEFINE_TERM'];
+                        
                         if (aiMessageIndex === -1) {
                             updated.push({
                                 id: messageId,
@@ -412,6 +428,7 @@ const ChatbotWindow = ({ onClose }) => {
                                 isMarkdown: true,
                                 followUpActions,
                                 originalUserMessage: currentInput,
+                                questionContext // Store the context with the message
                             });
                         } else {
                             updated[aiMessageIndex].text = responseText;
@@ -425,7 +442,11 @@ const ChatbotWindow = ({ onClose }) => {
                 eventSourceRef.current?.close();
                 eventSourceRef.current = null;
 
-                await axios.post('http://localhost:8000/api/messages', { message: currentInput });
+                // Send the final message with context
+                await axios.post('http://localhost:8000/api/messages', {
+                    message: currentInput,
+                    context: questionContext
+                });
 
                 const carouselPayload = await convertToCarouselPayload(responseText, geminiService, 150);
                 const finalText = carouselPayload
@@ -479,12 +500,28 @@ const ChatbotWindow = ({ onClose }) => {
         setIsWaitingForTerm(false);
         if (inputRef.current && isWaitingForTerm) inputRef.current.placeholder = 'Type your message...';
 
+        // Prepare question context
+        const questionContext = activeQuestion ? {
+            questionId: activeQuestion.id,
+            questionText: activeQuestion.question_text,
+            guidanceText: activeQuestion.guidance_text,
+            metadata: activeQuestion.metadata,
+            answer: activeQuestion.answer || state.answers[activeQuestion.id]
+        } : null;
+
         addMessage('user', `Action: ${action}${relatedText ? ` (related to: "${relatedText.substring(0, 50)}...")` : ''}`);
 
         try {
             let prompt = '';
             let responseText = '';
             const followUpActions = ['DEEP_DIVE', 'SUGGEST_USER_FOLLOWUPS', 'DEFINE_TERM'];
+            
+            // Include context in API call
+            const apiConfig = {
+                context: questionContext,
+                actionType: action
+            };
+
             const commonPromptSuffix = 'Structure your response with clear headers for main ideas and use bullet points for lists or key details where appropriate. Respond in well-formatted markdown.';
             const qText = activeQuestion?.question_text || 'the current BRSR topic';
             const qGuidance = activeQuestion?.guidance_text || 'None provided.';
@@ -508,25 +545,25 @@ const ChatbotWindow = ({ onClose }) => {
                         ? (messages[messages.length - 1]?.originalUserMessage || lastUserMessage || 'the last AI response')
                         : relatedText || 'the last AI response';
                     prompt = `Provide a comprehensive and detailed explanation on the topic: "${deepDiveTopic}". Include background information, key concepts, practical applications, and relevant examples. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     break;
                 case 'EXPLAIN_QUESTION':
                     prompt = `Provide a comprehensive explanation of BRSR question: "${qText}" (Guidance: "${qGuidance}"). Cover its purpose, regulatory context, what constitutes a good answer, key components to include, common challenges, and its importance in ESG reporting. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     break;
                 case 'DRAFT_ANSWER':
                     prompt = `Draft a comprehensive, professional, report-ready BRSR answer for question: "${qText}". Guidance: "${qGuidance}". Current user draft (if any): "${answerText}". Include relevant metrics, frameworks, and best practices where applicable. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     dispatch({ type: 'UPDATE_ANSWER', payload: { question_id: activeQuestion.question_id, text_value: responseText } });
                     responseText += '\n\n**📝 Answer Draft Created**\n\nI\'ve drafted a comprehensive answer and pre-filled it in your form. You can ask to *Explain this Draft*, **Improve this Draft**, or do a **Deep Dive** for more details.';
                     break;
                 case 'EXPLAIN_DRAFT':
                     prompt = `Question: "${qText}". Draft answer: "${answerText}". Provide a detailed explanation of this draft answer, including its strengths, how it addresses the question requirements, key components covered, and areas where it excels. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     break;
                 case 'IMPROVE_DRAFT':
                     prompt = `Question: "${qText}". Draft answer: "${answerText}". Analyze this draft comprehensively and suggest specific improvements. Consider completeness, clarity, compliance requirements, industry best practices, and ESG frameworks. Provide a detailed "Revised Version:" at the end. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     const improvementMarker = 'revised version:';
                     const markerIndex = responseText.toLowerCase().indexOf(improvementMarker);
                     if (markerIndex !== -1) {
@@ -539,15 +576,15 @@ const ChatbotWindow = ({ onClose }) => {
                     break;
                 case 'SUGGEST_INPUT_ELEMENTS':
                     prompt = `For BRSR question: "${qText}" (Guidance: "${qGuidance}"), provide a comprehensive list of 5-8 key elements, data points, or components that should be included in a thorough answer. Explain why each element is important and how it contributes to compliance. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     break;
                 case 'SHOW_EXAMPLE_ANSWER':
                     prompt = `Provide a detailed, high-quality example answer for a BRSR question like: "${qText}". Guidance: "${qGuidance}". Include industry-specific examples, relevant metrics, frameworks, and best practices that demonstrate comprehensive ESG reporting. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     break;
                 case 'SUGGEST_FOLLOW_UP':
                     prompt = `Based on BRSR question: "${qText}", suggest 4-6 detailed follow-up considerations, related questions, implementation steps, or complementary actions that organizations should consider. Explain the rationale for each suggestion. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     break;
                 case 'DEFINE_TERM':
                     responseText = 'Please type the BRSR or ESG term you\'d like me to define in detail.';
@@ -556,7 +593,7 @@ const ChatbotWindow = ({ onClose }) => {
                     break;
                 case 'EXPLORE_EXAMPLES':
                     prompt = `Provide 3-4 comprehensive, diverse examples of common BRSR disclosures across different categories (environmental, social, governance). For each example, include context, typical metrics, reporting frameworks, and best practices. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     break;
                 case 'SUMMARIZE_CHAT':
                     if (messages.length <= 2) {
@@ -567,20 +604,20 @@ const ChatbotWindow = ({ onClose }) => {
                             .map(m => `${m.sender}: ${m.text}`)
                             .join('\n');
                         prompt = `Provide a comprehensive summary of the following conversation, including key topics discussed, main insights shared, actions taken, and important conclusions reached. Organize into clear sections with bullet points for easy reference:\n\n${chatHistory}\n\n${commonPromptSuffix}`;
-                        responseText = await geminiService.generateText(prompt);
+                        responseText = await geminiService.generateText(prompt, apiConfig);
                     }
                     break;
                 case 'SUGGEST_USER_FOLLOWUPS':
                     const lastAiMessage = messages.slice().reverse().find(m => m.sender === 'ai');
                     prompt = `Based on the last AI response ("${lastAiMessage?.text || relatedText || 'previous topic'}"), suggest 4-6 relevant, specific questions the user might want to ask next. Include both clarifying questions and deeper exploration topics. Frame as a detailed bulleted list with explanations for why each question would be valuable. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     break;
                 case 'DRAFT_KEY_METRICS_LIST':
                     const metricsContext = activeQuestion
                         ? `BRSR question: "${qText}" (Guidance: "${qGuidance}")`
                         : `general context "${relatedText || 'ESG reporting'}"`;
                     prompt = `For the ${metricsContext}, draft a comprehensive list of 6-10 relevant key performance indicators (KPIs) and metrics to track. For each metric, include measurement methodology, reporting frequency, industry benchmarks where applicable, and alignment with ESG frameworks. ${commonPromptSuffix}`;
-                    responseText = await geminiService.generateText(prompt);
+                    responseText = await geminiService.generateText(prompt, apiConfig);
                     break;
                 default:
                     responseText = 'Action not recognized. Please try one of the available quick actions.';
@@ -685,41 +722,41 @@ const ChatbotWindow = ({ onClose }) => {
     }, [state.isChatbotOpen, activeQuestion]);
 
     return (
-<div className="fixed inset-x-0 bottom-0 w-full sm:max-w-md sm:h-[80vh] sm:max-h-[600px] sm:static bg-white/95 border border-slate-200/30 sm:rounded-2xl shadow-lg sm:shadow-xl flex flex-col overflow-hidden transition-all duration-300">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/10 to-indigo-50/10 pointer-events-none"></div>
-        <div className="relative flex flex-col h-full">
-            <ChatbotHeader
-                onClose={onClose}
-                activeQuestion={activeQuestion}
-                isApiKeyAvailable={geminiService.isApiKeyAvailable()}
-            />
-            <ChatbotMessages
-                messages={messages}
-                handleCopyMessage={handleCopyMessage}
-                copiedMessageId={copiedMessageId}
-                isLoading={isLoading}
-                error={error}
-                handleAction={handleAction}
-                formatTimestamp={formatTimestamp}
-            />
-            <ChatbotInput
-                input={input}
-                setInput={setInput}
-                handleSendMessage={handleSendMessage}
-                isLoading={isLoading}
-                isWaitingForTerm={isWaitingForTerm}
-                isApiKeyAvailable={geminiService.isApiKeyAvailable()}
-                inputRef={inputRef}
-            />
-            <ChatbotQuickActions
-                quickActions={quickActions}
-                handleAction={handleAction}
-                isLoading={isLoading}
-                isApiKeyAvailable={geminiService.isApiKeyAvailable()}
-                activeQuestion={activeQuestion}
-            />
-        </div>
-        <style jsx>{`
+        <div className="fixed inset-x-0 bottom-0 w-full sm:max-w-md sm:h-[80vh] sm:max-h-[600px] sm:static bg-white/95 border border-slate-200/30 sm:rounded-2xl shadow-lg sm:shadow-xl flex flex-col overflow-hidden transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-50/10 to-indigo-50/10 pointer-events-none"></div>
+            <div className="relative flex flex-col h-full">
+                <ChatbotHeader
+                    onClose={onClose}
+                    activeQuestion={activeQuestion}
+                    isApiKeyAvailable={geminiService.isApiKeyAvailable()}
+                />
+                <ChatbotMessages
+                    messages={messages}
+                    handleCopyMessage={handleCopyMessage}
+                    copiedMessageId={copiedMessageId}
+                    isLoading={isLoading}
+                    error={error}
+                    handleAction={handleAction}
+                    formatTimestamp={formatTimestamp}
+                />
+                <ChatbotInput
+                    input={input}
+                    setInput={setInput}
+                    handleSendMessage={handleSendMessage}
+                    isLoading={isLoading}
+                    isWaitingForTerm={isWaitingForTerm}
+                    isApiKeyAvailable={geminiService.isApiKeyAvailable()}
+                    inputRef={inputRef}
+                />
+                <ChatbotQuickActions
+                    quickActions={quickActions}
+                    handleAction={handleAction}
+                    isLoading={isLoading}
+                    isApiKeyAvailable={geminiService.isApiKeyAvailable()}
+                    activeQuestion={activeQuestion}
+                />
+            </div>
+            <style jsx>{`
             @media (max-width: 640px) {
                 .fixed {
                     height: 80vh;
@@ -737,7 +774,7 @@ const ChatbotWindow = ({ onClose }) => {
                 animation: fade-in 0.3s ease-out forwards;
             }
         `}</style>
-    </div>
+        </div>
     );
 };
 

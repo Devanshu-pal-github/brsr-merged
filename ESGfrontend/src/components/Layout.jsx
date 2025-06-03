@@ -1,33 +1,63 @@
-import { useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
 const Layout = ({ children }) => {
-    const sidebarRef = useRef(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Check if we're on mobile
+    useEffect(() => {
+        const checkIfMobile = () => {
+            setIsMobile(window.innerWidth < 1024); // 1024px is the lg breakpoint
+        };
+
+        checkIfMobile();
+        window.addEventListener('resize', checkIfMobile);
+        return () => window.removeEventListener('resize', checkIfMobile);
+    }, []);
 
     const toggleSidebar = () => {
-        const sidebarToggle = sidebarRef.current.querySelector('[data-toggle-sidebar]');
-        if (sidebarToggle) {
-            sidebarToggle.dataset.toggleSidebar();
+        // Only toggle if we're on mobile
+        if (isMobile) {
+            setIsSidebarOpen(!isSidebarOpen);
         }
     };
 
     return (
-        <div className="min-h-screen w-screen bg-[#F2F4F5] font-sans text-[#1A1A1A] grid grid-cols-[150px_1fr] lg:grid-cols-[170px_1fr] xl:grid-cols-[190px_1fr] grid-rows-[auto_1fr]" style={{overflow:'hidden'}}>
-            {/* Sidebar: visually balanced, always full height */}
-            <aside className="row-span-2 col-span-1 h-screen bg-[#000D30] z-40 transition-all duration-500 flex flex-col">
-                <Sidebar />
-            </aside>
+        <div className="flex h-screen w-screen overflow-hidden bg-[#F2F4F5] font-sans text-[#1A1A1A]">
+            {/* Sidebar - fixed width on desktop, slide in/out on mobile */}
+            <div className={`fixed lg:relative h-full z-50
+                ${isMobile ? 'w-[200px]' : 'w-[170px] lg:w-[190px]'}
+                ${isMobile && !isSidebarOpen ? '-translate-x-full' : 'translate-x-0'}
+                transition-all duration-300 ease-in-out`}>
+                <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
+            </div>
 
-            {/* Navbar: always meets sidebar, never shredded */}
-            <header className="col-span-1 row-span-1 h-[48px] min-h-[40px] max-h-[60px] bg-[#000D30] shadow-md flex items-center px-3 transition-all duration-500 z-50">
-                <Header toggleSidebar={toggleSidebar} />
-            </header>
+            {/* Main Content Area */}
+            <div className="flex flex-col flex-1">
+                {/* Header - only show hamburger on mobile */}
+                <header className="h-[48px] min-h-[40px] max-h-[60px] bg-[#000D30] shadow-md flex items-center z-40">
+                    <Header 
+                        toggleSidebar={toggleSidebar}
+                        showHamburger={isMobile}
+                        isSidebarOpen={isSidebarOpen}
+                    />
+                </header>
 
-            {/* Main content: scale down paddings and spacing for compactness */}
-            <main className="col-span-1 row-span-1 flex flex-col min-w-0 max-w-full pt-0 pb-0 overflow-y-auto transition-all duration-500 px-1.5 md:px-2" style={{height:'calc(100vh - 48px)'}}>
-                {children}
-            </main>
+                {/* Main Content */}
+                <main className="flex-1 min-w-0 overflow-y-auto px-1.5 md:px-2">
+                    {children}
+                </main>
+            </div>
+
+            {/* Mobile Overlay */}
+            {isMobile && isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    onClick={toggleSidebar}
+                />
+            )}
         </div>
     );
 };
