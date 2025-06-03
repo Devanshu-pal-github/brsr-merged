@@ -194,50 +194,33 @@ const ChatbotMessages = ({ messages, handleCopyMessage, copiedMessageId, isLoadi
 };
 
 
-const ChatbotInput = ({
-  input,
-  setInput,
-  handleSendMessage,
-  isLoading,
-  isWaitingForTerm,
-  isApiKeyAvailable,
-  inputRef,
-}) => {
-  const sendMessage = () => {
-    if (!input.trim() || isLoading) return;
-    handleSendMessage();
-    setTimeout(() => {
-      setInput("");
-      if (inputRef?.current) inputRef.current.focus();
-    }, 10);
-  };
 
-  return (
-    <div className="p-2 bg-gradient-to-r from-slate-50/90 to-indigo-50/90 border-t border-slate-200/30 animate-fade-in">
-      <div className="flex items-center gap-1.5">
-        <input
-          ref={inputRef}
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder={isWaitingForTerm ? "Enter term..." : "Type message..."}
-          className="flex-1 px-2.5 py-1.5 rounded-lg text-sm bg-white/90 text-slate-800 placeholder-slate-400/70 border border-slate-200/30 focus:outline-none focus:ring-1 focus:ring-indigo-400/50 disabled:opacity-50 transition-all duration-200"
-          disabled={isLoading || !isApiKeyAvailable}
-        />
-        <div
-          onClick={sendMessage}
-          className="p-1.5 rounded-lg bg-slate-100/50 hover:bg-indigo-100/50 text-slate-600 hover:text-indigo-700 disabled:opacity-40 cursor-pointer transition-all duration-200 animate-slide-up"
-          aria-label="Send message"
-        >
-          <FaPaperPlane className="w-3 h-3" />
+// Component 3: ChatbotInput
+const ChatbotInput = ({ input, setInput, handleSendMessage, isLoading, isWaitingForTerm, isApiKeyAvailable, inputRef }) => {
+    return (
+        <div className="p-2 bg-gradient-to-r from-slate-50/90 to-indigo-50/90 border-t border-slate-200/30 animate-fade-in">
+            <div className="flex items-center gap-1.5">
+                <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && !isLoading && handleSendMessage()}
+                    placeholder={isWaitingForTerm ? "Enter term..." : "Type message..."}
+                    className="flex-1 px-2.5 py-1.5 rounded-lg text-sm bg-white/90 text-slate-800 placeholder-slate-400/70 border border-slate-200/30 focus:outline-none focus:ring-1 focus:ring-indigo-400/50 disabled:opacity-50 transition-all duration-200"
+                    disabled={isLoading || !isApiKeyAvailable}
+                />
+                <div
+                    onClick={handleSendMessage}
+                    className="p-1.5 rounded-lg bg-slate-100/50 hover:bg-indigo-100/50 text-slate-600 hover:text-indigo-700 disabled:opacity-40 cursor-pointer transition-all duration-200 animate-slide-up"
+                    aria-label="Send message"
+                >
+                    <FaPaperPlane className="w-3 h-3" />
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
-
-
 
 // Component 4: ChatbotQuickActions
 const ChatbotQuickActions = ({ quickActions, handleAction, isLoading, isApiKeyAvailable, activeQuestion }) => {
@@ -358,104 +341,88 @@ const ChatbotWindow = ({ onClose }) => {
             });
     };
 
-const handleSendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+    const handleSendMessage = async () => {
+        if (!input.trim() || isLoading) return;
 
-    const currentInput = input;
-    addMessage('user', currentInput);
-    setInput(''); // Clear input immediately
-    setIsLoading(true);
-    setError(null);
+        const currentInput = input;
+        addMessage('user', currentInput);
+        setInput('');
+        setIsLoading(true);
+        setError(null);
 
-    try {
-        let responseText = '';
-        const messageId = Date.now().toString() + Math.random().toString(36).substring(2, 7);
-        eventSourceRef.current = new EventSource(
-            `http://localhost:8000/api/messages/stream?message=${encodeURIComponent(currentInput)}`
-        );
+        try {
+            let responseText = '';
+            const messageId = Date.now().toString() + Math.random().toString(36).substring(2, 7);
+            eventSourceRef.current = new EventSource(
+                `http://localhost:8000/api/messages/stream?message=${encodeURIComponent(currentInput)}`
+            );
 
-        eventSourceRef.current.onmessage = (event) => {
-            if (event.data) {
-                responseText += event.data;
+            eventSourceRef.current.onmessage = (event) => {
+                if (event.data) {
+                    responseText += event.data;
+                    setMessages((prev) => {
+                        const updated = [...prev];
+                        const aiMessageIndex = updated.findIndex((msg) => msg.id === messageId);
+                        const followUpActions = ['DEEP_DIVE', 'SUGGEST_USER_FOLLOWUPS', 'DEFINE_TERM'];
+                        if (aiMessageIndex === -1) {
+                            updated.push({
+                                id: messageId,
+                                sender: 'ai',
+                                text: responseText,
+                                timestamp: new Date().toISOString(),
+                                isMarkdown: true,
+                                followUpActions,
+                                originalUserMessage: currentInput,
+                            });
+                        } else {
+                            updated[aiMessageIndex].text = responseText;
+                        }
+                        return updated;
+                    });
+                }
+            };
+
+            eventSourceRef.current.addEventListener('complete', async () => {
+                eventSourceRef.current?.close();
+                eventSourceRef.current = null;
+
+                await axios.post('http://localhost:8000/api/messages', { message: currentInput });
+
+                const carouselPayload = await convertToCarouselPayload(responseText, geminiService, 150);
+                const finalText = carouselPayload
+                    ? `✨ **Comprehensive Response Ready** ✨\n\nI've prepared a detailed ${carouselPayload.slides.length}-slide presentation covering all aspects of your request. Use the carousel below to navigate through the structured content.`
+                    : responseText;
+
                 setMessages((prev) => {
                     const updated = [...prev];
                     const aiMessageIndex = updated.findIndex((msg) => msg.id === messageId);
-                    const followUpActions = ['DEEP_DIVE', 'SUGGEST_USER_FOLLOWUPS', 'DEFINE_TERM'];
-                    if (aiMessageIndex === -1) {
-                        updated.push({
-                            id: messageId,
-                            sender: 'ai',
-                            text: responseText,
-                            timestamp: new Date().toISOString(),
-                            isMarkdown: true,
-                            followUpActions,
-                            originalUserMessage: currentInput,
-                        });
-                    } else {
-                        updated[aiMessageIndex].text = responseText;
+                    if (aiMessageIndex !== -1) {
+                        updated[aiMessageIndex].text = finalText;
+                        updated[aiMessageIndex].carouselPayload = carouselPayload;
                     }
                     return updated;
                 });
-            }
-        };
 
-        eventSourceRef.current.addEventListener('complete', async () => {
-            eventSourceRef.current?.close();
-            eventSourceRef.current = null;
-
-            await axios.post('http://localhost:8000/api/messages', { message: currentInput });
-
-            const carouselPayload = await convertToCarouselPayload(responseText, geminiService, 150);
-            const finalText = carouselPayload
-                ? `✨ **Comprehensive Response Ready** ✨\n\nI've prepared a detailed ${carouselPayload.slides.length}-slide presentation covering all aspects of your request. Use the carousel below to navigate through the structured content.`
-                : responseText;
-
-            setMessages((prev) => {
-                const updated = [...prev];
-                const aiMessageIndex = updated.findIndex((msg) => msg.id === messageId);
-                if (aiMessageIndex !== -1) {
-                    updated[aiMessageIndex].text = finalText;
-                    updated[aiMessageIndex].carouselPayload = carouselPayload;
-                }
-                return updated;
+                setIsLoading(false);
+                inputRef.current?.focus();
             });
 
+            eventSourceRef.current.onerror = (err) => {
+                console.error('Stream error:', err);
+                setError('Failed to stream AI response. Check console for details.');
+                eventSourceRef.current?.close();
+                eventSourceRef.current = null;
+                setIsLoading(false);
+                inputRef.current?.focus();
+            };
+        } catch (err) {
+            console.error('Chatbot send message error:', err);
+            setError('An error occurred.');
+            addMessage('system', 'An error occurred.', false);
             setIsLoading(false);
-            // Use a slight delay to ensure DOM is updated before focusing
-            setTimeout(() => {
-                if (inputRef.current) {
-                    inputRef.current.focus();
-                    inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-            }, 100);
-        });
-
-        eventSourceRef.current.onerror = (err) => {
-            console.error('Stream error:', err);
-            setError('Failed to stream AI response. Check console for details.');
-            eventSourceRef.current?.close();
-            eventSourceRef.current = null;
-            setIsLoading(false);
-            setTimeout(() => {
-                if (inputRef.current) {
-                    inputRef.current.focus();
-                    inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-            }, 100);
-        };
-    } catch (err) {
-        console.error('Chatbot send message error:', err);
-        setError('An error occurred.');
-        addMessage('system', 'An error occurred.', false);
-        setIsLoading(false);
-        setTimeout(() => {
-            if (inputRef.current) {
-                inputRef.current.focus();
-                inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }, 100);
-    }
-};
+            inputRef.current?.focus();
+        }
+    };
 
     const requiresActiveQuestion = [
         'DRAFT_ANSWER', 'EXPLAIN_QUESTION', 'SUGGEST_INPUT_ELEMENTS', 'SHOW_EXAMPLE_ANSWER',
