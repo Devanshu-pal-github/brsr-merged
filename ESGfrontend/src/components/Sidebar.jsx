@@ -32,25 +32,36 @@ const Sidebar = ({ isOpen, onClose }) => {
 
     // Fetch module details when we have module access
     useEffect(() => {
-        const fetchModuleDetails = async () => {
+        const fetchModuleNames = async () => {
             console.log('🔄 Sidebar: Checking for stored module IDs...');
             const storedModuleIds = localStorage.getItem("module_ids");
             
             if (storedModuleIds) {
                 try {
-                    console.log('🔄 Sidebar: Fetching module details...');
-                    const result = await getModuleDetails().unwrap();
-                    if (result?.modules) {
-                        console.log('✅ Sidebar: Successfully loaded module details');
+                    // Only fetch module names instead of full details
+                    const moduleIds = JSON.parse(storedModuleIds);
+                    console.log('🔄 Sidebar: Fetching module names for IDs:', moduleIds);
+                    const response = await fetch('http://localhost:8000/modules/names', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+                        body: JSON.stringify(moduleIds)
+                    });
+                    const result = await response.json();
+                    console.log('📥 Sidebar: Raw module names response:', result);
+                    if (result?.modules && Array.isArray(result.modules)) {
+                        // Log each module for debugging
+                        result.modules.forEach((mod, idx) => {
+                            // Log the module object for debugging
+                            console.log(`📦 Sidebar: Module[${idx}] raw:`, mod);
+                            // Use 'name' instead of 'module_name' for the new endpoint
+                            console.log(`📦 Sidebar: Module[${idx}] - id: ${mod.id || mod._id}, name: ${mod.name}`);
+                        });
                         setModules(result.modules);
                     } else {
-                        console.warn('⚠️ Sidebar: No modules found in response');
+                        console.warn('⚠️ Sidebar: No modules found in response or response format invalid', result);
                     }
                 } catch (error) {
-                    console.error('❌ Sidebar: Error fetching module details:', error);
-                    if (error.status === 422) {
-                        console.warn('⚠️ Sidebar: Invalid module IDs or empty module list');
-                    }
+                    console.error('❌ Sidebar: Error fetching module names:', error);
                 }
             } else {
                 console.warn('⚠️ Sidebar: No module IDs found in localStorage');
@@ -58,9 +69,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         };
 
         if (moduleAccessSuccess) {
-            console.log('✅ Sidebar: Module access successful, preparing to fetch details...');
-            // Small delay to ensure localStorage is updated
-            setTimeout(fetchModuleDetails, 100);
+            setTimeout(fetchModuleNames, 100);
         }
 
         if (moduleAccessError) {
@@ -178,7 +187,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                                         onClick={() => handleModuleClick(moduleAccessId)}
                                     >
                                         <IconComponent className="w-4 h-4 flex-shrink-0" />
-                                        <span className="text-left">{module.module_name}</span>
+                                        <span className="text-left">{module.name}</span>
                                     </NavLink>
                                 </li>
                             );
