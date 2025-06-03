@@ -377,33 +377,75 @@ const DynamicEntityDetails = () => {
                             )}
                         </div>
                     </section>
-
-                            
                     <aside className="hidden lg:flex flex-col mt-[7vh] mr-[30px] gap-[1.2vh] px-[0.7vw] pt-[1.2vh] pb-[1.2vh] bg-white border-l border-gray-200 shadow-lg min-w-[16vw] max-w-[18vw] w-full sticky top-0 h-[82vh] z-20 items-center justify-start rounded-[4px] transition-all duration-500">
                         {/* Overall Progress Circle */}                        <div className="flex flex-col items-center mb-[0.7vh]">
                             <div className="font-semibold text-[13px] mb-[1vh] text-[#000D30]">Module Progress</div>
                             {submodules.length > 0 && (
                                 <>
-                                    <svg width="6vw" height="6vw" viewBox="0 0 120 120">
-                                        <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="8" />
-                                        <circle
-                                            cx="60"
-                                            cy="60"
-                                            r="50"
-                                            fill="none"
-                                            stroke="#4F46E5"
-                                            strokeWidth="8"
-                                            strokeDasharray="314"                                            strokeDashoffset={314 * (1 - (Object.values(answers).filter(a => a !== null && a !== undefined).length) / submodules.reduce((total, sub) =>
-                                                total + (sub.question_categories?.reduce((catTotal, cat) =>
-                                                    catTotal + (cat.questions?.length || 0), 0) || 0), 0))}
-                                            strokeLinecap="round"
-                                        />
-                                    </svg>
-                                    <div className="mt-[0.7vh] text-gray-700 font-semibold text-[11px]">
-                                        {Object.values(answers).filter(a => a !== null && a !== undefined).length} of {submodules.reduce((total, sub) =>
+                                    {(() => {
+                                        // Overall Module Progress
+                                        const questionTracker = new Set(); // Track unique question IDs
+                                        
+                                        // Count total questions from submodules structure
+                                        const totalQuestions = submodules.reduce((total, sub) =>
                                             total + (sub.question_categories?.reduce((catTotal, cat) =>
-                                                catTotal + (cat.questions?.length || 0), 0) || 0), 0)} questions completed
-                                    </div>
+                                                catTotal + (cat.questions?.length || 0), 0) || 0), 0);
+                                        
+                                        // Count answered questions by tracking unique question IDs from submodules
+                                        const totalAnswered = submodules.reduce((moduleTotal, sub) =>
+                                            moduleTotal + (sub.question_categories?.reduce((catTotal, cat) =>
+                                                catTotal + (cat.questions?.filter(q => {
+                                                    // Only count each question once
+                                                    if (questionTracker.has(q.question_id)) {
+                                                        return false;
+                                                    }
+                                                    const hasAnswer = answers[q.question_id] && (
+                                                        answers[q.question_id].string_value !== undefined ||
+                                                        answers[q.question_id].bool_value !== undefined ||
+                                                        answers[q.question_id].decimal_value !== undefined ||
+                                                        (answers[q.question_id].response && answers[q.question_id].response.table)
+                                                    );
+                                                    if (hasAnswer) {
+                                                        questionTracker.add(q.question_id);
+                                                    }
+                                                    return hasAnswer;
+                                                }).length || 0), 0) || 0), 0);
+                                        
+                                        console.log('Detailed Progress Stats:', {
+                                            totalAnsweredQuestions: totalAnswered,
+                                            totalQuestions: totalQuestions,
+                                            uniqueQuestionIds: Array.from(questionTracker),
+                                            answerDetails: Object.entries(answers).map(([key, val]) => ({
+                                                questionId: key,
+                                                hasStringValue: !!val?.string_value,
+                                                hasBoolValue: val?.bool_value !== undefined,
+                                                hasDecimalValue: val?.decimal_value !== undefined,
+                                                hasTableResponse: !!(val?.response?.table)
+                                            }))
+                                        });
+                                        
+                                        return (
+                                            <>
+                                                <svg width="6vw" height="6vw" viewBox="0 0 120 120">
+                                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" strokeWidth="8" />
+                                                    <circle
+                                                        cx="60"
+                                                        cy="60"
+                                                        r="50"
+                                                        fill="none"
+                                                        stroke="#4F46E5"
+                                                        strokeWidth="8"
+                                                        strokeDasharray="314"
+                                                        strokeDashoffset={314 * (1 - (totalAnswered / totalQuestions))}
+                                                        strokeLinecap="round"
+                                                    />
+                                                </svg>
+                                                <div className="mt-[0.7vh] text-gray-700 font-semibold text-[11px]">
+                                                    {totalAnswered} of {totalQuestions} questions completed
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
                                 </>
                             )}
                         </div>
@@ -412,12 +454,51 @@ const DynamicEntityDetails = () => {
                         <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.7vh]">
                             <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Submodules Progress</div>
                             <div className="flex flex-col gap-[0.3vh]">
-                                {submodules.map(submodule => {
-                                    const totalQuestions = submodule.question_categories?.reduce((total, cat) =>
-                                        total + (cat.questions?.length || 0), 0) || 0;
-                                    const answeredQuestions = submodule.question_categories?.reduce((total, cat) =>
-                                        total + (cat.questions?.filter(q => answers[q.question_id])?.length || 0), 0) || 0;
+                                {submodules.map((submodule, index) => {
+                                    const questionTracker = new Set(); // Track unique question IDs for this submodule
+                                    
+                                    const totalQuestions = submodule.question_categories?.reduce(
+                                        (total, cat) => total + (cat.questions?.length || 0),
+                                        0
+                                    ) || 0;
+
+                                    const answeredQuestions = submodule.question_categories?.reduce((total, cat) => {
+                                        const categoryAnswered = cat.questions?.filter(q => {
+                                            if (questionTracker.has(q.question_id)) {
+                                                return false;
+                                            }
+                                            const hasAnswer = answers[q.question_id] && (
+                                                answers[q.question_id].string_value !== undefined ||
+                                                answers[q.question_id].bool_value !== undefined ||
+                                                answers[q.question_id].decimal_value !== undefined ||
+                                                (answers[q.question_id].response && answers[q.question_id].response.table)
+                                            );
+                                            if (hasAnswer) {
+                                                questionTracker.add(q.question_id);
+                                            }
+                                            return hasAnswer;
+                                        }).length || 0;
+                                        return total + categoryAnswered;
+                                    }, 0) || 0;
+
                                     const completionPercentage = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
+
+                                    console.log(`Submodule ${submodule.submodule_name} Progress:`, {
+                                        totalQuestions,
+                                        answeredQuestions,
+                                        completionPercentage,
+                                        uniqueQuestionIds: Array.from(questionTracker),
+                                        categories: submodule.question_categories?.map(cat => ({
+                                            categoryName: cat.category_name,
+                                            totalQuestions: cat.questions?.length || 0,
+                                            answeredQuestions: cat.questions?.filter(q => !questionTracker.has(q.question_id) && answers[q.question_id] && (
+                                                answers[q.question_id].string_value !== undefined ||
+                                                answers[q.question_id].bool_value !== undefined ||
+                                                answers[q.question_id].decimal_value !== undefined ||
+                                                (answers[q.question_id].response && answers[q.question_id].response.table)
+                                            )).length || 0
+                                        }))
+                                    });
 
                                     return (
                                         <div key={submodule.submodule_id}>
