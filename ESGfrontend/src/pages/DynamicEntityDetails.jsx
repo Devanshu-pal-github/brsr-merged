@@ -505,7 +505,7 @@ const DynamicEntityDetails = () => {
                                                     const hasAnswer = answers[q.question_id] && (
                                                         answers[q.question_id].string_value !== undefined ||
                                                         answers[q.question_id].bool_value !== undefined ||
-                                                        answers[q.questionId].decimal_value !== undefined ||
+                                                        answers[q.question_id]?.decimal_value !== undefined ||
                                                         (answers[q.question_id].response && answers[q.question_id].response.table)
                                                     );
                                                     if (hasAnswer) {
@@ -569,11 +569,10 @@ const DynamicEntityDetails = () => {
                                         const categoryAnswered = cat.questions?.filter(q => {
                                             if (questionTracker.has(q.question_id)) {
                                                 return false;
-                                            }
-                                            const hasAnswer = answers[q.question_id] && (
+                                            }                                            const hasAnswer = answers[q.question_id] && (
                                                 answers[q.question_id].string_value !== undefined ||
                                                 answers[q.question_id].bool_value !== undefined ||
-                                                answers[q.questionId].decimal_value !== undefined ||
+                                                answers[q.question_id]?.decimal_value !== undefined ||
                                                 (answers[q.question_id].response && answers[q.question_id].response.table)
                                             );
                                             if (hasAnswer) {
@@ -595,9 +594,8 @@ const DynamicEntityDetails = () => {
                                             categoryName: cat.category_name,
                                             totalQuestions: cat.questions?.length || 0,
                                             answeredQuestions: cat.questions?.filter(q => !questionTracker.has(q.question_id) && answers[q.question_id] && (
-                                                answers[q.question_id].string_value !== undefined ||
-                                                answers[q.question_id].bool_value !== undefined ||
-                                                answers[q.questionId].decimal_value !== undefined ||
+                                                answers[q.question_id].string_value !== undefined ||                                                answers[q.question_id].bool_value !== undefined ||
+                                                answers[q.question_id]?.decimal_value !== undefined ||
                                                 (answers[q.question_id].response && answers[q.question_id].response.table)
                                             )).length || 0
                                         }))
