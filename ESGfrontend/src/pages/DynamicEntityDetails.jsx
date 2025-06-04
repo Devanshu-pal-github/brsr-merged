@@ -18,6 +18,7 @@ import ChatbotWindow from '../AICHATBOT/ChatbotWindow';
 import { AppProvider } from '../AICHATBOT/AppProvider';
 
 
+
 const getBestAnswerValue = (answerObj) => {
     if (!answerObj) return '';
     if (typeof answerObj.string_value !== 'undefined') return answerObj.string_value;

@@ -1,31 +1,65 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, ChevronDown, Bell } from 'lucide-react';
 
 const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
-    const [selectedFY, setSelectedFY] = useState('2025-26');
+    // Initialize financial year and user name from localStorage
+    const [selectedFY, setSelectedFY] = useState(() => {
+        return localStorage.getItem('financial_year') || '2025-26'; // Fallback if not in localStorage
+    });
+    const [userName, setUserName] = useState(() => {
+        return localStorage.getItem('user_name') || 'User'; // Fallback if not in localStorage
+    });
+
+    
     const [isFYDropdownOpen, setIsFYDropdownOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
+    // List of fiscal years (can be extended dynamically if needed)
     const fiscalYears = [
         '2020-21',
         '2021-22',
         '2022-23',
         '2023-24',
         '2024-25',
-        '2025-26'
+        '2025-26',
     ];
+
+    // Add the financial year from localStorage to fiscalYears if not already present
+    const financialYearFromToken = localStorage.getItem('financial_year');
+    if (financialYearFromToken && !fiscalYears.includes(financialYearFromToken)) {
+        fiscalYears.push(financialYearFromToken);
+        fiscalYears.sort(); // Sort to maintain chronological order
+    }
+
+    // Update localStorage when financial year changes
+    const selectFY = (year) => {
+        setSelectedFY(year);
+        localStorage.setItem('financial_year', year); // Persist the selected financial year
+        setIsFYDropdownOpen(false);
+    };
 
     const toggleFYDropdown = () => {
         setIsFYDropdownOpen(!isFYDropdownOpen);
     };
 
-    const selectFY = (year) => {
-        setSelectedFY(year);
-        setIsFYDropdownOpen(false);
-    };
-
     const toggleUserDropdown = () => {
         setIsUserDropdownOpen(!isUserDropdownOpen);
+    };
+
+    // Redirect to login if no token is present
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/login';
+        }
+    }, []);
+
+    // Extract user initials for the avatar
+    const getUserInitials = (name) => {
+        if (!name) return 'U';
+        const names = name.trim().split(' ');
+        if (names.length === 1) return names[0].charAt(0).toUpperCase();
+        return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
     };
 
     return (
@@ -86,10 +120,10 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                         className="flex items-center gap-2 focus:outline-none group"
                     >
                         <div className="w-8 h-8 bg-[#20305D] rounded-full flex items-center justify-center text-white text-[12px] font-semibold group-hover:bg-[#345678] transition-colors">
-                            JS
+                            {getUserInitials(userName)}
                         </div>
                         <div className="hidden sm:flex items-center gap-1">
-                            <span className="text-[#FFFFFF] text-[12px] font-medium">John Smith</span>
+                            <span className="text-[#FFFFFF] text-[12px] font-medium">{userName}</span>
                             <ChevronDown className={`w-5 h-5 text-[#FFFFFF] transition-transform duration-300 ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
                         </div>
                     </button>
@@ -111,7 +145,12 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                             </li>
                             <li
                                 className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
-                                onClick={() => setIsUserDropdownOpen(false)}
+                                onClick={() => {
+                                    // Clear localStorage and redirect to login on logout
+                                    localStorage.clear();
+                                    window.location.href = '/login';
+                                    setIsUserDropdownOpen(false);
+                                }}
                             >
                                 Logout
                             </li>

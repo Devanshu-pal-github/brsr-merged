@@ -34,6 +34,7 @@ const Login = () => {
             // Store token and user_id in localStorage
             localStorage.setItem('access_token', response.access_token);
             localStorage.setItem('user_id', response.user_id);
+            localStorage.setItem('user_name', response.user_name);
             console.log('Login successful:', response);
             
             // Redirect to dashboard

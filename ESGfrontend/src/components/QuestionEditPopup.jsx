@@ -91,22 +91,35 @@ const AIResponseDisplay = ({ aiMessage, isLoading, error, handlePostResponseActi
 };
 
 const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, moduleId }) => {
-    const [formData, setFormData] = useState(initialAnswer || {});
+    console.log('Rendering QuestionEditPopup for question:', question.question_id);
+    console.log('Initial answer:', initialAnswer);    const [formData, setFormData] = useState({
+        string_value: initialAnswer?.string_value || "",
+        decimal_value: initialAnswer?.decimal_value || "",
+        boolean_value: initialAnswer?.boolean_value || false,
+        link: initialAnswer?.link || "",
+        note: initialAnswer?.note || ""
+    });
     const [errors, setErrors] = useState({});
     const [isVisible, setIsVisible] = useState(false);
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
     const [storeQuestionData] = useStoreQuestionDataMutation();
-    const [generateText, { isLoading, error: aiError }] = useGenerateTextMutation();
+    const [generateText] = useGenerateTextMutation();
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [isTextareaFocused, setIsTextareaFocused] = useState(false);
     const [selectedTextInTextarea, setSelectedTextInTextarea] = useState(null);
     const [aiMessage, setAiMessage] = useState(null);
     const [refineTone, setRefineTone] = useState("professional");
-    const textareaRef = useRef(null);
-
-    useEffect(() => {
+    const textareaRef = useRef(null);    useEffect(() => {
         setIsVisible(true);
         if (initialAnswer) {
-            setFormData(initialAnswer);
+            setFormData({
+                string_value: initialAnswer?.string_value || "",
+                decimal_value: initialAnswer?.decimal_value || "",
+                boolean_value: initialAnswer?.boolean_value || false,
+                link: initialAnswer?.link || "",
+                note: initialAnswer?.note || ""
+            });
         }
     }, [initialAnswer]);
 
@@ -220,16 +233,14 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
         } else {
             setSelectedTextInTextarea(null);
         }
-    }, [isTextareaFocused, question]);
-
-    const handleQuickAIAction = useCallback(async (action) => {
+    }, [isTextareaFocused, question]);    const handleQuickAIAction = useCallback(async (action) => {
         setIsLoading(true);
-        setError(null);
+        setErrors(null);
         setAiMessage(null);
 
         try {
             let prompt;
-            const currentValue = formData.string_value || "";
+            const currentValue = formData?.string_value || "";
 
             switch (action) {
                 case MiniAIAssistantAction.EXPLAIN_THIS_QUESTION:
@@ -294,10 +305,10 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                 suggestion: response.includes('revised version:') ? 
                     response.split('revised version:')[1].trim() : 
                     action === MiniAIAssistantAction.RECOMMEND_AI_ANSWER ? response : null
-            });
-        } catch (error) {
-            console.error('AI Action Error:', error);
-            setError(error?.data?.detail || 'Failed to fetch AI response. Please try again.');
+            });        } catch (err) {
+            console.error('AI Action Error:', err);
+            setError(err?.data?.detail || 'Failed to fetch AI response. Please try again.');
+            setErrors(prev => ({ ...prev, ai: 'Failed to fetch AI response' }));
         } finally {
             setIsLoading(false);
         }
@@ -415,20 +426,19 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                                         />
                                         {renderAIButtons()}
                                     </div>
-                                    {errors.string_value && (
+                                    {errors?.string_value && (
                                         <div className="flex items-center gap-1 text-red-600 text-xs">
                                             <AlertCircle className="w-4 h-4" />
                                             {errors.string_value}
                                         </div>
-                                    )}
-                                    {aiMessage && (
-                                        <AIResponseDisplay
-                                            aiMessage={aiMessage}
-                                            isLoading={isLoading}
-                                            error={aiError?.message || error}
-                                            handlePostResponseAction={handleQuickAIAction}
-                                        />
-                                    )}
+                                    )}                    {aiMessage && (
+                        <AIResponseDisplay
+                            aiMessage={aiMessage}
+                            isLoading={isLoading}
+                            error={error}
+                            handlePostResponseAction={handleQuickAIAction}
+                        />
+                    )}
                                 </div>
                             )}
                             {question.has_decimal_value && (
@@ -446,7 +456,7 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                                         className="w-full p-3 border border-gray-200 rounded-[6px] focus:border-[#002A85] focus:ring-2 focus:ring-[#002A85]/20 text-[#1A2341] text-sm transition-all duration-200"
                                         required={question.decimal_value_required}
                                     />
-                                    {errors.decimal_value && (
+                                    {errors?.decimal_value && (
                                         <div className="flex items-center gap-1 text-red-600 text-xs">
                                             <AlertCircle className="w-4 h-4" />
                                             {errors.decimal_value}
@@ -522,7 +532,7 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                                 </div>
                             )}
                         </div>
-                        {errors.form && (
+                        {errors?.form && (
                             <div className="p-3 bg-red-50 border border-red-200 rounded-[6px]">
                                 <div className="flex items-center gap-2 text-red-700">
                                     <AlertCircle className="w-4 h-4" />
