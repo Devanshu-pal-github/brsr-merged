@@ -10,19 +10,37 @@ import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
 import { useInactivityDetector } from './QuestionEdit/useInactivityDetector';
 
-// ModalHeader component to match the provided Modal's header
-const ModalHeader = ({ questionId, questionText, closeModal }) => (
-    <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-white">
-        <h2 id={`question-${questionId}-title`} className="text-lg font-semibold text-gray-800">
+// ModalHeader component with toggle button for AI Assistant
+const ModalHeader = ({ questionId, questionText, closeModal, isAIAssistantOpen, toggleAIAssistant }) => (
+    <div className="relative flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-white">
+        <h2 id={`question-${questionId}-title`} className="text-lg font-semibold text-blue-700 truncate">
             Edit Answer: {questionText}
         </h2>
-        <button
-            onClick={closeModal}
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
-            aria-label="Close modal"
-        >
-            <X className="w-5 h-5" />
-        </button>
+        <div className="flex items-center space-x-2">
+            <button
+                onClick={toggleAIAssistant}
+                className="w-10 h-10 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200 drop-shadow-[0_0_10px_rgba(79,70,229,0.5)] animate-spin-slow flex items-center justify-center"
+                aria-label={isAIAssistantOpen ? "Hide Mini AI Assistant" : "Show Mini AI Assistant"}
+            >
+                <svg className="w-5 h-5 logo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                    />
+                </svg>
+            </button>
+            <button
+                onClick={closeModal}
+                className="p-1 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                aria-label="Close modal"
+            >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
     </div>
 );
 
@@ -69,6 +87,7 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
     });
     const [errors, setErrors] = useState({});
     const [isVisible, setIsVisible] = useState(false);
+    const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
     const [storeQuestionData] = useStoreQuestionDataMutation();
     const [generateText] = useGenerateTextMutation();
@@ -77,6 +96,7 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
     const [isTextareaFocused, setIsTextareaFocused] = useState(false);
     const [selectedTextInTextarea, setSelectedTextInTextarea] = useState(null);
     const [aiMessage, setAiMessage] = useState(null);
+    const [leftAiMessage, setLeftAiMessage] = useState(null); // New state for left panel AI responses
     const [refineTone, setRefineTone] = useState("concise");
     const textareaRef = useRef(null);
     const leftPanelRef = useRef(null);
@@ -94,10 +114,17 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
         }
     }, [initialAnswer]);
 
+    // useEffect(() => {
+    //     if (isAIAssistantOpen && !aiMessage) {
+    //         handleQuickAIAction(MiniAIAssistantAction.EXPLAIN_THIS_QUESTION);
+    //     }
+    // }, [isAIAssistantOpen]);
+
     useInactivityDetector({
-        timeouts: [300000], // 5 minutes
+        timeouts: [300000],
         onTimeout: () => {
             setAiMessage(null);
+            setLeftAiMessage(null); // Clear left panel message on timeout
             setError(null);
             setIsLoading(false);
         }
@@ -216,12 +243,14 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
         if (action === "USE_THIS") {
             setFormData(prev => ({ ...prev, string_value: suggestion }));
             setAiMessage(null);
+            setLeftAiMessage(null); // Clear left panel message when using the suggestion
             return;
         }
 
         setIsLoading(true);
         setError(null);
         setAiMessage(null);
+        setLeftAiMessage(null);
 
         try {
             let prompt;
@@ -312,7 +341,7 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
             };
 
             const response = await generateText({ message: prompt, context }).unwrap();
-            setAiMessage({
+            const message = {
                 id: Date.now().toString(),
                 action,
                 text: response,
@@ -320,7 +349,20 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                     response.split('revised version:')[1].trim() :
                     action === MiniAIAssistantAction.RECOMMEND_AI_ANSWER ? response : null,
                 confidence: 'medium'
-            });
+            };
+
+            // Check if the action is one of the left panel actions
+            const leftActions = [
+                MiniAIAssistantAction.RECOMMEND_AI_ANSWER,
+                MiniAIAssistantAction.EXPLAIN_THIS_QUESTION,
+                MiniAIAssistantAction.BREAK_DOWN_QUESTION,
+                MiniAIAssistantAction.QUICK_COMPLIANCE_CHECK
+            ];
+            if (leftActions.includes(action)) {
+                setLeftAiMessage(message);
+            } else {
+                setAiMessage(message);
+            }
         } catch (err) {
             setError(err?.data?.detail || 'Failed to fetch AI response. Please try again.');
             setErrors(prev => ({ ...prev, ai: 'Failed to fetch AI response' }));
@@ -354,8 +396,8 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
         const inputType = question.input_type || QuestionInputType.TEXTAREA;
 
         if (inputType === QuestionInputType.TABLE_LIKE) {
-            const tableData = aiMessage?.action === MiniAIAssistantAction.SUGGEST_TABLE_STRUCTURE
-                ? (aiMessage.points || ['Category', 'Value', 'Description'])
+            const tableData = leftAiMessage?.action === MiniAIAssistantAction.SUGGEST_TABLE_STRUCTURE
+                ? (leftAiMessage.points || ['Category', 'Value', 'Description'])
                 : ['Category', 'Value', 'Description'];
             const rows = formData.string_value ? formData.string_value.split('\n').map(row => row.split('|')) : [tableData.map(() => '')];
 
@@ -444,14 +486,13 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                         onSelect={handleTextareaSelectionChange}
                         onTouchEnd={handleTextareaSelectionChange}
                         placeholder="Enter your response..."
-                        className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-gray-800 text-sm transition-all duration-200 resize-y min-h-[100px] max-h-[150px]"
+                        className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-gray-800 text-sm transition-all duration-200 resize-y min-h-[100px] max-h-[300px]"
                         rows={4}
-                        required={question.string_value_required}
                     />
                 </div>
                 {formData.string_value.trim().length > 0 && (
                     <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                        <h3 className="text-sm font-medium text-gray-800 mb-2">Response Preview:</h3>
+                        <h3 className="text-sm font-medium text-gray-600 mb-2">Answer Preview:</h3>
                         <div className="prose prose-sm max-w-none text-gray-700">
                             <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
                                 {formData.string_value}
@@ -539,32 +580,93 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
         />
     );
 
-    // Render the four specific AI actions for the bottom left
     const renderLeftAIActions = () => {
-        const leftActions = {
-            RECOMMEND_AI_ANSWER: "Draft",
-            EXPLAIN_THIS_QUESTION: "Explain Question",
-            BREAK_DOWN_QUESTION: "Break Down Question",
-            QUICK_COMPLIANCE_CHECK: "Compliance Check"
+        const leftActions = [
+            { action: MiniAIAssistantAction.RECOMMEND_AI_ANSWER, icon: 'SparklesIcon', title: "Draft" },
+            { action: MiniAIAssistantAction.EXPLAIN_THIS_QUESTION, icon: 'InformationCircleIcon', title: "Explain Question" },
+            { action: MiniAIAssistantAction.BREAK_DOWN_QUESTION, icon: 'DocumentTextIcon', title: "Break Down Question" },
+            { action: MiniAIAssistantAction.QUICK_COMPLIANCE_CHECK, icon: 'ShieldCheckIcon', title: "Compliance Check", requiresDraft: true },
+        ];
+
+        const iconMap = {
+            SparklesIcon: (
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+            ),
+            InformationCircleIcon: (
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            ),
+            DocumentTextIcon: (
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m-9-8h.01M4 4h16v16H4V4z" />
+                </svg>
+            ),
+            ShieldCheckIcon: (
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.504A9.956 9.956 0 0112 2C6.48 2 2 6.48 2 12a9.956 9.956 0 014.382 7.496l-1.392 1.392A1 1 0 005.172 22h13.656a1 1 0 00.707-1.707l-1.392-1.392z" />
+                </svg>
+            ),
         };
 
+        const hasDraft = formData.string_value?.trim().length > 0;
+
         return (
-            <div className="grid grid-cols-2 gap-2">
-                {Object.entries(leftActions).map(([action, label]) => (
-                    <button
-                        key={action}
-                        onClick={() => handleQuickAIAction(action)}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
-                        disabled={isLoading}
-                    >
-                        {label}
-                    </button>
-                ))}
+            <div className="space-y-4">
+                <div className="flex justify-center space-x-3 mt-4">
+                    {leftActions.map(({ action, icon, title, requiresDraft }) => {
+                        const isDisabled = isLoading || (requiresDraft && !hasDraft);
+                        return (
+                            <button
+                                key={action}
+                                onClick={() => handleQuickAIAction(action)}
+                                title={title}
+                                className={`p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors disabled:opacity-50 disabled:hover:bg-blue-600 disabled:cursor-not-allowed`}
+                                disabled={isDisabled}
+                                aria-label={title}
+                            >
+                                {iconMap[icon]}
+                            </button>
+                        );
+                    })}
+                </div>
+                {leftAiMessage && (
+                    <div className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+                        {isLoading ? (
+                            <div className="text-gray-500 text-sm">Loading...</div>
+                        ) : error ? (
+                            <div className="text-red-600 text-sm flex items-center gap-1">
+                                <AlertCircle className="w-4 h-4" />
+                                {error}
+                            </div>
+                        ) : (
+                            <div>
+                                <div className="prose prose-sm max-w-none text-gray-700">
+                                    <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
+                                        {leftAiMessage.text}
+                                    </ReactMarkdown>
+                                </div>
+                                {leftAiMessage.suggestion && (
+                                    <div className="mt-3 flex justify-end">
+                                        <button
+                                            onClick={() => handleQuickAIAction("USE_THIS", leftAiMessage.suggestion)}
+                                            className="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            aria-label="Use this AI suggestion"
+                                        >
+                                            Use This
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         );
     };
 
-    // Render the remaining AI actions for the bottom right
     const renderRightAIActions = () => {
         const leftActionKeys = [
             MiniAIAssistantAction.RECOMMEND_AI_ANSWER,
@@ -595,7 +697,7 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
         >
             <div className="relative">
                 <motion.div
-                    className="bg-white rounded-2xl shadow-xl transition-all duration-700 ease-in-out flex flex-col overflow-hidden w-[80vw] max-w-5xl min-w-[400px] h-[80vh]"
+                    className={`bg-white rounded-2xl shadow-xl transition-all duration-700 ease-in-out flex flex-col overflow-hidden ${isAIAssistantOpen ? 'w-[90vw] max-w-6xl' : 'w-[70vw] max-w-4xl'} h-[80vh]`}
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: isVisible ? 1 : 0.95, opacity: isVisible ? 1 : 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -604,14 +706,14 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                         questionId={question.question_id}
                         questionText={question.question}
                         closeModal={onClose}
+                        isAIAssistantOpen={isAIAssistantOpen}
+                        toggleAIAssistant={() => setIsAIAssistantOpen(prev => !prev)}
                     />
                     <div className="flex flex-1 overflow-hidden">
-                        {/* Left Panel: Question, Form Fields, and Four AI Actions */}
                         <div
                             ref={leftPanelRef}
                             className="flex-1 flex flex-col overflow-y-auto px-6 py-4 border-r border-gray-200 bg-gray-50"
                         >
-                            {/* Top Left: Question and Form Fields */}
                             <div className="flex-1">
                                 <div className="mb-4">
                                     <h3 className="text-base font-semibold text-gray-800">{question.question}</h3>
@@ -643,39 +745,48 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                                     )}
                                 </form>
                             </div>
-                            {/* Bottom Left: Four AI Actions */}
                             <div className="mt-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
                                 {renderLeftAIActions()}
                             </div>
                         </div>
-                        {/* Right Panel: Tone Selector and Remaining AI Actions */}
-                        <div className="flex-1 flex flex-col overflow-y-auto px-6 py-4 bg-white">
-                            {/* Top Right: Tone Selector */}
-                            <div className="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200">
-                                <ToneSelector
-                                    refineTone={refineTone}
-                                    setRefineTone={setRefineTone}
-                                    handleRefineDraftWithTone={handleRefineDraftWithTone}
-                                    currentValue={formData.string_value}
-                                    selectedTextInTextarea={selectedTextInTextarea}
-                                    isLoading={isLoading}
-                                />
-                            </div>
-                            {/* Bottom Right: Remaining AI Actions */}
-                            <div className="flex-1 p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200 overflow-y-auto">
-                                {renderRightAIActions()}
-                                {aiMessage && (
-                                    <div className="mt-4">
-                                        <AIResponseDisplay
-                                            aiMessage={aiMessage}
+                        <motion.div
+                            className="overflow-hidden"
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{
+                                width: isAIAssistantOpen ? '40%' : 0,
+                                opacity: isAIAssistantOpen ? 1 : 0,
+                                minWidth: isAIAssistantOpen ? '300px' : 0
+                            }}
+                            transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+                        >
+                            {isAIAssistantOpen && (
+                                <div className="flex-1 flex flex-col overflow-y-auto px-6 py-4 bg-white h-full">
+                                    <div className="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+                                        <ToneSelector
+                                            refineTone={refineTone}
+                                            setRefineTone={setRefineTone}
+                                            handleRefineDraftWithTone={handleRefineDraftWithTone}
+                                            currentValue={formData.string_value}
+                                            selectedTextInTextarea={selectedTextInTextarea}
                                             isLoading={isLoading}
-                                            error={error}
-                                            handlePostResponseAction={handleQuickAIAction}
                                         />
                                     </div>
-                                )}
-                            </div>
-                        </div>
+                                    <div className="flex-1 p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200 overflow-y-auto">
+                                        {renderRightAIActions()}
+                                        {aiMessage && (
+                                            <div className="mt-4">
+                                                <AIResponseDisplay
+                                                    aiMessage={aiMessage}
+                                                    isLoading={isLoading}
+                                                    error={error}
+                                                    handlePostResponseAction={handleQuickAIAction}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </motion.div>
                     </div>
                     <div className="p-4 border-t border-gray-200 flex justify-end space-x-3 bg-white">
                         <button
