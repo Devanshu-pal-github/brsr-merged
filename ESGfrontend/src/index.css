@@ -30,7 +30,7 @@ h1, .h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
 h2, .h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
 h3, .h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; }
 
-p, .p, label, input, textarea, button, span, th, td {
+p, .p, label, input, textarea, button, span {
   font-size: 0.92rem;
   line-height: 1.4;
 }
@@ -45,14 +45,9 @@ p, .p, label, input, textarea, button, span, th, td {
   border-radius: 0.3rem;
 }
 
-.table, table, .table-component, .big-table, .duo-table {
-  font-size: 0.9rem;
-  border-spacing: 0.12rem;
-}
 
-th, td {
-  padding: 0.18rem 0.3rem;
-}
+
+
 
 button, .custom-button, .action-btn {
   padding: 0.18rem 0.5rem;
@@ -80,8 +75,7 @@ button, .custom-button, .action-btn {
 @media (max-width: 768px) {
   h1, .h1 { font-size: 1.1rem; }
   h2, .h2 { font-size: 1rem; }
-  h3, .h3 { font-size: 0.92rem; }
-  p, .p, label, input, textarea, button, span, th, td { font-size: 0.85rem; }
+  h3, .h3 { font-size: 0.92rem; }  p, .p, label, input, textarea, button, span { font-size: 0.85rem; }
   .card, .category-card, .progress-card, .kpi-card, .popup-card { padding: 0.18rem 0.2rem; margin: 0.08rem 0.1rem; }
   .sidebar, .side-bar, .sidebar-container { width: 100px; min-width: 80px; padding: 0.1rem 0.05rem; }
   .header, .sub-header { padding: 0.12rem 0.2rem; min-height: 1rem; }

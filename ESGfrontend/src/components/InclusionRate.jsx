@@ -1,4 +1,4 @@
-export default function WorkerTable() {
+export default function InclusionRateGrid() {
   return (
     <div className="w-full max-w-full md:max-w-[300px] h-auto p-3 pt-0 rounded-[8px] mx-auto">
       <div className="flex items-center justify-between mb-3">
@@ -11,27 +11,26 @@ export default function WorkerTable() {
       </div>
 
       <div className="bg-white rounded-[8px] shadow-sm">
-        <table className="w-full min-w-[240px] table-fixed">
-          <thead>
-            <tr className="bg-[#F3F4F6]">
-              <th className="text-left py-2 px-1 sm:px-2 font-medium text-gray-700 text-xs sm:text-sm">Category</th>
-              <th className="text-center py-2 px-1 sm:px-2 font-medium text-gray-700 text-xs sm:text-sm">Male No.</th>
-              <th className="text-center py-2 px-1 sm:px-2 font-medium text-gray-700 text-xs sm:text-sm">Female No.</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b border-gray-200">
-              <td className="py-1 px-1 sm:px-2 text-[10px] md:text-[12px] text-black">Permanent</td>
-              <td className="py-1 px-1 sm:px-2 text-center text-[10px] md:text-[12px] text-black">0</td>
-              <td className="py-1 px-1 sm:px-2 text-center text-[10px] md:text-[12px] text-black">0</td>
-            </tr>
-            <tr className="border-b border-gray-200">
-              <td className="py-1 px-1 sm:px-2 text-[10px] md:text-[12px] text-black">Other than Permanent</td>
-              <td className="py-1 px-1 sm:px-2 text-center text-[10px] md:text-[12px] text-black">0</td>
-              <td className="py-1 px-1 sm:px-2 text-center text-[10px] md:text-[12px] text-black">0</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="min-w-[240px]">
+          {/* Header */}
+          <div className="grid grid-cols-3 bg-[#F3F4F6]">
+            <div className="text-left py-2 px-1 sm:px-2 font-medium text-gray-700 text-xs sm:text-sm">Category</div>
+            <div className="text-center py-2 px-1 sm:px-2 font-medium text-gray-700 text-xs sm:text-sm">Male No.</div>
+            <div className="text-center py-2 px-1 sm:px-2 font-medium text-gray-700 text-xs sm:text-sm">Female No.</div>
+          </div>
+          
+          {/* Data Rows */}
+          <div className="border-b border-gray-200 grid grid-cols-3">
+            <div className="py-1 px-1 sm:px-2 text-[10px] md:text-[12px] text-black">Permanent</div>
+            <div className="py-1 px-1 sm:px-2 text-center text-[10px] md:text-[12px] text-black">0</div>
+            <div className="py-1 px-1 sm:px-2 text-center text-[10px] md:text-[12px] text-black">0</div>
+          </div>
+          <div className="border-b border-gray-200 grid grid-cols-3">
+            <div className="py-1 px-1 sm:px-2 text-[10px] md:text-[12px] text-black">Other than Permanent</div>
+            <div className="py-1 px-1 sm:px-2 text-center text-[10px] md:text-[12px] text-black">0</div>
+            <div className="py-1 px-1 sm:px-2 text-center text-[10px] md:text-[12px] text-black">0</div>
+          </div>
+        </div>
       </div>
     </div>
   );

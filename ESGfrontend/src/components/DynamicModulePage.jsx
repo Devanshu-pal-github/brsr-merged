@@ -8,7 +8,6 @@ import SubHeader from './SubHeader';
 import ProgressCard from './ProgressCard';
 import AIAssistant from './WorkforceAi';
 import QuestionnaireItem from './QuestionItem';
-import BigTable from './BigTable';
 import QuestionCategory from './QuestionCategory';
 
 const DynamicModulePage = () => {

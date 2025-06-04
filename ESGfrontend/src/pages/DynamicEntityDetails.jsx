@@ -13,11 +13,10 @@ import QuestionnaireItem from '../components/QuestionItem';
 import ProgressCard from '../components/ProgressCard';
 import AIAssistant from '../components/WorkforceAi';
 import QuestionEditPopup from "../components/QuestionEditPopup";
-import TableQuestionFormPopup from "../components/TableQuestionFormPopup";
+import TableQuestionRenderer from "../components/TableQuestionRenderer";
 import ChatbotWindow from '../AICHATBOT/ChatbotWindow';
 import { AppProvider } from '../AICHATBOT/AppProvider';
-
-
+import { transformTableMetadata, createEmptyTableResponse } from '../components/tableUtils';
 
 const getBestAnswerValue = (answerObj) => {
     if (!answerObj) return '';
@@ -28,6 +27,23 @@ const getBestAnswerValue = (answerObj) => {
     if (typeof answerObj.note !== 'undefined') return answerObj.note;
     if (typeof answerObj.response !== 'undefined') return answerObj.response;
     return '';
+};
+
+// Utility to map flat table array to row/column structure for TableQuestionRenderer
+const mapFlatTableToRows = (flatTable, meta) => {
+    if (!Array.isArray(flatTable) || !meta || !meta.rows || !meta.headers) return [];
+    // For each row index, get the row label and rowKey (activity_1, activity_2, ...)
+    return meta.rows.map((rowObj, rowIdx) => {
+        const rowKey = `activity_${rowIdx + 1}`;
+        const rowLabel = rowObj.name || rowObj.label || '';
+        const rowData = { __rowLabel: rowLabel };
+        meta.headers.forEach((colObj) => {
+            const colKey = colObj.key || colObj.label?.replace(/\s+/g, '_').toLowerCase();
+            const cell = flatTable.find(cell => cell.row === rowKey && cell.col === colKey);
+            rowData[colKey] = cell ? cell.value : '';
+        });
+        return rowData;
+    });
 };
 
 const DynamicEntityDetails = () => {
@@ -50,9 +66,7 @@ const DynamicEntityDetails = () => {
                 const questionIds = submodules.flatMap(submodule => 
                     submodule.question_categories?.flatMap(cat => 
                         Array.isArray(cat.questions) ?
-                            cat.questions
-                                .filter(q => q.type !== 'table')
-                                .map(q => q.question_id)
+                            cat.questions.map(q => q.question_id)
                             : []
                     ) || []
                 );
@@ -101,8 +115,7 @@ const DynamicEntityDetails = () => {
     };
 
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
-    const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);    
-    const [answers, setAnswers] = useState({});
+    const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);    const [answers, setAnswers] = useState({});
     const [aiChatOpen, setAiChatOpen] = useState(false);
     const [showMobileProgress, setShowMobileProgress] = useState(false);
 
@@ -167,12 +180,10 @@ const DynamicEntityDetails = () => {
         } else {
             setEditModalQuestionId(question.question_id);
         }
-    };
-
-    const handleEditClose = () => {
+    };    const handleEditClose = () => {
         setEditModalQuestionId(null);
         setEditModalTableQuestion(null);
-    }; const handleEditSuccess = (questionId, result) => {
+    };const handleEditSuccess = (questionId, result) => {
         // Update stored question data with the new answer while preserving history
         const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
         if (storedQuestions[questionId]) {
@@ -235,8 +246,7 @@ const DynamicEntityDetails = () => {
                                     category.questions.map((question) => {
                                         const answer = answers[question.question_id];
 
-                                        return (
-                                            <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mt-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[30px]">
+                                        return (                                            <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mt-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[30px]">
                                                 <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
                                                     <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2">
                                                         {question.question}
@@ -261,45 +271,69 @@ const DynamicEntityDetails = () => {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div className="mt-2 pl-2 relative">
-                                                    {answer ? (
+                                                <div className="mt-2 pl-2 relative">                                    {question.type === 'table' ? (
+                                                        (() => {
+                                                            // Transform metadata first
+                                                            const transformedMeta = transformTableMetadata(question);
+                                                            // Remove duplicate S No. columns (flexible match)
+                                                            let columns = transformedMeta.columns.filter((col, idx, arr) => {
+                                                                const isSNo = col.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || col.label.toLowerCase().replace(/\s/g, '').includes('sno');
+                                                                // Keep only the first occurrence
+                                                                if (!isSNo) return true;
+                                                                return arr.findIndex(c => (c.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || c.label.toLowerCase().replace(/\s/g, '').includes('sno'))) === idx;
+                                                            });
+                                                            // Ensure 'S No.' is always the first column
+                                                            if (!columns.length || !(columns[0].col_id.toLowerCase().replace(/\s/g, '').includes('sno') || columns[0].label.toLowerCase().replace(/\s/g, '').includes('sno'))) {
+                                                                columns = [
+                                                                    { col_id: 's_no', label: 'S No.' },
+                                                                    ...columns
+                                                                ];
+                                                            }
+                                                            // Ensure '% turnover of the entity' column is present (flexible match)
+                                                            let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
+                                                            if (!turnoverCol) {
+                                                                columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
+                                                            }
+                                                            // Create response object using the transformed metadata's IDs
+                                                            const response = {
+                                                                columns,
+                                                                rows: transformedMeta.rows.map((row, idx) => {
+                                                                    return {
+                                                                        row_id: row.row_id,
+                                                                        label: row.label,
+                                                                        cells: columns.map(col => {
+                                                                            if (col.col_id === 's_no' || col.label.toLowerCase().includes('s no')) {
+                                                                                return { col_id: col.col_id, value: (idx + 1).toString() };
+                                                                            }
+                                                                            // Flexible match for turnover column
+                                                                            const isTurnover = col.col_id.toLowerCase().includes('turnover') || col.label.toLowerCase().includes('turnover');
+                                                                            let cell = answer?.table?.find(cell => {
+                                                                                const rowMatch = cell.row === row.row_id || cell.row === `activity_${idx + 1}`;
+                                                                                if (isTurnover) {
+                                                                                    return rowMatch && (cell.col.toLowerCase().includes('turnover') || cell.col === col.col_id);
+                                                                                }
+                                                                                return rowMatch && (cell.col === col.col_id || cell.col.toLowerCase() === col.col_id.toLowerCase());
+                                                                            });
+                                                                            return {
+                                                                                col_id: col.col_id,
+                                                                                value: cell?.value ?? ''
+                                                                            };
+                                                                        })
+                                                                    };
+                                                                })
+                                                            };
+                                                            return (
+                                                                <TableQuestionRenderer 
+                                                                    meta={{ ...transformedMeta, columns }}
+                                                                    response={response}
+                                                                    editable={false}
+                                                                />
+                                                            );
+                                                        })()
+                                                    ) : answer ? (
                                                         <div className="space-y-2">
                                                             <div className="flex flex-row gap-4 items-start">
-                                                                {question.type === 'table' && Array.isArray(question.table_metadata?.headers) && Array.isArray(question.table_metadata?.rows) ? (
-                                                                    <div className="overflow-x-auto mt-2">
-                                                                        <table className="min-w-full border border-gray-200 rounded-[6px] text-sm">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341]">Row</th>
-                                                                                    {question.table_metadata.headers.map((header, idx) => (
-                                                                                        <th key={header.label + '-' + idx} className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341] border-b border-gray-200">
-                                                                                            {header.label}
-                                                                                        </th>
-                                                                                    ))}
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                {question.table_metadata.rows.map((row, rowIdx) => (
-                                                                                    <tr key={row.name + '-' + rowIdx}>
-                                                                                        <td className="px-3 py-2 text-sm font-medium text-[#1A2341] bg-gray-50">{row.name}</td>
-                                                                                        {question.table_metadata.headers.map((header, colIdx) => {
-                                                                                            let cellValue = '';
-                                                                                            if (answer && answer.response && Array.isArray(answer.response.table)) {
-                                                                                                const cell = answer.response.table.find(cell => cell.row === row.name && cell.col === header.label);
-                                                                                                cellValue = cell?.value ?? '';
-                                                                                            }
-                                                                                            return (
-                                                                                                <td key={header.label + '-' + colIdx} className="px-3 py-2 text-sm text-gray-600">
-                                                                                                    {cellValue}
-                                                                                                </td>
-                                                                                            );
-                                                                                        })}
-                                                                                    </tr>
-                                                                                ))}
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                ) : answer && answer.bool_value !== undefined && (
+                                                                {answer.bool_value !== undefined && (
                                                                     <div className={`text-[13px] font-medium break-words min-w-[30px] ${answer.bool_value ? 'text-green-600' : 'text-red-600'}`}>
                                                                         {answer.bool_value ? "Yes" : "No"}
                                                                     </div>
@@ -339,21 +373,66 @@ const DynamicEntityDetails = () => {
                                                             No response provided yet
                                                         </div>
                                                     )}
-                                                </div>
-                                                {editModalQuestionId === question.question_id && (
+                                                </div>                                                {editModalQuestionId === question.question_id && question.type !== 'table' && (
                                                     <QuestionEditPopup
                                                         question={question}
                                                         initialAnswer={answer}
                                                         onClose={handleEditClose}
                                                         onSuccess={handleEditSuccess}
+                                                        moduleId={moduleId}
                                                     />
                                                 )}
-                                                {editModalTableQuestion?.question_id === question.question_id && (
-                                                    <TableQuestionFormPopup
-                                                        questionData={question}
+                                                {editModalTableQuestion && editModalTableQuestion.question_id === question.question_id && question.type === 'table' && (
+                                                    <QuestionEditPopup
+                                                        question={question}
+                                                        initialAnswer={(() => {
+                                                            // Prefill table: create empty structure, then fill with current values
+                                                            const meta = transformTableMetadata(question);
+                                                            // Remove duplicate S No. columns (flexible match)
+                                                            let columns = meta.columns.filter((col, idx, arr) => {
+                                                                const isSNo = col.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || col.label.toLowerCase().replace(/\s/g, '').includes('sno');
+                                                                // Keep only the first occurrence
+                                                                if (!isSNo) return true;
+                                                                return arr.findIndex(c => (c.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || c.label.toLowerCase().replace(/\s/g, '').includes('sno'))) === idx;
+                                                            });
+                                                            // Ensure 'S No.' is always the first column
+                                                            if (!columns.length || !(columns[0].col_id.toLowerCase().replace(/\s/g, '').includes('sno') || columns[0].label.toLowerCase().replace(/\s/g, '').includes('sno'))) {
+                                                                columns = [
+                                                                    { col_id: 's_no', label: 'S No.' },
+                                                                    ...columns
+                                                                ];
+                                                            }
+                                                            // Ensure '% turnover of the entity' column is present (flexible match)
+                                                            let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
+                                                            if (!turnoverCol) {
+                                                                columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
+                                                            }
+                                                            const emptyTable = createEmptyTableResponse({ ...meta, columns });
+                                                            const currentTable = answer?.table || [];
+                                                            // Fill values from currentTable (flat array) into emptyTable (structured)
+                                                            const filledRows = emptyTable.rows.map((row, idx) => ({
+                                                                ...row,
+                                                                cells: row.cells.map(cell => {
+                                                                    if (cell.col_id === 's_no' || cell.label?.toLowerCase().includes('s no')) {
+                                                                        return { ...cell, value: (idx + 1).toString() };
+                                                                    }
+                                                                    // Flexible match for turnover column
+                                                                    const isTurnover = cell.col_id.toLowerCase().includes('turnover') || cell.label?.toLowerCase().includes('turnover');
+                                                                    const found = currentTable.find(c => {
+                                                                        const rowMatch = c.row === row.row_id || c.row === row.label || c.row === `activity_${meta.rows.findIndex(r => r.row_id === row.row_id) + 1}`;
+                                                                        if (isTurnover) {
+                                                                            return rowMatch && (c.col.toLowerCase().includes('turnover') || c.col === cell.col_id);
+                                                                        }
+                                                                        return rowMatch && (c.col === cell.col_id || c.col.toLowerCase() === cell.col_id.toLowerCase());
+                                                                    });
+                                                                    return found ? { ...cell, value: found.value } : cell;
+                                                                })
+                                                            }));
+                                                            return { ...answer, table: { columns, rows: filledRows } };
+                                                        })()}
                                                         onClose={handleEditClose}
-                                                        onSubmit={(response) => handleEditSuccess(question.question_id, response)}
-                                                        initialValues={answer?.response?.table}
+                                                        onSuccess={handleEditSuccess}
+                                                        moduleId={moduleId}
                                                     />
                                                 )}
                                             </div>
@@ -426,8 +505,8 @@ const DynamicEntityDetails = () => {
                                                     const hasAnswer = answers[q.question_id] && (
                                                         answers[q.question_id].string_value !== undefined ||
                                                         answers[q.question_id].bool_value !== undefined ||
-                                                        answers[q.question_id].decimal_value !== undefined ||
-                                                        (answers[q.question_id].response && answers[q.questionId].response.table)
+                                                        answers[q.questionId].decimal_value !== undefined ||
+                                                        (answers[q.question_id].response && answers[q.question_id].response.table)
                                                     );
                                                     if (hasAnswer) {
                                                         questionTracker.add(q.question_id);
@@ -494,8 +573,8 @@ const DynamicEntityDetails = () => {
                                             const hasAnswer = answers[q.question_id] && (
                                                 answers[q.question_id].string_value !== undefined ||
                                                 answers[q.question_id].bool_value !== undefined ||
-                                                answers[q.question_id].decimal_value !== undefined ||
-                                                (answers[q.question_id].response && answers[q.questionId].response.table)
+                                                answers[q.questionId].decimal_value !== undefined ||
+                                                (answers[q.question_id].response && answers[q.question_id].response.table)
                                             );
                                             if (hasAnswer) {
                                                 questionTracker.add(q.question_id);
@@ -518,8 +597,8 @@ const DynamicEntityDetails = () => {
                                             answeredQuestions: cat.questions?.filter(q => !questionTracker.has(q.question_id) && answers[q.question_id] && (
                                                 answers[q.question_id].string_value !== undefined ||
                                                 answers[q.question_id].bool_value !== undefined ||
-                                                answers[q.question_id].decimal_value !== undefined ||
-                                                (answers[q.question_id].response && answers[q.questionId].response.table)
+                                                answers[q.questionId].decimal_value !== undefined ||
+                                                (answers[q.question_id].response && answers[q.question_id].response.table)
                                             )).length || 0
                                         }))
                                     });
@@ -544,7 +623,7 @@ const DynamicEntityDetails = () => {
                         {currentSubmodule && (
                             <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.3vh]">
                                 <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Category Overview</div>
-                                <div className="flex flex-col gap-[0.15vh]">                                    {currentSubmodule.question_categories?.map(category => {
+                                <div className="flex flex-col gap-[0.15vh]">                                    {currentSubmodule.question_categories?.map((category, idx) => {
                                         const totalQuestions = category.questions?.length || 0;
                                         const answeredQuestions = category.questions?.filter(q => answers[q.question_id])?.length || 0;
                                         const categoryName = category.category_name || 'Unnamed Category';
@@ -552,8 +631,10 @@ const DynamicEntityDetails = () => {
                                             ? categoryName.substring(0, 15) + '...' 
                                             : categoryName;
 
+                                        // Use category.id if available, otherwise fallback to a stable string key
+                                        const key = category.id || `category-${categoryName.replace(/\s+/g, '-')}-${idx}`;
                                         return (
-                                            <div key={category.id} className="flex justify-between text-[10px]">
+                                            <div key={key} className="flex justify-between text-[10px]">
                                                 <span 
                                                     className="hover:cursor-help truncate max-w-[120px]" 
                                                     title={categoryName}
