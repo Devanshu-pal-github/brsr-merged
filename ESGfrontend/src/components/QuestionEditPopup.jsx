@@ -1,6 +1,94 @@
-import { useState, useEffect } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import { X, CheckCircle, AlertCircle, LinkIcon, FileText, Hash, Type } from "lucide-react";
-import { useSubmitQuestionAnswerMutation, useStoreQuestionDataMutation } from "../api/apiSlice";
+import { useSubmitQuestionAnswerMutation, useStoreQuestionDataMutation, useGenerateTextMutation } from "../api/apiSlice";
+import { motion } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import rehypeSanitize from "rehype-sanitize";
+
+const MiniAIAssistantAction = {
+    EXPLAIN_THIS_QUESTION: "EXPLAIN_THIS_QUESTION",
+    RECOMMEND_AI_ANSWER: "RECOMMEND_AI_ANSWER", 
+    BREAK_DOWN_QUESTION: "BREAK_DOWN_QUESTION",
+    IDENTIFY_KEY_TERMS: "IDENTIFY_KEY_TERMS",
+    CHECK_TONE_CONSISTENCY: "CHECK_TONE_CONSISTENCY",
+    SUGGEST_ALTERNATIVE_PHRASING: "SUGGEST_ALTERNATIVE_PHRASING",
+    SUMMARIZE_ANSWER: "SUMMARIZE_ANSWER",
+    REFINE_ANSWER: "REFINE_ANSWER",
+    QUICK_COMPLIANCE_CHECK: "QUICK_COMPLIANCE_CHECK",
+    IMPROVE_CLARITY: "IMPROVE_CLARITY",
+    EXPAND_ANSWER: "EXPAND_ANSWER",
+    MAKE_MORE_CONCISE: "MAKE_MORE_CONCISE",
+    CHECK_COMPLETENESS: "CHECK_COMPLETENESS"
+};
+
+// AIResponseDisplay component with enhanced UI and features
+const AIResponseDisplay = ({ aiMessage, isLoading, error, handlePostResponseAction }) => {
+    if (isLoading) {
+        return (
+            <div className="mt-2 px-4 py-3 border border-blue-300 bg-blue-50 rounded-lg text-sm">
+                <div className="flex items-center gap-2">
+                    <div className="text-blue-600 font-semibold flex items-center gap-2">
+                        <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                        </svg>
+                        AI is thinking...
+                    </div>
+                </div>
+                <p className="text-blue-600/70 text-xs mt-1">Analyzing your question and generating a response...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="mt-2 px-4 py-3 border border-red-300 bg-red-50 rounded-lg">
+                <div className="flex items-center gap-2 text-red-600">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="font-medium">Error</span>
+                </div>
+                <p className="text-red-600/70 text-sm mt-1">{error}</p>
+                <button 
+                    onClick={() => handlePostResponseAction(aiMessage?.action)} 
+                    className="mt-2 text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                >
+                    Retry
+                </button>
+            </div>
+        );
+    }
+
+    if (!aiMessage) return null;
+
+    return (
+        <div className="mt-2 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="prose prose-sm max-w-none text-gray-700">
+                <ReactMarkdown 
+                    rehypePlugins={[rehypeSanitize]}
+                    components={{
+                        p: ({node, ...props}) => <p className="text-sm text-gray-600 mb-2" {...props} />,
+                        ul: ({node, ...props}) => <ul className="list-disc pl-4 my-2" {...props} />,
+                        li: ({node, ...props}) => <li className="text-sm text-gray-600 mb-1" {...props} />,
+                        code: ({node, ...props}) => <code className="bg-gray-100 px-1 py-0.5 rounded text-sm" {...props} />
+                    }}
+                >
+                    {aiMessage.text}
+                </ReactMarkdown>
+            </div>
+            {aiMessage.suggestion && (
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                    <button
+                        onClick={() => handlePostResponseAction("USE_THIS", aiMessage.suggestion)}
+                        className="w-full p-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                    >
+                        <CheckCircle className="w-4 h-4" />
+                        Use This Suggestion
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, moduleId }) => {
     const [formData, setFormData] = useState(initialAnswer || {});
@@ -8,8 +96,14 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
     const [isVisible, setIsVisible] = useState(false);
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
     const [storeQuestionData] = useStoreQuestionDataMutation();
+    const [generateText, { isLoading, error: aiError }] = useGenerateTextMutation();
+    const [isTextareaFocused, setIsTextareaFocused] = useState(false);
+    const [selectedTextInTextarea, setSelectedTextInTextarea] = useState(null);
+    const [aiMessage, setAiMessage] = useState(null);
+    const [refineTone, setRefineTone] = useState("professional");
+    const textareaRef = useRef(null);
 
-    useEffect(() => { 
+    useEffect(() => {
         setIsVisible(true);
         if (initialAnswer) {
             setFormData(initialAnswer);
@@ -20,8 +114,7 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
         const { name, value, type, checked } = e.target;
         let isValid = true;
         let errorMessage = "";
-          if (fieldType === "string") {
-            // Allow all text input, just ensure it's not empty if required
+        if (fieldType === "string") {
             if (question.string_value_required && !value.trim()) {
                 isValid = false;
                 errorMessage = "This field is required.";
@@ -41,7 +134,9 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
         
         setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
         setErrors((prev) => ({ ...prev, [name]: isValid ? "" : errorMessage }));
-    };    const handleSubmit = async (e) => {
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const hasErrors = Object.values(errors).some((error) => error);
         const requiredFields = [];
@@ -58,7 +153,6 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
         }
 
         try {
-            // Prepare the response according to the API model
             const response = {
                 question_id: question.question_id,
                 response: {
@@ -70,7 +164,6 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                 }
             };
 
-            // Clean up undefined values
             Object.keys(response.response).forEach(key => 
                 response.response[key] === undefined && delete response.response[key]
             );
@@ -82,7 +175,6 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
             }).unwrap();
             console.log('✅ Answer submitted successfully:', result);
 
-            // Store question data including metadata and answer
             await storeQuestionData({
                 moduleId,
                 questionId: question.question_id,
@@ -102,7 +194,6 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                 answer: response.response
             });
             
-            // Pass back the updated data
             onSuccess?.(question.question_id, response.response);
             onClose();
         } catch (error) {
@@ -121,6 +212,150 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
             default: return null;
         }
     };
+
+    const handleTextareaSelectionChange = useCallback(() => {
+        if (textareaRef.current && isTextareaFocused && question.has_string_value) {
+            const selection = window.getSelection().toString();
+            setSelectedTextInTextarea(selection);
+        } else {
+            setSelectedTextInTextarea(null);
+        }
+    }, [isTextareaFocused, question]);
+
+    const handleQuickAIAction = useCallback(async (action) => {
+        setIsLoading(true);
+        setError(null);
+        setAiMessage(null);
+
+        try {
+            let prompt;
+            const currentValue = formData.string_value || "";
+
+            switch (action) {
+                case MiniAIAssistantAction.EXPLAIN_THIS_QUESTION:
+                    prompt = `Explain the following question in the context of sustainability reporting: "${question.question}"`;
+                    break;
+                case MiniAIAssistantAction.RECOMMEND_AI_ANSWER:
+                    prompt = `Generate a professional answer for the question: "${question.question}" ${currentValue ? `based on the draft: "${currentValue}"` : ''}`;
+                    break;
+                case MiniAIAssistantAction.BREAK_DOWN_QUESTION:
+                    prompt = `Break down the following question into smaller components and explain what information is needed for each: "${question.question}"`;
+                    break;
+                case MiniAIAssistantAction.IDENTIFY_KEY_TERMS:
+                    prompt = `Identify and explain key terms in the following question and draft answer: Question: "${question.question}" ${currentValue ? `Draft: "${currentValue}"` : ''}`;
+                    break;
+                case MiniAIAssistantAction.CHECK_TONE_CONSISTENCY:
+                    prompt = `Check the tone consistency of the following draft answer: "${currentValue}" and suggest improvements to make it more ${refineTone}`;
+                    break;
+                case MiniAIAssistantAction.SUGGEST_ALTERNATIVE_PHRASING:
+                    prompt = `Suggest alternative professional phrasing for the following draft answer while maintaining accuracy: "${currentValue}"`;
+                    break;
+                case MiniAIAssistantAction.SUMMARIZE_ANSWER:
+                    prompt = `Provide a concise summary highlighting key points from this draft answer: "${currentValue}"`;
+                    break;
+                case MiniAIAssistantAction.REFINE_ANSWER:
+                    prompt = `Refine and enhance the following draft answer to be more ${refineTone} and comprehensive: "${currentValue}"`;
+                    break;
+                case MiniAIAssistantAction.QUICK_COMPLIANCE_CHECK:
+                    prompt = `Perform a quick compliance check for this sustainability report answer, highlighting any potential issues or missing elements: "${currentValue}"`;
+                    break;
+                case MiniAIAssistantAction.IMPROVE_CLARITY:
+                    prompt = `Improve the clarity and readability of this answer while maintaining its meaning: "${currentValue}"`;
+                    break;
+                case MiniAIAssistantAction.EXPAND_ANSWER:
+                    prompt = `Expand this answer with more detailed information and examples while maintaining professionalism: "${currentValue}"`;
+                    break;
+                case MiniAIAssistantAction.MAKE_MORE_CONCISE:
+                    prompt = `Make this answer more concise while retaining all important information: "${currentValue}"`;
+                    break;
+                case MiniAIAssistantAction.CHECK_COMPLETENESS:
+                    prompt = `Analyze this answer for completeness and suggest any missing information or aspects that should be addressed: "${currentValue}"`;
+                    break;
+                default:
+                    prompt = `${action} for question: "${question.question}" with draft: "${currentValue}"`;
+            }
+
+            // Use RTK Query to generate text
+            const context = {
+                questionText: question.question,
+                guidanceText: question.guidance || "",
+                metadata: {
+                    question_id: question.question_id,
+                    module_id: moduleId
+                },
+                answer: currentValue
+            };
+
+            const response = await generateText({ message: prompt, context }).unwrap();
+            setAiMessage({
+                id: Date.now().toString(),
+                action,
+                text: response,
+                suggestion: response.includes('revised version:') ? 
+                    response.split('revised version:')[1].trim() : 
+                    action === MiniAIAssistantAction.RECOMMEND_AI_ANSWER ? response : null
+            });
+        } catch (error) {
+            console.error('AI Action Error:', error);
+            setError(error?.data?.detail || 'Failed to fetch AI response. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [question, formData, refineTone, generateText, moduleId]);
+
+    const AIActionButton = ({ action, icon, title }) => (
+        console.log(`Rendering AI action button for: ${action}`),
+        <button
+            type="button"
+            onClick={() => handleQuickAIAction(action)}
+            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+            title={title}
+        >
+            {icon}
+        </button>
+    );
+
+    const renderAIButtons = () => (
+        <div className="absolute right-2 bottom-2 flex gap-1 bg-white/80 backdrop-blur-sm p-1 rounded-lg border border-gray-100">
+            <AIActionButton
+                action={MiniAIAssistantAction.QUICK_COMPLIANCE_CHECK}
+                icon={<CheckCircle className="w-4 h-4" />}
+                title="Quick compliance check"
+            />
+            <AIActionButton
+                action={MiniAIAssistantAction.RECOMMEND_AI_ANSWER}
+                icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>}
+                title="Get AI suggestions"
+            />
+            <AIActionButton
+                action={MiniAIAssistantAction.IMPROVE_CLARITY}
+                icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>}
+                title="Improve clarity"
+            />
+            {selectedTextInTextarea && (
+                <>
+                    <AIActionButton
+                        action={MiniAIAssistantAction.EXPLAIN_THIS_QUESTION}
+                        icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>}
+                        title="Explain selected text"
+                    />
+                    <AIActionButton
+                        action={MiniAIAssistantAction.IDENTIFY_KEY_TERMS}
+                        icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                        </svg>}
+                        title="Identify key terms"
+                    />
+                </>
+            )}
+        </div>
+    );
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[140] p-4">
@@ -145,23 +380,54 @@ const QuestionEditPopup = ({ question, initialAnswer, onClose, onSuccess, module
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             {question.has_string_value && (
                                 <div className="lg:col-span-2 space-y-2">
-                                    <label className="flex items-center gap-2 text-sm font-semibold text-[#1A2341]">
-                                        {getFieldIcon("string")} Response {question.string_value_required && <span className="text-red-500 text-xs">*</span>}
+                                    <label className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2 text-sm font-semibold text-[#1A2341]">
+                                            {getFieldIcon("string")} Response {question.string_value_required && <span className="text-red-500 text-xs">*</span>}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <select
+                                                value={refineTone}
+                                                onChange={(e) => setRefineTone(e.target.value)}
+                                                className="text-xs border border-gray-200 rounded px-2 py-1 text-gray-600"
+                                            >
+                                                <option value="professional">Professional</option>
+                                                <option value="technical">Technical</option>
+                                                <option value="detailed">Detailed</option>
+                                                <option value="concise">Concise</option>
+                                            </select>
+                                        </div>
                                     </label>
-                                    <textarea
-                                        name="string_value"
-                                        value={formData.string_value || ""}
-                                        onChange={(e) => handleInputChange(e, "string")}
-                                        placeholder="Enter your response..."
-                                        className="w-full p-3 border border-gray-200 rounded-[6px] focus:border-[#002A85] focus:ring-2 focus:ring-[#002A85]/20 text-[#1A2341] text-sm transition-all duration-200 resize-y"
-                                        rows={4}
-                                        required={question.string_value_required}
-                                    />
+                                    <div className="relative">
+                                        <textarea
+                                            ref={textareaRef}
+                                            name="string_value"
+                                            value={formData.string_value || ""}
+                                            onChange={(e) => handleInputChange(e, "string")}
+                                            onFocus={() => setIsTextareaFocused(true)}
+                                            onBlur={() => setTimeout(() => setIsTextareaFocused(false), 200)}
+                                            onMouseUp={handleTextareaSelectionChange}
+                                            onKeyUp={handleTextareaSelectionChange}
+                                            onSelect={handleTextareaSelectionChange}
+                                            placeholder="Enter your response..."
+                                            className="w-full p-3 border border-gray-200 rounded-[6px] focus:border-[#002A85] focus:ring-2 focus:ring-[#002A85]/20 text-[#1A2341] text-sm transition-all duration-200 resize-y"
+                                            rows={4}
+                                            required={question.string_value_required}
+                                        />
+                                        {renderAIButtons()}
+                                    </div>
                                     {errors.string_value && (
                                         <div className="flex items-center gap-1 text-red-600 text-xs">
                                             <AlertCircle className="w-4 h-4" />
                                             {errors.string_value}
                                         </div>
+                                    )}
+                                    {aiMessage && (
+                                        <AIResponseDisplay
+                                            aiMessage={aiMessage}
+                                            isLoading={isLoading}
+                                            error={aiError?.message || error}
+                                            handlePostResponseAction={handleQuickAIAction}
+                                        />
                                     )}
                                 </div>
                             )}

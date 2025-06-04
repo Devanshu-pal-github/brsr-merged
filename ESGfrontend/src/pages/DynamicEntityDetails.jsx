@@ -17,6 +17,7 @@ import TableQuestionFormPopup from "../components/TableQuestionFormPopup";
 import ChatbotWindow from '../AICHATBOT/ChatbotWindow';
 import { AppProvider } from '../AICHATBOT/AppProvider';
 
+
 const getBestAnswerValue = (answerObj) => {
     if (!answerObj) return '';
     if (typeof answerObj.string_value !== 'undefined') return answerObj.string_value;
@@ -99,7 +100,8 @@ const DynamicEntityDetails = () => {
     };
 
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
-    const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);    const [answers, setAnswers] = useState({});
+    const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);    
+    const [answers, setAnswers] = useState({});
     const [aiChatOpen, setAiChatOpen] = useState(false);
     const [showMobileProgress, setShowMobileProgress] = useState(false);
 
@@ -107,11 +109,11 @@ const DynamicEntityDetails = () => {
         console.log('aiChatOpen state changed:', aiChatOpen);
     }, [aiChatOpen]);
 
-    const [submitAnswer] = useSubmitQuestionAnswerMutation(); const handleEditClick = (question) => {
+    const handleAIClick = (question) => {
         // Get current answer for this question from state
         const currentAnswer = answers[question.question_id] || {};
 
-        // Get question metadata when edit is clicked
+        // Get question metadata when AI is clicked
         const metadata = {
             question_text: question.question,
             has_string_value: question.has_string_value,
@@ -147,6 +149,16 @@ const DynamicEntityDetails = () => {
         storedQuestions[question.question_id] = questionData;
         localStorage.setItem('questionData', JSON.stringify(storedQuestions));
         console.log('Stored question data:', questionData);
+        
+        // Open the AI chat
+        setAiChatOpen(true);
+    };
+
+    const [submitAnswer] = useSubmitQuestionAnswerMutation(); 
+    
+    const handleEditClick = (question) => {
+        // Get current answer for this question from state
+        const currentAnswer = answers[question.question_id] || {};
 
         // Update state for modal
         if (question.type === 'table') {
@@ -228,14 +240,25 @@ const DynamicEntityDetails = () => {
                                                     <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2">
                                                         {question.question}
                                                     </div>
-                                                    <button
-                                                        className="absolute right-2 top-0 bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
-                                                        onClick={() => handleEditClick(question)}
-                                                        aria-label="Edit"
-                                                        style={{ marginLeft: 'auto' }}
-                                                    >
-                                                        Edit
-                                                    </button>
+                                                    <div className="absolute right-2 top-0 flex gap-2">
+                                                        <button
+                                                            className="bg-[#4F46E5] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#4338CA] flex items-center gap-1"
+                                                            onClick={() => handleAIClick(question)}
+                                                            aria-label="AI Assist"
+                                                        >
+                                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                            </svg>
+                                                            AI
+                                                        </button>
+                                                        <button
+                                                            className="bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
+                                                            onClick={() => handleEditClick(question)}
+                                                            aria-label="Edit"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <div className="mt-2 pl-2 relative">
                                                     {answer ? (
@@ -403,7 +426,7 @@ const DynamicEntityDetails = () => {
                                                         answers[q.question_id].string_value !== undefined ||
                                                         answers[q.question_id].bool_value !== undefined ||
                                                         answers[q.question_id].decimal_value !== undefined ||
-                                                        (answers[q.question_id].response && answers[q.question_id].response.table)
+                                                        (answers[q.question_id].response && answers[q.questionId].response.table)
                                                     );
                                                     if (hasAnswer) {
                                                         questionTracker.add(q.question_id);
@@ -471,7 +494,7 @@ const DynamicEntityDetails = () => {
                                                 answers[q.question_id].string_value !== undefined ||
                                                 answers[q.question_id].bool_value !== undefined ||
                                                 answers[q.question_id].decimal_value !== undefined ||
-                                                (answers[q.question_id].response && answers[q.question_id].response.table)
+                                                (answers[q.question_id].response && answers[q.questionId].response.table)
                                             );
                                             if (hasAnswer) {
                                                 questionTracker.add(q.question_id);
@@ -495,7 +518,7 @@ const DynamicEntityDetails = () => {
                                                 answers[q.question_id].string_value !== undefined ||
                                                 answers[q.question_id].bool_value !== undefined ||
                                                 answers[q.question_id].decimal_value !== undefined ||
-                                                (answers[q.question_id].response && answers[q.question_id].response.table)
+                                                (answers[q.question_id].response && answers[q.questionId].response.table)
                                             )).length || 0
                                         }))
                                     });
