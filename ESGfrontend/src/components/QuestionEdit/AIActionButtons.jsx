@@ -1,5 +1,5 @@
 import React from 'react';
-import { MiniAIAssistantAction } from '../QuestionEditPopup'; // Assuming MiniAIAssistantAction is exported from QuestionEditPopup
+import { MiniAIAssistantAction } from './MiniAIAssistantAction.js'; // Assuming MiniAIAssistantAction is exported from QuestionEditPopup
 
 const AIActionButtons = ({ selectedTextInTextarea, handleQuickAIAction, actions, currentValue }) => {
     const allPanelActionsWithMetadata = [
