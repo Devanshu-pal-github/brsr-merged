@@ -1,0 +1,151 @@
+{
+  "policyDisclosures": {
+    "table_metadata": {
+      "columns": [
+        { "col_id": "question", "label": "Questions", "type": "string", "width": 400 },
+        { "col_id": "p1", "label": "P1", "type": "radio", "width": 60 },
+      { "key": "p2", "label": "P2" },
+      { "key": "p3", "label": "P3" },
+      { "key": "p4", "label": "P4" },
+      { "key": "p5", "label": "P5" },
+      { "key": "p6", "label": "P6" },
+      { "key": "p7", "label": "P7" },
+      { "key": "p8", "label": "P8" },
+      { "key": "p9", "label": "P9" }
+    ],
+    "sections": [
+      {
+        "title": "Policy and management processes",
+        "questions": [
+          {
+            "id": "1a",
+            "question": "Whether your entity's policy/policies cover each principle and its core elements",
+            "type": "boolean"
+          },
+          {
+            "id": "1b",
+            "question": "Has the policy been approved by the Board?",
+            "type": "boolean"
+          },
+          {
+            "id": "1c",
+            "question": "Web Link of the Policies, if available",
+            "type": "text"
+          },
+          {
+            "id": "2",
+            "question": "Whether the entity has translated the policy into procedures.",
+            "type": "boolean"
+          }
+        ]
+      },
+      {
+        "title": "Governance, leadership and oversight",
+        "questions": [
+          {
+            "id": "3",
+            "question": "Do the enlisted policies extend to your value chain partners?",
+            "type": "boolean"
+          },
+          {
+            "id": "4",
+            "question": "Name of the national and international codes/certifications/labels/standards adopted by your entity and mapped to each principle.",
+            "type": "text"
+          },
+          {
+            "id": "5",
+            "question": "Specific commitments, goals and targets set by the entity with defined timelines, if any.",
+            "type": "text"
+          },
+          {
+            "id": "6",
+            "question": "Performance of the entity against the specific commitments, goals and targets along-with reasons in case the same are not met.",
+            "type": "text"
+          },
+          {
+            "id": "7",
+            "question": "Statement by director responsible for the business responsibility report, highlighting ESG related challenges, targets and achievements",
+            "type": "text"
+          },
+          {
+            "id": "8",
+            "question": "Details of the highest authority responsible for implementation and oversight of the Business Responsibility policy(ies).",
+            "type": "text"
+          },
+          {
+            "id": "9",
+            "question": "Does the entity have a specified Committee of the Board/Director responsible for decision making on sustainability related issues?",
+            "type": "boolean"
+          }
+        ]
+      },
+      {
+        "title": "Review of NGRBCs",
+        "questions": [
+          {
+            "id": "10",
+            "question": "Details of Review of NGRBCs",
+            "subTable": {
+              "headers": [
+                { "key": "subject", "label": "Subject for Review" },
+                { "key": "review_by", "label": "Review by Director/Committee" },
+                { "key": "frequency", "label": "Frequency" }
+              ],
+              "rows": [
+                {
+                  "subject": "Performance against above policies and follow up action",
+                  "type": "matrix"
+                },
+                {
+                  "subject": "Compliance with statutory requirements of relevance to the principles",
+                  "type": "matrix"
+                }
+              ]
+            }
+          },
+          {
+            "id": "11",
+            "question": "Has the entity carried out independent assessment/evaluation of the working of its policies by an external agency?",
+            "type": "boolean"
+          }
+        ]
+      },
+      {
+        "title": "Non-compliance explanation",
+        "questions": [
+          {
+            "id": "12",
+            "question": "If not all Principles are covered by a policy, reasons to be stated:",
+            "subTable": {
+              "headers": [
+                { "key": "reason", "label": "Reason" }
+              ],
+              "rows": [
+                {
+                  "reason": "The entity does not consider the Principles material to its business",
+                  "type": "matrix"
+                },
+                {
+                  "reason": "The entity is not at a stage where it can formulate and implement the policies on specified principles",
+                  "type": "matrix"
+                },
+                {
+                  "reason": "The entity does not have the financial or/human and technical resources available for the task",
+                  "type": "matrix"
+                },
+                {
+                  "reason": "It is planned to be done in the next financial year",
+                  "type": "matrix"
+                },
+                {
+                  "reason": "Any other reason (please specify)",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

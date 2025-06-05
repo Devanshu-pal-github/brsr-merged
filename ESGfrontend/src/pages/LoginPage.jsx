@@ -36,9 +36,8 @@ const Login = () => {
             localStorage.setItem('user_id', response.user_id);
             localStorage.setItem('user_name', response.user_name);
             console.log('Login successful:', response);
-            
-            // Redirect to dashboard
-            navigate('/dashboard');
+              // Redirect to landing page
+            navigate('/');
         } catch (err) {
             console.error('Login failed:', err);
             setError(err.data?.detail || 'Login failed. Please try again.');

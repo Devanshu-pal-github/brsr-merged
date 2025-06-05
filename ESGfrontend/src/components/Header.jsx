@@ -130,10 +130,12 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
 
                     {/* User Dropdown Menu */}
                     {isUserDropdownOpen && (
-                        <ul className="absolute right-0 mt-2 w-36 sm:w-44 bg-[#000D30] rounded-md shadow-md z-50 overflow-hidden">
-                            <li
+                        <ul className="absolute right-0 mt-2 w-36 sm:w-44 bg-[#000D30] rounded-md shadow-md z-50 overflow-hidden">                            <li
                                 className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
-                                onClick={() => setIsUserDropdownOpen(false)}
+                                onClick={() => {
+                                    setIsUserDropdownOpen(false);
+                                    window.location.href = '/';
+                                }}
                             >
                                 Profile
                             </li>
