@@ -59,12 +59,12 @@ const DynamicEntityDetails = () => {
 
     const currentSubmodule = submodules.find(sub => sub.submodule_name === activeTab);
 
-    const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation();    useEffect(() => {
+    const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation(); useEffect(() => {
         const fetchAllAnswers = async () => {
             if (submodules && submodules.length > 0) {
                 // Get all question IDs from all submodules
-                const questionIds = submodules.flatMap(submodule => 
-                    submodule.question_categories?.flatMap(cat => 
+                const questionIds = submodules.flatMap(submodule =>
+                    submodule.question_categories?.flatMap(cat =>
                         Array.isArray(cat.questions) ?
                             cat.questions.map(q => q.question_id)
                             : []
@@ -93,7 +93,8 @@ const DynamicEntityDetails = () => {
                         setAnswers(prev => ({ ...prev, ...newAnswers }));
                     } catch (err) {
                         console.error('Error fetching answers:', err);
-                    }                }
+                    }
+                }
             }
         };
 
@@ -115,7 +116,7 @@ const DynamicEntityDetails = () => {
     };
 
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
-    const [editModalTableQuestion, setEditModalTableQuestion] = useState(null);    const [answers, setAnswers] = useState({});
+    const [editModalTableQuestion, setEditModalTableQuestion] = useState(null); const [answers, setAnswers] = useState({});
     const [aiChatOpen, setAiChatOpen] = useState(false);
     const [showMobileProgress, setShowMobileProgress] = useState(false);
 
@@ -163,13 +164,13 @@ const DynamicEntityDetails = () => {
         storedQuestions[question.question_id] = questionData;
         localStorage.setItem('questionData', JSON.stringify(storedQuestions));
         console.log('Stored question data:', questionData);
-        
+
         // Open the AI chat
         setAiChatOpen(true);
     };
 
-    const [submitAnswer] = useSubmitQuestionAnswerMutation(); 
-    
+    const [submitAnswer] = useSubmitQuestionAnswerMutation();
+
     const handleEditClick = (question) => {
         // Get current answer for this question from state
         const currentAnswer = answers[question.question_id] || {};
@@ -180,10 +181,10 @@ const DynamicEntityDetails = () => {
         } else {
             setEditModalQuestionId(question.question_id);
         }
-    };    const handleEditClose = () => {
+    }; const handleEditClose = () => {
         setEditModalQuestionId(null);
         setEditModalTableQuestion(null);
-    };const handleEditSuccess = (questionId, result) => {
+    }; const handleEditSuccess = (questionId, result) => {
         // Update stored question data with the new answer while preserving history
         const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
         if (storedQuestions[questionId]) {
@@ -246,196 +247,196 @@ const DynamicEntityDetails = () => {
                                     category.questions.map((question) => {
                                         const answer = answers[question.question_id];
 
-                                        return (                                            <div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mt-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[30px]">
-                                                <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
-                                                    <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2">
-                                                        {question.question}
-                                                    </div>
-                                                    <div className="absolute right-2 top-0 flex gap-2">
-                                                        <button
-                                                            className="bg-[#4F46E5] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#4338CA] flex items-center gap-1"
-                                                            onClick={() => handleAIClick(question)}
-                                                            aria-label="AI Assist"
-                                                        >
-                                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                                            </svg>
-                                                            AI
-                                                        </button>
-                                                        <button
-                                                            className="bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
-                                                            onClick={() => handleEditClick(question)}
-                                                            aria-label="Edit"
-                                                        >
-                                                            Edit
-                                                        </button>
-                                                    </div>
+                                        return (<div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mt-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[30px]">
+                                            <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
+                                                <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2">
+                                                    {question.question}
                                                 </div>
-                                                <div className="mt-2 pl-2 relative">                                    {question.type === 'table' ? (
-                                                        (() => {
-                                                            // Transform metadata first
-                                                            const transformedMeta = transformTableMetadata(question);
-                                                            // Remove duplicate S No. columns (flexible match)
-                                                            let columns = transformedMeta.columns.filter((col, idx, arr) => {
-                                                                const isSNo = col.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || col.label.toLowerCase().replace(/\s/g, '').includes('sno');
-                                                                // Keep only the first occurrence
-                                                                if (!isSNo) return true;
-                                                                return arr.findIndex(c => (c.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || c.label.toLowerCase().replace(/\s/g, '').includes('sno'))) === idx;
-                                                            });
-                                                            // Ensure 'S No.' is always the first column
-                                                            if (!columns.length || !(columns[0].col_id.toLowerCase().replace(/\s/g, '').includes('sno') || columns[0].label.toLowerCase().replace(/\s/g, '').includes('sno'))) {
-                                                                columns = [
-                                                                    { col_id: 's_no', label: 'S No.' },
-                                                                    ...columns
-                                                                ];
-                                                            }
-                                                            // Ensure '% turnover of the entity' column is present (flexible match)
-                                                            let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
-                                                            if (!turnoverCol) {
-                                                                columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
-                                                            }
-                                                            // Create response object using the transformed metadata's IDs
-                                                            const response = {
-                                                                columns,
-                                                                rows: transformedMeta.rows.map((row, idx) => {
+                                                <div className="absolute right-2 top-0 flex gap-2">
+                                                    <button
+                                                        className="bg-[#4F46E5] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#4338CA] flex items-center gap-1"
+                                                        onClick={() => handleAIClick(question)}
+                                                        aria-label="AI Assist"
+                                                    >
+                                                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                        </svg>
+                                                        AI
+                                                    </button>
+                                                    <button
+                                                        className="bg-[#002A85] text-white font-medium px-2 min-w-[32px] min-h-[20px] rounded-[4px] text-[11px] shadow-sm focus:outline-none transition-all duration-200 hover:bg-[#0A2E87]"
+                                                        onClick={() => handleEditClick(question)}
+                                                        aria-label="Edit"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="mt-2 pl-2 relative">                                    {question.type === 'table' ? (
+                                                (() => {
+                                                    // Transform metadata first
+                                                    const transformedMeta = transformTableMetadata(question);
+                                                    // Remove duplicate S No. columns (flexible match)
+                                                    let columns = transformedMeta.columns.filter((col, idx, arr) => {
+                                                        const isSNo = col.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || col.label.toLowerCase().replace(/\s/g, '').includes('sno');
+                                                        // Keep only the first occurrence
+                                                        if (!isSNo) return true;
+                                                        return arr.findIndex(c => (c.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || c.label.toLowerCase().replace(/\s/g, '').includes('sno'))) === idx;
+                                                    });
+                                                    // Ensure 'S No.' is always the first column
+                                                    if (!columns.length || !(columns[0].col_id.toLowerCase().replace(/\s/g, '').includes('sno') || columns[0].label.toLowerCase().replace(/\s/g, '').includes('sno'))) {
+                                                        columns = [
+                                                            { col_id: 's_no', label: 'S No.' },
+                                                            ...columns
+                                                        ];
+                                                    }
+                                                    // Ensure '% turnover of the entity' column is present (flexible match)
+                                                    let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
+                                                    if (!turnoverCol) {
+                                                        columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
+                                                    }
+                                                    // Create response object using the transformed metadata's IDs
+                                                    const response = {
+                                                        columns,
+                                                        rows: transformedMeta.rows.map((row, idx) => {
+                                                            return {
+                                                                row_id: row.row_id,
+                                                                label: row.label,
+                                                                cells: columns.map(col => {
+                                                                    if (col.col_id === 's_no' || col.label.toLowerCase().includes('s no')) {
+                                                                        return { col_id: col.col_id, value: (idx + 1).toString() };
+                                                                    }
+                                                                    // Flexible match for turnover column
+                                                                    const isTurnover = col.col_id.toLowerCase().includes('turnover') || col.label.toLowerCase().includes('turnover');
+                                                                    let cell = answer?.table?.find(cell => {
+                                                                        const rowMatch = cell.row === row.row_id || cell.row === `activity_${idx + 1}`;
+                                                                        if (isTurnover) {
+                                                                            return rowMatch && (cell.col.toLowerCase().includes('turnover') || cell.col === col.col_id);
+                                                                        }
+                                                                        return rowMatch && (cell.col === col.col_id || cell.col.toLowerCase() === col.col_id.toLowerCase());
+                                                                    });
                                                                     return {
-                                                                        row_id: row.row_id,
-                                                                        label: row.label,
-                                                                        cells: columns.map(col => {
-                                                                            if (col.col_id === 's_no' || col.label.toLowerCase().includes('s no')) {
-                                                                                return { col_id: col.col_id, value: (idx + 1).toString() };
-                                                                            }
-                                                                            // Flexible match for turnover column
-                                                                            const isTurnover = col.col_id.toLowerCase().includes('turnover') || col.label.toLowerCase().includes('turnover');
-                                                                            let cell = answer?.table?.find(cell => {
-                                                                                const rowMatch = cell.row === row.row_id || cell.row === `activity_${idx + 1}`;
-                                                                                if (isTurnover) {
-                                                                                    return rowMatch && (cell.col.toLowerCase().includes('turnover') || cell.col === col.col_id);
-                                                                                }
-                                                                                return rowMatch && (cell.col === col.col_id || cell.col.toLowerCase() === col.col_id.toLowerCase());
-                                                                            });
-                                                                            return {
-                                                                                col_id: col.col_id,
-                                                                                value: cell?.value ?? ''
-                                                                            };
-                                                                        })
+                                                                        col_id: col.col_id,
+                                                                        value: cell?.value ?? ''
                                                                     };
                                                                 })
                                                             };
-                                                            return (
-                                                                <TableQuestionRenderer 
-                                                                    meta={{ ...transformedMeta, columns }}
-                                                                    response={response}
-                                                                    editable={false}
-                                                                />
-                                                            );
-                                                        })()
-                                                    ) : answer ? (
-                                                        <div className="space-y-2">
-                                                            <div className="flex flex-row gap-4 items-start">
-                                                                {answer.bool_value !== undefined && (
-                                                                    <div className={`text-[13px] font-medium break-words min-w-[30px] ${answer.bool_value ? 'text-green-600' : 'text-red-600'}`}>
-                                                                        {answer.bool_value ? "Yes" : "No"}
-                                                                    </div>
-                                                                )}
-                                                                <div className="flex-1 flex flex-row gap-4 items-start overflow-hidden">
-                                                                    {answer.string_value && (
-                                                                        <div className="text-[13px] text-gray-600 break-words flex-1 ">
-                                                                            <span className="line-clamp-3">{answer.string_value}</span>
-                                                                            {answer.string_value.split(' ').length > 50 && (
-                                                                                <button className="text-blue-600 hover:underline text-[11px] mt-1">Show more...</button>
-                                                                            )}
-                                                                        </div>
-                                                                    )}
-                                                                    {answer.decimal_value !== undefined && (
-                                                                        <div className="text-[13px] text-gray-600 whitespace-nowrap pr-42">
-                                                                            <span className="font-medium">Value:</span> {answer.decimal_value}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
+                                                        })
+                                                    };
+                                                    return (
+                                                        <TableQuestionRenderer
+                                                            meta={{ ...transformedMeta, columns }}
+                                                            response={response}
+                                                            editable={false}
+                                                        />
+                                                    );
+                                                })()
+                                            ) : answer ? (
+                                                <div className="space-y-2">
+                                                    <div className="flex flex-row gap-4 items-start">
+                                                        {answer.bool_value !== undefined && (
+                                                            <div className={`text-[13px] font-medium break-words min-w-[30px] ${answer.bool_value ? 'text-green-600' : 'text-red-600'}`}>
+                                                                {answer.bool_value ? "Yes" : "No"}
                                                             </div>
-                                                            {answer.note && (
-                                                                <div className="text-[10px] text-gray-600 pr-[60px] break-words italic">
-                                                                    <span className="font-medium not-italic"></span> {answer.note}
+                                                        )}
+                                                        <div className="flex-1 flex flex-row gap-4 items-start overflow-hidden">
+                                                            {answer.string_value && (
+                                                                <div className="text-[13px] text-gray-600 break-words flex-1 ">
+                                                                    <span className="line-clamp-3">{answer.string_value}</span>
+                                                                    {answer.string_value.split(' ').length > 50 && (
+                                                                        <button className="text-blue-600 hover:underline text-[11px] mt-1">Show more...</button>
+                                                                    )}
                                                                 </div>
                                                             )}
-                                                            {answer.link && (
-                                                                <div className="text-[13px] absolute bottom-0 right-2 pr-36">
-                                                                    <a href={answer.link} target="_blank" rel="noopener noreferrer"
-                                                                        className="text-blue-600 hover:underline">
-                                                                        View Document
-                                                                    </a>
+                                                            {answer.decimal_value !== undefined && (
+                                                                <div className="text-[13px] text-gray-600 whitespace-nowrap pr-42">
+                                                                    <span className="font-medium">Value:</span> {answer.decimal_value}
                                                                 </div>
                                                             )}
                                                         </div>
-                                                    ) : (
-                                                        <div className="text-[13px] text-gray-600">
-                                                            No response provided yet
+                                                    </div>
+                                                    {answer.note && (
+                                                        <div className="text-[10px] text-gray-600 pr-[60px] break-words italic">
+                                                            <span className="font-medium not-italic"></span> {answer.note}
                                                         </div>
                                                     )}
-                                                </div>                                                {editModalQuestionId === question.question_id && question.type !== 'table' && (
-                                                    <QuestionEditPopup
-                                                        question={question}
-                                                        initialAnswer={answer}
-                                                        onClose={handleEditClose}
-                                                        onSuccess={handleEditSuccess}
-                                                        moduleId={moduleId}
-                                                    />
-                                                )}
-                                                {editModalTableQuestion && editModalTableQuestion.question_id === question.question_id && question.type === 'table' && (
-                                                    <QuestionEditPopup
-                                                        question={question}
-                                                        initialAnswer={(() => {
-                                                            // Prefill table: create empty structure, then fill with current values
-                                                            const meta = transformTableMetadata(question);
-                                                            // Remove duplicate S No. columns (flexible match)
-                                                            let columns = meta.columns.filter((col, idx, arr) => {
-                                                                const isSNo = col.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || col.label.toLowerCase().replace(/\s/g, '').includes('sno');
-                                                                // Keep only the first occurrence
-                                                                if (!isSNo) return true;
-                                                                return arr.findIndex(c => (c.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || c.label.toLowerCase().replace(/\s/g, '').includes('sno'))) === idx;
-                                                            });
-                                                            // Ensure 'S No.' is always the first column
-                                                            if (!columns.length || !(columns[0].col_id.toLowerCase().replace(/\s/g, '').includes('sno') || columns[0].label.toLowerCase().replace(/\s/g, '').includes('sno'))) {
-                                                                columns = [
-                                                                    { col_id: 's_no', label: 'S No.' },
-                                                                    ...columns
-                                                                ];
-                                                            }
-                                                            // Ensure '% turnover of the entity' column is present (flexible match)
-                                                            let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
-                                                            if (!turnoverCol) {
-                                                                columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
-                                                            }
-                                                            const emptyTable = createEmptyTableResponse({ ...meta, columns });
-                                                            const currentTable = answer?.table || [];
-                                                            // Fill values from currentTable (flat array) into emptyTable (structured)
-                                                            const filledRows = emptyTable.rows.map((row, idx) => ({
-                                                                ...row,
-                                                                cells: row.cells.map(cell => {
-                                                                    if (cell.col_id === 's_no' || cell.label?.toLowerCase().includes('s no')) {
-                                                                        return { ...cell, value: (idx + 1).toString() };
+                                                    {answer.link && (
+                                                        <div className="text-[13px] absolute bottom-0 right-2 pr-36">
+                                                            <a href={answer.link} target="_blank" rel="noopener noreferrer"
+                                                                className="text-blue-600 hover:underline">
+                                                                View Document
+                                                            </a>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div className="text-[13px] text-gray-600">
+                                                    No response provided yet
+                                                </div>
+                                            )}
+                                            </div>                                                {editModalQuestionId === question.question_id && question.type !== 'table' && (
+                                                <QuestionEditPopup
+                                                    question={question}
+                                                    initialAnswer={answer}
+                                                    onClose={handleEditClose}
+                                                    onSuccess={handleEditSuccess}
+                                                    moduleId={moduleId}
+                                                />
+                                            )}
+                                            {editModalTableQuestion && editModalTableQuestion.question_id === question.question_id && question.type === 'table' && (
+                                                <QuestionEditPopup
+                                                    question={question}
+                                                    initialAnswer={(() => {
+                                                        // Prefill table: create empty structure, then fill with current values
+                                                        const meta = transformTableMetadata(question);
+                                                        // Remove duplicate S No. columns (flexible match)
+                                                        let columns = meta.columns.filter((col, idx, arr) => {
+                                                            const isSNo = col.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || col.label.toLowerCase().replace(/\s/g, '').includes('sno');
+                                                            // Keep only the first occurrence
+                                                            if (!isSNo) return true;
+                                                            return arr.findIndex(c => (c.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || c.label.toLowerCase().replace(/\s/g, '').includes('sno'))) === idx;
+                                                        });
+                                                        // Ensure 'S No.' is always the first column
+                                                        if (!columns.length || !(columns[0].col_id.toLowerCase().replace(/\s/g, '').includes('sno') || columns[0].label.toLowerCase().replace(/\s/g, '').includes('sno'))) {
+                                                            columns = [
+                                                                { col_id: 's_no', label: 'S No.' },
+                                                                ...columns
+                                                            ];
+                                                        }
+                                                        // Ensure '% turnover of the entity' column is present (flexible match)
+                                                        let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
+                                                        if (!turnoverCol) {
+                                                            columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
+                                                        }
+                                                        const emptyTable = createEmptyTableResponse({ ...meta, columns });
+                                                        const currentTable = answer?.table || [];
+                                                        // Fill values from currentTable (flat array) into emptyTable (structured)
+                                                        const filledRows = emptyTable.rows.map((row, idx) => ({
+                                                            ...row,
+                                                            cells: row.cells.map(cell => {
+                                                                if (cell.col_id === 's_no' || cell.label?.toLowerCase().includes('s no')) {
+                                                                    return { ...cell, value: (idx + 1).toString() };
+                                                                }
+                                                                // Flexible match for turnover column
+                                                                const isTurnover = cell.col_id.toLowerCase().includes('turnover') || cell.label?.toLowerCase().includes('turnover');
+                                                                const found = currentTable.find(c => {
+                                                                    const rowMatch = c.row === row.row_id || c.row === row.label || c.row === `activity_${meta.rows.findIndex(r => r.row_id === row.row_id) + 1}`;
+                                                                    if (isTurnover) {
+                                                                        return rowMatch && (c.col.toLowerCase().includes('turnover') || c.col === cell.col_id);
                                                                     }
-                                                                    // Flexible match for turnover column
-                                                                    const isTurnover = cell.col_id.toLowerCase().includes('turnover') || cell.label?.toLowerCase().includes('turnover');
-                                                                    const found = currentTable.find(c => {
-                                                                        const rowMatch = c.row === row.row_id || c.row === row.label || c.row === `activity_${meta.rows.findIndex(r => r.row_id === row.row_id) + 1}`;
-                                                                        if (isTurnover) {
-                                                                            return rowMatch && (c.col.toLowerCase().includes('turnover') || c.col === cell.col_id);
-                                                                        }
-                                                                        return rowMatch && (c.col === cell.col_id || c.col.toLowerCase() === cell.col_id.toLowerCase());
-                                                                    });
-                                                                    return found ? { ...cell, value: found.value } : cell;
-                                                                })
-                                                            }));
-                                                            return { ...answer, table: { columns, rows: filledRows } };
-                                                        })()}
-                                                        onClose={handleEditClose}
-                                                        onSuccess={handleEditSuccess}
-                                                        moduleId={moduleId}
-                                                    />
-                                                )}
-                                            </div>
+                                                                    return rowMatch && (c.col === cell.col_id || c.col.toLowerCase() === cell.col_id.toLowerCase());
+                                                                });
+                                                                return found ? { ...cell, value: found.value } : cell;
+                                                            })
+                                                        }));
+                                                        return { ...answer, table: { columns, rows: filledRows } };
+                                                    })()}
+                                                    onClose={handleEditClose}
+                                                    onSuccess={handleEditSuccess}
+                                                    moduleId={moduleId}
+                                                />
+                                            )}
+                                        </div>
                                         );
                                     })
                                 ) : (
@@ -488,12 +489,12 @@ const DynamicEntityDetails = () => {
                                     {(() => {
                                         // Overall Module Progress
                                         const questionTracker = new Set(); // Track unique question IDs
-                                        
+
                                         // Count total questions from submodules structure
                                         const totalQuestions = submodules.reduce((total, sub) =>
                                             total + (sub.question_categories?.reduce((catTotal, cat) =>
                                                 catTotal + (cat.questions?.length || 0), 0) || 0), 0);
-                                        
+
                                         // Count answered questions by tracking unique question IDs from submodules
                                         const totalAnswered = submodules.reduce((moduleTotal, sub) =>
                                             moduleTotal + (sub.question_categories?.reduce((catTotal, cat) =>
@@ -513,7 +514,7 @@ const DynamicEntityDetails = () => {
                                                     }
                                                     return hasAnswer;
                                                 }).length || 0), 0) || 0), 0);
-                                        
+
                                         console.log('Detailed Progress Stats:', {
                                             totalAnsweredQuestions: totalAnswered,
                                             totalQuestions: totalQuestions,
@@ -526,7 +527,7 @@ const DynamicEntityDetails = () => {
                                                 hasTableResponse: !!(val?.response?.table)
                                             }))
                                         });
-                                        
+
                                         return (
                                             <>
                                                 <svg width="6vw" height="6vw" viewBox="0 0 120 120">
@@ -559,7 +560,7 @@ const DynamicEntityDetails = () => {
                             <div className="flex flex-col gap-[0.3vh]">
                                 {submodules.map((submodule, index) => {
                                     const questionTracker = new Set(); // Track unique question IDs for this submodule
-                                    
+
                                     const totalQuestions = submodule.question_categories?.reduce(
                                         (total, cat) => total + (cat.questions?.length || 0),
                                         0
@@ -569,7 +570,7 @@ const DynamicEntityDetails = () => {
                                         const categoryAnswered = cat.questions?.filter(q => {
                                             if (questionTracker.has(q.question_id)) {
                                                 return false;
-                                            }                                            const hasAnswer = answers[q.question_id] && (
+                                            } const hasAnswer = answers[q.question_id] && (
                                                 answers[q.question_id].string_value !== undefined ||
                                                 answers[q.question_id].bool_value !== undefined ||
                                                 answers[q.question_id]?.decimal_value !== undefined ||
@@ -594,7 +595,7 @@ const DynamicEntityDetails = () => {
                                             categoryName: cat.category_name,
                                             totalQuestions: cat.questions?.length || 0,
                                             answeredQuestions: cat.questions?.filter(q => !questionTracker.has(q.question_id) && answers[q.question_id] && (
-                                                answers[q.question_id].string_value !== undefined ||                                                answers[q.question_id].bool_value !== undefined ||
+                                                answers[q.question_id].string_value !== undefined || answers[q.question_id].bool_value !== undefined ||
                                                 answers[q.question_id]?.decimal_value !== undefined ||
                                                 (answers[q.question_id].response && answers[q.question_id].response.table)
                                             )).length || 0
@@ -622,27 +623,27 @@ const DynamicEntityDetails = () => {
                             <div className="bg-[#F8FAFC] rounded-[4px] shadow p-[0.7vw] border border-gray-100 w-full flex flex-col gap-[0.3vh]">
                                 <div className="font-semibold text-[11px] mb-[0.3vh] text-[#000D30]">Category Overview</div>
                                 <div className="flex flex-col gap-[0.15vh]">                                    {currentSubmodule.question_categories?.map((category, idx) => {
-                                        const totalQuestions = category.questions?.length || 0;
-                                        const answeredQuestions = category.questions?.filter(q => answers[q.question_id])?.length || 0;
-                                        const categoryName = category.category_name || 'Unnamed Category';
-                                        const truncatedName = categoryName.length > 15 
-                                            ? categoryName.substring(0, 15) + '...' 
-                                            : categoryName;
+                                    const totalQuestions = category.questions?.length || 0;
+                                    const answeredQuestions = category.questions?.filter(q => answers[q.question_id])?.length || 0;
+                                    const categoryName = category.category_name || 'Unnamed Category';
+                                    const truncatedName = categoryName.length > 15
+                                        ? categoryName.substring(0, 15) + '...'
+                                        : categoryName;
 
-                                        // Use category.id if available, otherwise fallback to a stable string key
-                                        const key = category.id || `category-${categoryName.replace(/\s+/g, '-')}-${idx}`;
-                                        return (
-                                            <div key={key} className="flex justify-between text-[10px]">
-                                                <span 
-                                                    className="hover:cursor-help truncate max-w-[120px]" 
-                                                    title={categoryName}
-                                                >
-                                                    {truncatedName}
-                                                </span>
-                                                <span>{answeredQuestions}/{totalQuestions} questions</span>
-                                            </div>
-                                        );
-                                    })}
+                                    // Use category.id if available, otherwise fallback to a stable string key
+                                    const key = category.id || `category-${categoryName.replace(/\s+/g, '-')}-${idx}`;
+                                    return (
+                                        <div key={key} className="flex justify-between text-[10px]">
+                                            <span
+                                                className="hover:cursor-help truncate max-w-[120px]"
+                                                title={categoryName}
+                                            >
+                                                {truncatedName}
+                                            </span>
+                                            <span>{answeredQuestions}/{totalQuestions} questions</span>
+                                        </div>
+                                    );
+                                })}
                                 </div>
                             </div>
                         )}
@@ -680,14 +681,14 @@ const DynamicEntityDetails = () => {
                                 <div className="bg-white rounded-lg shadow-2xl p-4 overflow-hidden border border-gray-200">
                                     <div className="flex justify-between items-center mb-4">
                                         <h2 className="text-lg font-semibold text-[#000D30]">Progress Overview</h2>
-                                        <button 
+                                        <button
                                             onClick={() => setShowMobileProgress(false)}
                                             className="p-1 hover:bg-gray-100 rounded-full"
                                         >
                                             <X className="w-5 h-5 text-gray-500" />
                                         </button>
                                     </div>
-                                    
+
                                     {/* Progress Content */}
                                     <div className="flex flex-col gap-4">
                                         {/* Module Progress */}
@@ -714,7 +715,7 @@ const DynamicEntityDetails = () => {
                                                 </>
                                             )}
                                         </div>
-                                        
+
                                         {/* Submodules Progress */}
                                         <div className="bg-[#F8FAFC] rounded-lg p-3 border border-gray-100">
                                             <div className="font-semibold text-sm mb-2 text-[#000D30]">Submodules Progress</div>

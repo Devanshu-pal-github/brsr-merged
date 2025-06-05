@@ -363,8 +363,6 @@ const QuestionEditPopup = ({
                         questionId={question.question_id}
                         questionText={question.question}
                         closeModal={onClose}
-                        isAIAssistantOpen={isAIAssistantOpen}
-                        toggleAIAssistant={() => setIsAIAssistantOpen((prev) => !prev)}
                     />
                     <div className="flex flex-1 overflow-hidden">
                         <div
@@ -484,6 +482,21 @@ const QuestionEditPopup = ({
                         </div>
                     </form>
                 </motion.div>
+                <button
+                    onClick={() => setIsAIAssistantOpen((prev) => !prev)}
+                    className="absolute top-1 right-[-40px] p-2 !rounded-full bg-blue-700   text-white hover:bg-blue-600 transition-colors duration-200 drop-shadow-[0_0_10px_rgba(79,70,229,0.5)] animate-spin-slow z-50  focus:outline-none focus:ring-1 focus:ring-white"
+                    aria-label={isAIAssistantOpen ? "Hide Mini AI Assistant" : "Show Mini AI Assistant"}
+                    animate={{ rotate: 360 }}
+                >
+                    <svg className="w-5 h-[25px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                        />
+                    </svg>
+                </button>
             </div>
         </div>
     );
