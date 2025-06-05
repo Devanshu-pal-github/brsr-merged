@@ -5,9 +5,8 @@ const WelcomeSidebar = () => {
     const navigate = useNavigate();
     
     const menuItems = [
-        { icon: Building, label: 'Get Started', path: '/' },
-        { icon: FileText, label: 'Company Details', path: '/general' },
-        { icon: Settings, label: 'Settings', path: '#' },
+        { icon: FileText, label: 'General Details', path: '/general' },
+        { icon: Settings, label: 'Policies and Governance', path: '/policies' },
         { icon: HelpCircle, label: 'Help & Support', path: '#' }
     ];
 

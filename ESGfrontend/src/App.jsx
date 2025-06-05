@@ -5,6 +5,7 @@ import Dashboard from './pages/PlantPages/Dashboard';
 import Login from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
 import GeneralDetails from './pages/GeneralDetails';
+import PoliciesPage from './pages/PoliciesPage';
 import DynamicModulePage from './components/DynamicModulePage';
 import CreateEmployee from './pages/createEmployee';
 import DynamicEntityDetails from './pages/DynamicEntityDetails';
@@ -41,6 +42,7 @@ function App() {
                     }>
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/general" element={<GeneralDetails />} />
+                        <Route path="/policies" element={<PoliciesPage />} />
                     </Route>
 
                     {/* Main App Flow Routes - Only accessible after setup */}

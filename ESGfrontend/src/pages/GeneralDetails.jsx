@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import TableQuestionRenderer from '../components/TableQuestionRenderer';
-import { policyDisclosures } from '../data/tableMetadata';
 
 const GeneralDetails = () => {
     const [formData, setFormData] = useState({
@@ -16,23 +14,38 @@ const GeneralDetails = () => {
         stockExchanges: '',
         paidUpCapital: '',
         reportingBoundary: 'standalone',
+        csrApplicable: false,
+        turnover: '',
+        netWorth: '',
+        sameAsRegisteredAddress: false
     });
 
-    const [tableResponses, setTableResponses] = useState({});
-
     const handleInputChange = (field, value) => {
+        setFormData(prev => {
+            // If sameAsRegisteredAddress is checked and we're updating regOfficeAddress, update corporateAddress too
+            if (field === 'regOfficeAddress' && prev.sameAsRegisteredAddress) {
+                return {
+                    ...prev,
+                    [field]: value,
+                    corporateAddress: value
+                };
+            }
+            return {
+                ...prev,
+                [field]: value
+            };
+        });
+    };
+
+    const handleSameAddressChange = (e) => {
+        const isChecked = e.target.checked;
         setFormData(prev => ({
             ...prev,
-            [field]: value
+            sameAsRegisteredAddress: isChecked,
+            corporateAddress: isChecked ? prev.regOfficeAddress : prev.corporateAddress
         }));
     };
 
-    const handleTableChange = (sectionId, value) => {
-        setTableResponses(prev => ({
-            ...prev,
-            [sectionId]: value
-        }));
-    };
 
     return (
         <div className="p-6 space-y-6">
@@ -92,6 +105,18 @@ const GeneralDetails = () => {
                                 className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent"
                             />
                         </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-[#1A2341]">
+                                Turnover (in Rs.)
+                            </label>
+                            <input
+                                type="number"
+                                value={formData.turnover}
+                                onChange={(e) => handleInputChange('turnover', e.target.value)}
+                                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent"
+                            />
+                        </div>
                     </div>
 
                     {/* Column 2 */}
@@ -109,14 +134,27 @@ const GeneralDetails = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-[#1A2341]">
+                            <label className="block text-sm font-medium text-[#1A2341] mb-1">
                                 Corporate Address
                             </label>
+                            <div className="flex items-center mb-2">
+                                <input
+                                    type="checkbox"
+                                    id="sameAsRegistered"
+                                    checked={formData.sameAsRegisteredAddress}
+                                    onChange={handleSameAddressChange}
+                                    className="h-4 w-4 text-[#14B8A6] focus:ring-[#14B8A6] border-gray-300 rounded"
+                                />
+                                <label htmlFor="sameAsRegistered" className="ml-2 block text-sm text-gray-700">
+                                    Same as Registered Office Address
+                                </label>
+                            </div>
                             <textarea
                                 value={formData.corporateAddress}
                                 onChange={(e) => handleInputChange('corporateAddress', e.target.value)}
-                                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent"
+                                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent disabled:bg-gray-50"
                                 rows={4}
+                                disabled={formData.sameAsRegisteredAddress}
                             />
                         </div>
 
@@ -158,6 +196,33 @@ const GeneralDetails = () => {
                                 onChange={(e) => handleInputChange('website', e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent"
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-[#1A2341]">
+                                Net Worth (in Rs.)
+                            </label>
+                            <input
+                                type="number"
+                                value={formData.netWorth}
+                                onChange={(e) => handleInputChange('netWorth', e.target.value)}
+                                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent"
+                            />
+                        </div>
+
+                        <div className="space-y-2 pt-2">
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    id="csrApplicable"
+                                    checked={formData.csrApplicable}
+                                    onChange={(e) => handleInputChange('csrApplicable', e.target.checked)}
+                                    className="h-4 w-4 text-[#14B8A6] focus:ring-[#14B8A6] border-gray-300 rounded"
+                                />
+                                <label htmlFor="csrApplicable" className="ml-2 block text-sm text-gray-700">
+                                    Whether CSR is applicable as per section 135 of Companies Act, 2013
+                                </label>
+                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -216,26 +281,7 @@ const GeneralDetails = () => {
                 </div>
             </div>
 
-            {/* Policy & Governance Section */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h2 className="text-2xl font-bold text-[#1A2341] mb-6">
-                    Policy & Governance Disclosures
-                </h2>
-
-                {policyDisclosures.sections.map((section, idx) => (
-                    <div key={section.title} className="mb-8">
-                        <h3 className="text-lg font-semibold text-[#1A2341] mb-4">
-                            {section.title}
-                        </h3>
-
-                        <TableQuestionRenderer
-                            meta={section.table_metadata}
-                            response={tableResponses[section.title] || { rows: [] }}
-                            onChange={(value) => handleTableChange(section.title, value)}
-                        />
-                    </div>
-                ))}
-            </div>
+            {/* Removed Policy & Governance Section - Moved to Policies Page */}
         </div>
     );
 };
