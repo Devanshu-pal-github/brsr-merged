@@ -68,54 +68,69 @@ const PolicyReviewForm = () => {
         `}
       </style>
 
-      {/* Question 10 */}
-      <Card>
+      {/* Question 10 */}      <Card>
         <CardHeader>
           <h3 className="text-lg font-semibold">10. Details of Review of NGRBCs by the Company</h3>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto custom-scrollbar">
             <div className="min-w-max">
-              <table className="min-w-full divide-y divide-gray-200 table-fixed" style={{ minWidth: '800px' }}>
+              <table className="min-w-full divide-y divide-gray-200 table-fixed bg-white" style={{ minWidth: '1200px' }}>
                 <thead>
                   <tr>
-                    <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[40%]">Subject for Review</th>
-                    <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[30%]">Review By</th>
-                    <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[30%]">Frequency</th>
+                    <th rowSpan="2" className="w-72 px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Subject for Review</th>
+                    <th colSpan="9" className="px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                      Indicate whether review was undertaken by Director / Committee of the Board / Any other Committee
+                    </th>
+                    <th colSpan="9" className="px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                      Frequency (Annually / Half yearly / Quarterly / Any other)
+                    </th>
+                  </tr>
+                  <tr>
+                    {principles.map(p => (
+                      <th key={`review-${p}`} className="w-24 px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b">{p}</th>
+                    ))}
+                    {principles.map(p => (
+                      <th key={`frequency-${p}`} className="w-24 px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b">{p}</th>
+                    ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {['Performance', 'Compliance'].map(rowType => (
-                    <tr key={rowType}>
-                      <td className="px-4 py-4 text-sm text-gray-900 align-top">
+                <tbody className="divide-y divide-gray-200">
+                  {['Performance', 'Compliance'].map((rowType, idx) => (
+                    <tr key={rowType} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="px-4 py-4 text-sm text-gray-900">
                         {rowType === 'Performance' 
                           ? 'Performance against above policies and follow up action'
                           : 'Compliance with statutory requirements of relevance to the principles, and rectification of any non-compliances'}
                       </td>
-                      <td className="px-4 py-4">
-                        <select
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          onChange={(e) => handleReviewDetailsChange(rowType, 'review', 'by', e.target.value)}
-                          value={reviewDetails[`${rowType}-review-by`] || ''}
-                        >
-                          <option value="">Select...</option>
-                          {reviewOptions.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="px-4 py-4">
-                        <select
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          onChange={(e) => handleReviewDetailsChange(rowType, 'review', 'frequency', e.target.value)}
-                          value={reviewDetails[`${rowType}-review-frequency`] || ''}
-                        >
-                          <option value="">Select...</option>
-                          {frequencyOptions.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                          ))}
-                        </select>
-                      </td>
+                      {principles.map(p => (
+                        <td key={`review-${p}-${rowType}`} className="px-4 py-4">
+                          <select
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm hover:border-indigo-400"
+                            onChange={(e) => handleReviewDetailsChange(rowType, p, 'by', e.target.value)}
+                            value={reviewDetails[`${rowType}-${p}-by`] || ''}
+                          >
+                            <option value="">Select...</option>
+                            {reviewOptions.map(option => (
+                              <option key={option} value={option}>{option}</option>
+                            ))}
+                          </select>
+                        </td>
+                      ))}
+                      {principles.map(p => (
+                        <td key={`frequency-${p}-${rowType}`} className="px-4 py-4">
+                          <select
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm hover:border-indigo-400"
+                            onChange={(e) => handleReviewDetailsChange(rowType, p, 'frequency', e.target.value)}
+                            value={reviewDetails[`${rowType}-${p}-frequency`] || ''}
+                          >
+                            <option value="">Select...</option>
+                            {frequencyOptions.map(option => (
+                              <option key={option} value={option}>{option}</option>
+                            ))}
+                          </select>
+                        </td>
+                      ))}
                     </tr>
                   ))}
                 </tbody>
@@ -123,7 +138,7 @@ const PolicyReviewForm = () => {
             </div>
           </div>
         </CardContent>
-      </Card>      {/* Question 11 */}
+      </Card>{/* Question 11 */}
       <Card>
         <CardHeader>
           <h3 className="text-lg font-semibold">11. Has the entity carried out independent assessment/evaluation of the working of its policies by an external agency?</h3>
