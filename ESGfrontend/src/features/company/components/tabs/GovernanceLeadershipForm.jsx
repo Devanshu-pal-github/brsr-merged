@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent } from '../common/CardComponents';
 import { FormInput, FormTextArea } from '../common/FormComponents';
+import TableActionButtons from '../common/TableActionButtons';
 
 const GovernanceLeadershipForm = () => {
   // State for director's statement
@@ -32,6 +33,29 @@ const GovernanceLeadershipForm = () => {
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleReset = () => {
+    setDirectorStatement('');
+    setHighestAuthority({
+      name: '',
+      designation: '',
+      details: ''
+    });
+    setCommitteeDetails({
+      hasCommittee: 'No',
+      name: '',
+      description: ''
+    });
+  };
+
+  const handleSave = () => {
+    // TODO: Implement save functionality
+    console.log('Saving governance details:', {
+      directorStatement,
+      highestAuthority,
+      committeeDetails
+    });
   };
 
   return (
@@ -169,6 +193,11 @@ const GovernanceLeadershipForm = () => {
           </div>
         </CardContent>
       </Card>
+
+      <TableActionButtons 
+        onReset={handleReset}
+        onSave={handleSave}
+      />
     </div>
   );
 };

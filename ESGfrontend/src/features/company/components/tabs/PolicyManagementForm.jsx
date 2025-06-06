@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent } from '../common/CardComponents';
+import TableActionButtons from '../common/TableActionButtons';
 
 const PolicyManagementForm = () => {
   // State for Yes/No answers
@@ -49,6 +50,33 @@ const PolicyManagementForm = () => {
       ...prev,
       [key]: value
     }));
+  };
+
+  const handleYesNoReset = () => {
+    setYesNoAnswers({});
+  };
+
+  const handleYesNoSave = () => {
+    // TODO: Implement save functionality
+    console.log('Saving Yes/No answers:', yesNoAnswers);
+  };
+
+  const handleWebLinksReset = () => {
+    setWebLinks({});
+  };
+
+  const handleWebLinksSave = () => {
+    // TODO: Implement save functionality
+    console.log('Saving web links:', webLinks);
+  };
+
+  const handleTextAnswersReset = () => {
+    setTextAnswers({});
+  };
+
+  const handleTextAnswersSave = () => {
+    // TODO: Implement save functionality
+    console.log('Saving text answers:', textAnswers);
   };
 
   return (
@@ -121,9 +149,12 @@ const PolicyManagementForm = () => {
                       );
                     })}
                   </tr>
-                ))}
-              </tbody>
+                ))}              </tbody>
             </table>
+            <TableActionButtons 
+              onReset={handleYesNoReset}
+              onSave={handleYesNoSave}
+            />
           </div>
         </CardContent>
       </Card>
@@ -170,9 +201,12 @@ const PolicyManagementForm = () => {
                       );
                     })}
                   </tr>
-                ))}
-              </tbody>
+                ))}              </tbody>
             </table>
+            <TableActionButtons 
+              onReset={handleWebLinksReset}
+              onSave={handleWebLinksSave}
+            />
           </div>
         </CardContent>
       </Card>
@@ -222,6 +256,10 @@ const PolicyManagementForm = () => {
                 ))}
               </tbody>
             </table>
+            <TableActionButtons 
+              onReset={handleTextAnswersReset}
+              onSave={handleTextAnswersSave}
+            />
           </div>
         </CardContent>
       </Card>

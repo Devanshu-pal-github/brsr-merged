@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FormSection, FormField, FormInput, FormTextArea, FormButton } from '../common/FormComponents';
 import { Card, CardContent, CardFooter } from '../common/CardComponents';
+import TableActionButtons from '../common/TableActionButtons';
 
 const GeneralDetailsForm = () => {
   const [formData, setFormData] = useState({
@@ -307,40 +308,33 @@ const GeneralDetailsForm = () => {
               </FormField>
             </div>
           </FormSection>
-        </CardContent>
-
-        <CardFooter>
-          <div className="flex gap-3 justify-end">
-            <FormButton 
-              variant="secondary" 
-              onClick={() => setFormData({
-                cin: '',
-                companyName: '',
-                incorporationYear: '',
-                registeredAddress: '',
-                corporateAddress: '',
-                sameAsRegistered: false,
-                email: '',
-                telephone: '',
-                website: '',
-                financialYear: '',
-                stockExchanges: '',
-                paidUpCapital: '',
-                contactPersonName: '',
-                contactPersonEmail: '',
-                contactPersonPhone: '',
-                reportingBoundary: 'standalone',
-                csrApplicable: 'no',
-                turnover: '',
-                netWorth: ''
-              })}
-            >
-              Reset
-            </FormButton>
-            <FormButton type="submit" variant="primary">
-              Save Changes
-            </FormButton>
-          </div>
+        </CardContent>        <CardFooter>          <TableActionButtons 
+            onReset={() => setFormData({
+              cin: '',
+              companyName: '',
+              incorporationYear: '',
+              registeredAddress: '',
+              corporateAddress: '',
+              sameAsRegistered: false,
+              email: '',
+              telephone: '',
+              website: '',
+              financialYear: '',
+              stockExchanges: '',
+              paidUpCapital: '',
+              contactPersonName: '',
+              contactPersonEmail: '',
+              contactPersonPhone: '',
+              reportingBoundary: 'standalone',
+              csrApplicable: 'no',
+              turnover: '',
+              netWorth: ''
+            })}
+            onSave={(e) => {
+              e?.preventDefault();
+              console.log('Saving form data:', formData);
+            }}
+          />
         </CardFooter>
       </form>
     </Card>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent } from '../common/CardComponents';
+import TableActionButtons from '../common/TableActionButtons';
 
 const PolicyReviewForm = () => {
   const principles = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'];
@@ -44,6 +45,33 @@ const PolicyReviewForm = () => {
       ...prev,
       [key]: prev[key] === 'Yes' ? 'No' : prev[key] === 'No' ? 'N/A' : 'Yes'
     }));
+  };
+
+  const handleReviewReset = () => {
+    setReviewDetails({});
+  };
+
+  const handleReviewSave = () => {
+    // TODO: Implement save functionality
+    console.log('Saving review details:', reviewDetails);
+  };
+
+  const handleAssessmentReset = () => {
+    setAssessmentDetails({});
+  };
+
+  const handleAssessmentSave = () => {
+    // TODO: Implement save functionality
+    console.log('Saving assessment details:', assessmentDetails);
+  };
+
+  const handleNonCoverageReset = () => {
+    setNonCoverageReasons({});
+  };
+
+  const handleNonCoverageSave = () => {
+    // TODO: Implement save functionality
+    console.log('Saving non-coverage reasons:', nonCoverageReasons);
   };
 
   return (
@@ -136,6 +164,10 @@ const PolicyReviewForm = () => {
                 </tbody>
               </table>
             </div>
+            <TableActionButtons 
+              onReset={handleReviewReset}
+              onSave={handleReviewSave}
+            />
           </div>
         </CardContent>
       </Card>{/* Question 11 */}
@@ -191,6 +223,10 @@ const PolicyReviewForm = () => {
                 </tbody>
               </table>
             </div>
+            <TableActionButtons 
+              onReset={handleAssessmentReset}
+              onSave={handleAssessmentSave}
+            />
           </div>
         </CardContent>
       </Card>
@@ -243,6 +279,10 @@ const PolicyReviewForm = () => {
                 </tbody>
               </table>
             </div>
+            <TableActionButtons 
+              onReset={handleNonCoverageReset}
+              onSave={handleNonCoverageSave}
+            />
           </div>
         </CardContent>
       </Card>

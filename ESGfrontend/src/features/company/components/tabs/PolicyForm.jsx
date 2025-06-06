@@ -1,6 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
+import TableActionButtons from '../common/TableActionButtons';
 
 const PolicyForm = () => {
+  const [policies, setPolicies] = useState({
+    hr: { filename: 'HR-Policy-2024.pdf' },
+    environmental: { filename: 'Environmental-Policy-2024.pdf' },
+    privacy: { filename: 'Privacy-Policy-2024.pdf' }
+  });
+
+  const handleReset = () => {
+    setPolicies({
+      hr: { filename: '' },
+      environmental: { filename: '' },
+      privacy: { filename: '' }
+    });
+  };
+
+  const handleSave = () => {
+    // TODO: Implement save functionality
+    console.log('Saving policies:', policies);
+  };
+
   return (
     <div className="space-y-6">
       <section className="space-y-4">
@@ -19,7 +39,7 @@ const PolicyForm = () => {
               <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="text-sm text-gray-600">HR-Policy-2024.pdf</span>
+              <span className="text-sm text-gray-600">{policies.hr.filename}</span>
             </div>
             <button className="text-sm text-red-600 hover:text-red-700">Remove</button>
           </div>
@@ -38,7 +58,7 @@ const PolicyForm = () => {
               <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="text-sm text-gray-600">Environmental-Policy-2024.pdf</span>
+              <span className="text-sm text-gray-600">{policies.environmental.filename}</span>
             </div>
             <button className="text-sm text-red-600 hover:text-red-700">Remove</button>
           </div>
@@ -57,21 +77,17 @@ const PolicyForm = () => {
               <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="text-sm text-gray-600">Privacy-Policy-2024.pdf</span>
+              <span className="text-sm text-gray-600">{policies.privacy.filename}</span>
             </div>
             <button className="text-sm text-red-600 hover:text-red-700">Remove</button>
           </div>
         </div>
       </section>
 
-      <div className="flex justify-end pt-4">
-        <button
-          type="submit"
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Save Changes
-        </button>
-      </div>
+      <TableActionButtons 
+        onReset={handleReset}
+        onSave={handleSave}
+      />
     </div>
   );
 };
