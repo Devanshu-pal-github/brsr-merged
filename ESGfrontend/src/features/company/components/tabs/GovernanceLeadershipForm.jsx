@@ -1,114 +1,174 @@
 import React, { useState } from 'react';
+import { Card, CardHeader, CardContent } from '../common/CardComponents';
+import { FormInput, FormTextArea } from '../common/FormComponents';
 
 const GovernanceLeadershipForm = () => {
-  const [activeTab, setActiveTab] = useState('pending');
+  // State for director's statement
+  const [directorStatement, setDirectorStatement] = useState('');
+  
+  // State for highest authority details
+  const [highestAuthority, setHighestAuthority] = useState({
+    name: '',
+    designation: '',
+    details: ''
+  });
+  
+  // State for committee details
+  const [committeeDetails, setCommitteeDetails] = useState({
+    hasCommittee: 'No',
+    name: '',
+    description: ''
+  });
+
+  const handleHighestAuthorityChange = (field, value) => {
+    setHighestAuthority(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleCommitteeChange = (field, value) => {
+    setCommitteeDetails(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   return (
-    <div className="space-y-6">
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">Governance Leadership and Oversight</h2>
-      </section>
+    <div className="space-y-8">
+      {/* Director's Statement Section */}
+      <Card>
+        <CardHeader 
+          title="Director's Statement" 
+          subtitle="Statement by director responsible for the business responsibility report, highlighting ESG related challenges, targets and achievements"
+        />
+        <CardContent>
+          <FormTextArea
+            value={directorStatement}
+            onChange={(e) => setDirectorStatement(e.target.value)}
+            placeholder="Enter the director's statement here..."
+            rows={6}
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-vertical min-h-[150px]"
+          />
+        </CardContent>
+      </Card>
 
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-200">
-        <nav className="flex -mb-px gap-6">
-          <button
-            onClick={() => setActiveTab('pending')}
-            className={`py-2 border-b-2 text-sm font-medium ${
-              activeTab === 'pending'
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Pending Grievances
-          </button>
-          <button
-            onClick={() => setActiveTab('resolved')}
-            className={`py-2 border-b-2 text-sm font-medium ${
-              activeTab === 'resolved'
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Resolved Grievances
-          </button>
-        </nav>
-      </div>
-
-      {/* Grievance List */}
-      <div className="space-y-4">
-        {activeTab === 'pending' ? (
-          <>
-            <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Environmental Concern #123</h3>
-                  <p className="text-sm text-gray-500 mt-1">Reported on: June 1, 2025</p>
-                </div>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                  Pending
-                </span>
+      {/* Highest Authority Details Section */}
+      <Card>
+        <CardHeader 
+          title="Highest Authority Details" 
+          subtitle="Details of the highest authority responsible for implementation and oversight of the Business Responsibility policy(ies)"
+        />
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Name of Authority
+                </label>
+                <FormInput
+                  name="authorityName"
+                  value={highestAuthority.name}
+                  onChange={(e) => handleHighestAuthorityChange('name', e.target.value)}
+                  placeholder="Enter name"
+                />
               </div>
-              <p className="text-sm text-gray-600">
-                Concerns regarding waste management practices in the manufacturing unit...
-              </p>
-              <div className="flex justify-end space-x-3">
-                <button className="text-sm text-gray-600 hover:text-gray-900">View Details</button>
-                <button className="text-sm text-indigo-600 hover:text-indigo-700">Resolve</button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Designation
+                </label>
+                <FormInput
+                  name="designation"
+                  value={highestAuthority.designation}
+                  onChange={(e) => handleHighestAuthorityChange('designation', e.target.value)}
+                  placeholder="Enter designation"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Additional Details
+              </label>
+              <FormTextArea
+                name="details"
+                value={highestAuthority.details}
+                onChange={(e) => handleHighestAuthorityChange('details', e.target.value)}
+                placeholder="Enter additional details about the authority's role and responsibilities"
+                rows={4}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Committee Details Section */}
+      <Card>
+        <CardHeader 
+          title="Board Committee Details" 
+          subtitle="Information about the Committee of the Board/Director responsible for decision making on sustainability related issues"
+        />
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <label className="text-sm font-medium text-gray-700">
+                Does the entity have a specified Committee of the Board/Director responsible for decision making on sustainability related issues?
+              </label>
+              <div className="flex items-center space-x-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    className="form-radio text-indigo-600"
+                    name="hasCommittee"
+                    value="Yes"
+                    checked={committeeDetails.hasCommittee === 'Yes'}
+                    onChange={(e) => handleCommitteeChange('hasCommittee', e.target.value)}
+                  />
+                  <span className="ml-2">Yes</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    className="form-radio text-indigo-600"
+                    name="hasCommittee"
+                    value="No"
+                    checked={committeeDetails.hasCommittee === 'No'}
+                    onChange={(e) => handleCommitteeChange('hasCommittee', e.target.value)}
+                  />
+                  <span className="ml-2">No</span>
+                </label>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
-              <div className="flex justify-between items-start">
+            {committeeDetails.hasCommittee === 'Yes' && (
+              <div className="space-y-4 mt-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">Employee Grievance #124</h3>
-                  <p className="text-sm text-gray-500 mt-1">Reported on: June 3, 2025</p>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Committee Name
+                  </label>
+                  <FormInput
+                    name="committeeName"
+                    value={committeeDetails.name}
+                    onChange={(e) => handleCommitteeChange('name', e.target.value)}
+                    placeholder="Enter committee name"
+                  />
                 </div>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                  In Progress
-                </span>
-              </div>
-              <p className="text-sm text-gray-600">
-                Workplace safety concerns in the production area...
-              </p>
-              <div className="flex justify-end space-x-3">
-                <button className="text-sm text-gray-600 hover:text-gray-900">View Details</button>
-                <button className="text-sm text-indigo-600 hover:text-indigo-700">Resolve</button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
-              <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">Safety Concern #121</h3>
-                  <p className="text-sm text-gray-500 mt-1">Resolved on: May 28, 2025</p>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Committee Details
+                  </label>
+                  <FormTextArea
+                    name="committeeDescription"
+                    value={committeeDetails.description}
+                    onChange={(e) => handleCommitteeChange('description', e.target.value)}
+                    placeholder="Enter detailed information about the committee's role, composition, and responsibilities"
+                    rows={4}
+                  />
                 </div>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Resolved
-                </span>
               </div>
-              <p className="text-sm text-gray-600">
-                Equipment maintenance schedule concerns...
-              </p>
-              <div className="flex justify-end">
-                <button className="text-sm text-gray-600 hover:text-gray-900">View Resolution</button>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Add New Grievance Button */}
-      <div className="flex justify-end pt-4">
-        <button
-          type="button"
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Add New Grievance
-        </button>
-      </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
