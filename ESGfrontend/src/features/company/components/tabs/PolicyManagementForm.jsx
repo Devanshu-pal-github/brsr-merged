@@ -1,78 +1,232 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Card, CardHeader, CardContent } from '../common/CardComponents';
 
-const PolicyForm = () => {
+const PolicyManagementForm = () => {
+  // State for Yes/No answers
+  const [yesNoAnswers, setYesNoAnswers] = useState({});
+  // State for web links
+  const [webLinks, setWebLinks] = useState({});
+  // State for text answers
+  const [textAnswers, setTextAnswers] = useState({});
+
+  const principles = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'];
+  
+  const yesNoQuestions = [
+    "Whether your entity's policy/policies cover each principle and its core elements of the NGRBCs.",
+    "Has the policy been approved by the Board?",
+    "Whether the entity has translated the policy into procedures.",
+    "Do the enlisted policies extend to your value chain partners?"
+  ];
+
+  const linkQuestions = [
+    "Web Link of the Policies, if available"
+  ];
+
+  const textQuestions = [
+    "Name of the national and international codes/certifications/labels/standards adopted by your entity and mapped to each principle.",
+    "Specific commitments, goals and targets set by the entity with defined timelines, if any.",
+    "Performance of the entity against the specific commitments, goals and targets along-with reasons in case the same are not met."
+  ];
+  const handleYesNoClick = (principle, question) => {
+    const key = `${principle}-${question}`;
+    setYesNoAnswers(prev => ({
+      ...prev,
+      [key]: prev[key] === 'Yes' ? 'No' : prev[key] === 'No' ? 'N/A' : 'Yes'
+    }));
+  };
+
+  const handleLinkChange = (principle, question, value) => {
+    const key = `${principle}-${question}`;
+    setWebLinks(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const handleTextChange = (principle, question, value) => {
+    const key = `${principle}-${question}`;
+    setTextAnswers(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
   return (
-    <div className="space-y-6">      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">Policy and Management</h2>
-        
-        {/* HR Policy */}
-        <div className="p-4 border border-gray-200 rounded-lg space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-md font-medium text-gray-900">HR Policy</h3>
-            <button className="px-3 py-1.5 text-sm bg-indigo-50 text-indigo-600 rounded-md hover:bg-indigo-100">
-              Upload New
-            </button>
-          </div>
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-            <div className="flex items-center gap-3">
-              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span className="text-sm text-gray-600">HR-Policy-2024.pdf</span>
-            </div>
-            <button className="text-sm text-red-600 hover:text-red-700">Remove</button>
-          </div>
-        </div>
+    <div className="space-y-8">
+      {/* Custom scrollbar styles */}
+      <style>
+        {`
+          .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #666;
+          }
+        `}
+      </style>
 
-        {/* Environmental Policy */}
-        <div className="p-4 border border-gray-200 rounded-lg space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-md font-medium text-gray-900">Environmental Policy</h3>
-            <button className="px-3 py-1.5 text-sm bg-indigo-50 text-indigo-600 rounded-md hover:bg-indigo-100">
-              Upload New
-            </button>
+      {/* Yes/No Questions Table */}
+      <Card>
+        <CardHeader 
+          title="Policy Questions - Yes/No Responses" 
+          subtitle="Click on cells to cycle between Yes, No, and N/A"
+        />
+        <CardContent>
+          <div className="overflow-x-auto custom-scrollbar" style={{ maxWidth: '100%' }}>
+            <table className="min-w-full divide-y divide-gray-200 table-fixed" style={{ minWidth: '800px' }}>
+              <thead>
+                <tr>
+                  <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
+                    Questions
+                  </th>
+                  {principles.map(principle => (
+                    <th key={principle} className="px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {principle}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {yesNoQuestions.map((question, idx) => (
+                  <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="px-4 py-4 text-sm text-gray-900 align-top">
+                      {question}
+                    </td>
+                    {principles.map(principle => {
+                      const key = `${principle}-${question}`;
+                      return (
+                        <td 
+                          key={principle}
+                          onClick={() => handleYesNoClick(principle, question)}
+                          className="px-4 py-4 text-center cursor-pointer hover:bg-gray-100"
+                        >
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            yesNoAnswers[key] === 'Yes' 
+                              ? 'bg-green-100 text-green-800' 
+                              : yesNoAnswers[key] === 'No'
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {yesNoAnswers[key] || 'N/A'}
+                          </span>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-            <div className="flex items-center gap-3">
-              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span className="text-sm text-gray-600">Environmental-Policy-2024.pdf</span>
-            </div>
-            <button className="text-sm text-red-600 hover:text-red-700">Remove</button>
-          </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Data Privacy Policy */}
-        <div className="p-4 border border-gray-200 rounded-lg space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-md font-medium text-gray-900">Data Privacy Policy</h3>
-            <button className="px-3 py-1.5 text-sm bg-indigo-50 text-indigo-600 rounded-md hover:bg-indigo-100">
-              Upload New
-            </button>
+      {/* Web Links Table */}
+      <Card>
+        <CardHeader 
+          title="Policy Links" 
+          subtitle="Enter web links for available policies"
+        />
+        <CardContent>
+          <div className="overflow-x-auto custom-scrollbar" style={{ maxWidth: '100%' }}>
+            <table className="min-w-full divide-y divide-gray-200 table-fixed" style={{ minWidth: '800px' }}>
+              <thead>
+                <tr>
+                  <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
+                    Links
+                  </th>
+                  {principles.map(principle => (
+                    <th key={principle} className="px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {principle}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {linkQuestions.map((question, idx) => (
+                  <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="px-4 py-4 text-sm text-gray-900 align-top">
+                      {question}
+                    </td>
+                    {principles.map(principle => {
+                      const key = `${principle}-${question}`;
+                      return (
+                        <td key={principle} className="px-4 py-4">
+                          <input
+                            type="url"
+                            value={webLinks[key] || ''}
+                            onChange={(e) => handleLinkChange(principle, question, e.target.value)}
+                            placeholder="Enter URL"
+                            className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                          />
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-            <div className="flex items-center gap-3">
-              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span className="text-sm text-gray-600">Privacy-Policy-2024.pdf</span>
-            </div>
-            <button className="text-sm text-red-600 hover:text-red-700">Remove</button>
-          </div>
-        </div>
-      </section>
+        </CardContent>
+      </Card>
 
-      <div className="flex justify-end pt-4">
-        <button
-          type="submit"
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Save Changes
-        </button>
-      </div>
+      {/* Text Questions Table */}
+      <Card>
+        <CardHeader 
+          title="Additional Information" 
+          subtitle="Provide detailed responses for each principle"
+        />
+        <CardContent>
+          <div className="overflow-x-auto custom-scrollbar" style={{ maxWidth: '100%' }}>
+            <table className="min-w-full divide-y divide-gray-200 table-fixed" style={{ minWidth: '800px' }}>
+              <thead>
+                <tr>
+                  <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
+                    Details Required
+                  </th>
+                  {principles.map(principle => (
+                    <th key={principle} className="px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {principle}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {textQuestions.map((question, idx) => (
+                  <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="px-4 py-4 text-sm text-gray-900 align-top">
+                      {question}
+                    </td>
+                    {principles.map(principle => {
+                      const key = `${principle}-${question}`;
+                      return (
+                        <td key={principle} className="px-4 py-4">
+                          <textarea
+                            value={textAnswers[key] || ''}
+                            onChange={(e) => handleTextChange(principle, question, e.target.value)}
+                            placeholder="Enter details"
+                            rows={3}
+                            className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                          />
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
-export default PolicyForm;
+export default PolicyManagementForm;
