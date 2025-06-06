@@ -8,6 +8,7 @@ import DynamicEntityDetails from './pages/DynamicEntityDetails';
 import TestHarness from './features/temp';
 import ChatbotButton from './AICHATBOT/ChatbotButton'; // Corrected import
 import { AppProvider } from './AICHATBOT/AppProvider'; // Import AppProvider
+import LandingPage from './pages/LandingPage'; // Import LandingPage
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/landing" element={<LandingPage />} /> {/* New landing page route */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/:moduleName" element={<DynamicModulePage />} />
           <Route path="/createEmployee" element={<CreateEmployee />} />
