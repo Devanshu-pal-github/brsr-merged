@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/PlantPages/Dashboard';
-import Login from './pages/LoginPage';
+import LoginPage from './pages/LoginPage';
 import DynamicModulePage from './components/DynamicModulePage';
 import CreateEmployee from './pages/createEmployee';
 import DynamicEntityDetails from './pages/DynamicEntityDetails';
@@ -15,7 +15,7 @@ function App() {
     <AppProvider> {/* Wrap the app with AppProvider */}
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<LoginPage />} />
           <Route path="/company" element={<CompanyPage />} /> {/* New company page route */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/:moduleName" element={<DynamicModulePage />} />

@@ -3,7 +3,7 @@ import { Shield } from 'lucide-react';
 import { useLoginMutation } from '../api/apiSlice';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const LoginPage = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -107,4 +107,4 @@ const Login = () => {
     );
 };
 
-export default Login; 
+export default LoginPage;

@@ -1,35 +1,13 @@
 import React from 'react';
+import GeneralDetailsForm from './tabs/GeneralDetailsForm';
+import PolicyForm from './tabs/PolicyForm';
+import GrievanceForm from './tabs/GrievanceForm';
+import DisclosuresForm from './tabs/DisclosuresForm';
 
-const GeneralDetails = () => {
-  return (
-    <div className="space-y-4">
-      <p className="text-gray-600">General details content will go here...</p>
-    </div>
-  );
-};
-
-const Policy = () => {
-  return (
-    <div className="space-y-4">
-      <p className="text-gray-600">Policy content will go here...</p>
-    </div>
-  );
-};
-
-const Grievance = () => {
-  return (
-    <div className="space-y-4">
-      <p className="text-gray-600">Grievance content will go here...</p>
-    </div>
-  );
-};
-
-const Disclosures = () => {
-  return (
-    <div className="space-y-4">
-      <p className="text-gray-600">Disclosures content will go here...</p>
-    </div>
-  );
-};
+// Each component is now a simple wrapper around its respective form component
+const GeneralDetails = () => <GeneralDetailsForm />;
+const Policy = () => <PolicyForm />;
+const Grievance = () => <GrievanceForm />;
+const Disclosures = () => <DisclosuresForm />;
 
 export { GeneralDetails, Policy, Grievance, Disclosures };
