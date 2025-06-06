@@ -1,14 +1,37 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, ChevronDown, Bell } from 'lucide-react';
+import { Menu, Bell, Settings, FileText, AlertCircle, FileBarChart } from 'lucide-react';
+
+// Create a sidebar item component
+const SidebarItem = ({ icon: Icon, label, isActive, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors ${
+      isActive
+        ? 'bg-[#F3F4F6] text-[#1A2341]'
+        : 'text-gray-600 hover:bg-gray-50'
+    }`}
+  >
+    <Icon className="w-5 h-5" />
+    <span>{label}</span>
+  </button>
+);
 
 const NewLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState('General Details');
   const navigate = useNavigate();
+
+  const sidebarItems = [
+    { icon: Settings, label: 'General Details' },
+    { icon: FileText, label: 'Policy' },
+    { icon: AlertCircle, label: 'Grievance' },
+    { icon: FileBarChart, label: 'Disclosures' },
+  ];
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F2F4F5] font-sans text-[#1A1A1A]">
-      {/* Main Content Area */}
+      {/* Main Content Area with Header */}
       <div className="flex flex-col flex-1">
         {/* Header */}
         <header className="h-[48px] min-h-[40px] max-h-[60px] bg-[#000D30] shadow-md flex items-center z-40 px-4 justify-between">
@@ -47,39 +70,59 @@ const NewLayout = ({ children }) => {
           </div>
         </header>
 
-        {/* Content */}
-        <main className="flex-1 overflow-auto p-6">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-2xl font-semibold text-[#1A2341] mb-6">Welcome to Landing Page</h1>
-            {/* Add your content here */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Sample content cards */}
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <h2 className="text-lg font-semibold mb-2">Section 1</h2>
-                <p className="text-gray-600">Content for section 1</p>
+        {/* Main Content with Sidebar */}
+        <div className="flex-1 overflow-auto">
+          <div className="max-w-6xl mx-auto px-8 py-6 flex gap-8">
+            {/* Floating Sidebar */}
+            <div className="w-[190px] shrink-0">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden sticky top-6">
+                {sidebarItems.map((item) => (
+                  <SidebarItem
+                    key={item.label}
+                    icon={item.icon}
+                    label={item.label}
+                    isActive={activeTab === item.label}
+                    onClick={() => setActiveTab(item.label)}
+                  />
+                ))}
               </div>
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <h2 className="text-lg font-semibold mb-2">Section 2</h2>
-                <p className="text-gray-600">Content for section 2</p>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <h2 className="text-lg font-semibold mb-2">Section 3</h2>
-                <p className="text-gray-600">Content for section 3</p>
+            </div>
+
+            {/* Main Content Area */}
+            <div className="flex-1 max-w-4xl">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h1 className="text-xl font-semibold text-[#1A2341] mb-4">{activeTab}</h1>
+                {activeTab === 'General Details' && (
+                  <div className="space-y-4">
+                    <p className="text-gray-600">General details content will go here...</p>
+                  </div>
+                )}
+                {activeTab === 'Policy' && (
+                  <div className="space-y-4">
+                    <p className="text-gray-600">Policy content will go here...</p>
+                  </div>
+                )}
+                {activeTab === 'Grievance' && (
+                  <div className="space-y-4">
+                    <p className="text-gray-600">Grievance content will go here...</p>
+                  </div>
+                )}
+                {activeTab === 'Disclosures' && (
+                  <div className="space-y-4">
+                    <p className="text-gray-600">Disclosures content will go here...</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
 };
 
 const LandingPage = () => {
-  return (
-    <NewLayout>
-      {/* Content will be added here */}
-    </NewLayout>
-  );
+  return <NewLayout />;
 };
 
 export default LandingPage;
