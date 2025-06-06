@@ -20,13 +20,11 @@ const SidebarItem = ({ icon: Icon, label, isActive, onClick }) => (
 const NewLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('General Details');
-  const navigate = useNavigate();
-
-  const sidebarItems = [
+  const navigate = useNavigate();  const sidebarItems = [
     { icon: Settings, label: 'General Details' },
-    { icon: FileText, label: 'Policy' },
-    { icon: AlertCircle, label: 'Grievance' },
-    { icon: FileBarChart, label: 'Disclosures' },
+    { icon: FileText, label: 'Policy and Management' },
+    { icon: AlertCircle, label: 'Governance Leadership and Oversight' },
+    { icon: FileBarChart, label: 'Policy Review' },
   ];
 
   return (

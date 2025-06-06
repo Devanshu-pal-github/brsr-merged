@@ -32,7 +32,7 @@ const GeneralDetailsForm = () => {
     <Card>
       <form onSubmit={handleSubmit}>
         <CardContent>
-          <FormSection title="Company Information">
+          <FormSection title="General Details">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField label="Company Name" required>
                 <FormInput

@@ -4,15 +4,14 @@ import { GeneralDetails, Policy, Grievance, Disclosures } from '../components/Ta
 
 const CompanyPage = () => {
   // Render function that returns the appropriate component based on active tab
-  const renderContent = (activeTab) => {
-    switch (activeTab) {
+  const renderContent = (activeTab) => {    switch (activeTab) {
       case 'General Details':
         return <GeneralDetails />;
-      case 'Policy':
+      case 'Policy and Management':
         return <Policy />;
-      case 'Grievance':
+      case 'Governance Leadership and Oversight':
         return <Grievance />;
-      case 'Disclosures':
+      case 'Policy Review':
         return <Disclosures />;
       default:
         return <GeneralDetails />;
