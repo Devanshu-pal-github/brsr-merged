@@ -329,10 +329,9 @@
         {
           "id": "policy_details",
           "category_name": "Policy Details",
-          "questions": [
-            {
+          "questions": [            {
               "question_id": "Q1_B",
-              "question": "Policy Coverage Details",
+              "question": "Whether your entity's policy/policies cover each principle and its core elements of the NGRBCs",
               "type": "table",
               "table_metadata": {
                 "columns": [
@@ -1229,6 +1228,97 @@
                   }
                 }
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "governance_and_leadership",
+      "name": "Governance and Leadership",
+      "submodules": [
+        {
+          "id": "governance_structure",
+          "submodule_name": "Governance Structure",
+          "question_categories": [
+            {
+              "id": "governing_body",
+              "category_name": "Governance, Leadership and Oversight",
+              "questions": [
+                {
+                  "question_id": "Q7_B",
+                  "question": "Statement by director responsible for the business responsibility report, highlighting ESG related challenges, targets and achievements",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": true,
+                  "note": "listed entity has flexibility regarding the placement of this disclosure",
+                  "guidance": "Please provide a detailed statement from the director highlighting ESG challenges, targets and achievements"
+                },                {
+                  "question_id": "Q8_B",
+                  "question": "Details of the highest authority responsible for implementation and oversight of the Business Responsibility policy(ies)",
+                  "type": "subjective",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "authority_name",
+                      "question": "Name of Authority",
+                      "has_string_value": true,
+                      "string_value_required": true,
+                      "has_decimal_value": false,
+                      "has_boolean_value": false,
+                      "has_link": false,
+                      "has_note": false
+                    },
+                    {
+                      "id": "designation",
+                      "question": "Designation",
+                      "has_string_value": true,
+                      "string_value_required": true,
+                      "has_decimal_value": false,
+                      "has_boolean_value": false,
+                      "has_link": false,
+                      "has_note": false
+                    },
+                    {
+                      "id": "additional_details",
+                      "question": "Additional Details",
+                      "has_string_value": true,
+                      "string_value_required": false,
+                      "has_decimal_value": false,
+                      "has_boolean_value": false,
+                      "has_link": false,
+                      "has_note": false
+                    }
+                  ]
+                },
+                {
+                  "question_id": "Q9_B",
+                  "question": "Does the entity have a specified Committee of the Board/ Director responsible for decision making on sustainability related issues?",
+                  "type": "radio",
+                  "options": ["Yes", "No"],
+                  "has_string_value": true,
+                  "string_value_required": false,
+                  "has_decimal_value": false,
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_link": false,
+                  "has_note": false,
+                  "followUpQuestion": {
+                    "question": "If yes, provide details",
+                    "type": "subjective",
+                    "has_string_value": true,
+                    "string_value_required": true,
+                    "dependency": {
+                      "question": "Q9_B",
+                      "value": "Yes"
+                    }
+                  }
+                }
+              ]
             }
           ]
         }

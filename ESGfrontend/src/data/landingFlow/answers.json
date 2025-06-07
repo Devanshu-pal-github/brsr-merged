@@ -227,8 +227,7 @@
         "table": null
       }
     },
-    "policy_management": {
-      "Q1_B": {
+    "policy_management": {      "Q1_B": {
         "question_id": "Q1_B",
         "columns": [
           {
@@ -2811,7 +2810,7 @@
               },
               {
                 "row_id": "next_year",
-                "col id": "p6",
+                "col_id": "p6",
                 "value": "",
                 "calc": false,
                 "note": null
@@ -2842,6 +2841,51 @@
             "note": null
           }
         ]
+      },
+      "governance_and_leadership": {
+        "Q7_B": {
+          "string_value": "",
+          "bool_value": null,
+          "decimal_value": null,
+          "link": null,
+          "note": null,
+          "table": null
+        },
+        "Q8_B": {
+          "string_value": null,
+          "bool_value": null,
+          "decimal_value": null,
+          "link": null,
+          "note": null,
+          "table": [
+            {
+              "row": "authority_name",
+              "col": "name",
+              "value": ""
+            },
+            {
+              "row": "designation",
+              "col": "designation",
+              "value": ""
+            },
+            {
+              "row": "additional_details",
+              "col": "details",
+              "value": ""
+            }
+          ]
+        },
+        "Q9_B": {
+          "string_value": "",
+          "bool_value": null,
+          "decimal_value": null,
+          "link": null,
+          "note": null,
+          "table": null,
+          "followUp": {
+            "string_value": ""
+          }
+        }
       }
     }
   },
