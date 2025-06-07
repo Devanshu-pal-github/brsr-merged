@@ -11,45 +11,55 @@
         "string_value": "",
         "timestamp": null,
         "updated_by": null
-      },      "Q3_A": {
+      },
+      "Q3_A": {
         "decimal_value": null,
         "timestamp": null,
         "updated_by": null
-      },      "Q9_A": {
+      },
+      "Q9_A": {
         "string_value": "",
         "timestamp": null,
         "updated_by": null
-      },      "Q4_A": {
+      },
+      "Q4_A": {
         "string_value": "",
         "timestamp": null,
         "updated_by": null
-      },      "Q5_A": {
+      },
+      "Q5_A": {
         "string_value": "",
         "bool_value": false,
         "timestamp": null,
         "updated_by": null
-      },      "Q6_A": {
+      },
+      "Q6_A": {
         "string_value": "",
         "timestamp": null,
         "updated_by": null
-      },      "Q7_A": {
+      },
+      "Q7_A": {
         "string_value": "",
         "timestamp": null,
         "updated_by": null
-      },      "Q8_A": {
+      },
+      "Q8_A": {
         "string_value": "",
         "link": null,
         "timestamp": null,
         "updated_by": null
-      },      "Q10_A": {
+      },
+      "Q10_A": {
         "string_value": "",
         "timestamp": null,
         "updated_by": null
-      },      "Q11_A": {
+      },
+      "Q11_A": {
         "decimal_value": null,
         "timestamp": null,
         "updated_by": null
-      },      "Q12_A": {
+      },
+      "Q12_A": {
         "fields": {
           "name": {
             "string_value": "",
@@ -69,11 +79,13 @@
         },
         "timestamp": null,
         "updated_by": null
-      },      "Q13_A": {
+      },
+      "Q13_A": {
         "string_value": "standalone",
         "timestamp": null,
         "updated_by": null
-      },      "Q22i_A": {
+      },
+      "Q22i_A": {
         "bool_value": false,
         "timestamp": null,
         "updated_by": null
@@ -88,7 +100,8 @@
         "timestamp": null,
         "updated_by": null
       }
-    },    "policy_management": {
+    },
+    "policy_management": {
       "Q1a_B": {
         "bool_value": null,
         "timestamp": null,
@@ -113,7 +126,8 @@
         "string_value": "",
         "timestamp": null,
         "updated_by": null
-      },      "Q4_B": {
+      },
+      "Q4_B": {
         "string_value": "",
         "timestamp": null,
         "updated_by": null
@@ -129,11 +143,13 @@
         "updated_by": null
       }
     },
-    "governance": {      "Q7_B": {
+    "governance": {
+      "Q7_B": {
         "string_value": "",
         "timestamp": null,
         "updated_by": null
-      },      "Q8_B": {
+      },
+      "Q8_B": {
         "fields": {
           "name": {
             "string_value": "",
@@ -152,7 +168,9 @@
           }
         },
         "timestamp": null,
-        "updated_by": null      },      "Q9_B": {
+        "updated_by": null
+      },
+      "Q9_B": {
         "fields": {
           "exists": {
             "bool_value": null,
@@ -173,7 +191,9 @@
         "timestamp": null,
         "updated_by": null
       }
-    },    "policy_review": {      "Q10_B": {
+    },
+    "policy_review": {
+      "Q10_B": {
         "fields": {
           "not_material": {
             "bool_value": null,
@@ -214,7 +234,8 @@
             "string_value": "",
             "timestamp": null,
             "updated_by": null
-          },          "performance_review": {
+          },
+          "performance_review": {
             "fields": {
               "P1": {
                 "fields": {
@@ -537,7 +558,8 @@
         },
         "timestamp": null,
         "updated_by": null
-      },      "Q12_B": {
+      },
+      "Q12_B": {
         "fields": {
           "P1": {
             "fields": {
