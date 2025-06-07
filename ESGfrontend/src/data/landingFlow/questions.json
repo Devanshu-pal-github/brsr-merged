@@ -948,105 +948,24 @@
                   "min_rows": 2,
                   "max_rows": 2,
                   "allowed_values": {
-                    "p1_review": [
-                      "Director",
-                      "Board Committee",
-                      "Other Committee"
-                    ],
-                    "p2_review": [
-                      "Director",
-                      "Board Committee",
-                      "Other Committee"
-                    ],
-                    "p3_review": [
-                      "Director",
-                      "Board Committee",
-                      "Other Committee"
-                    ],
-                    "p4_review": [
-                      "Director",
-                      "Board Committee",
-                      "Other Committee"
-                    ],
-                    "p5_review": [
-                      "Director",
-                      "Board Committee",
-                      "Other Committee"
-                    ],
-                    "p6_review": [
-                      "Director",
-                      "Board Committee",
-                      "Other Committee"
-                    ],
-                    "p7_review": [
-                      "Director",
-                      "Board Committee",
-                      "Other Committee"
-                    ],
-                    "p8_review": [
-                      "Director",
-                      "Board Committee",
-                      "Other Committee"
-                    ],
-                    "p9_review": [
-                      "Director",
-                      "Board Committee",
-                      "Other Committee"
-                    ],
-                    "p1_freq": [
-                      "Annually",
-                      "Half yearly",
-                      "Quarterly",
-                      "Others"
-                    ],
-                    "p2_freq": [
-                      "Annually",
-                      "Half yearly",
-                      "Quarterly",
-                      "Others"
-                    ],
-                    "p3_freq": [
-                      "Annually",
-                      "Half yearly",
-                      "Quarterly",
-                      "Others"
-                    ],
-                    "p4_freq": [
-                      "Annually",
-                      "Half yearly",
-                      "Quarterly",
-                      "Others"
-                    ],
-                    "p5_freq": [
-                      "Annually",
-                      "Half yearly",
-                      "Quarterly",
-                      "Others"
-                    ],
-                    "p6_freq": [
-                      "Annually",
-                      "Half yearly",
-                      "Quarterly",
-                      "Others"
-                    ],
-                    "p7_freq": [
-                      "Annually",
-                      "Half yearly",
-                      "Quarterly",
-                      "Others"
-                    ],
-                    "p8_freq": [
-                      "Annually",
-                      "Half yearly",
-                      "Quarterly",
-                      "Others"
-                    ],
-                    "p9_freq": [
-                      "Annually",
-                      "Half yearly",
-                      "Quarterly",
-                      "Others"
-                    ]
+                    "p1_review": ["Director", "Board Committee", "Other Committee"],
+                    "p2_review": ["Director", "Board Committee", "Other Committee"],
+                    "p3_review": ["Director", "Board Committee", "Other Committee"],
+                    "p4_review": ["Director", "Board Committee", "Other Committee"],
+                    "p5_review": ["Director", "Board Committee", "Other Committee"],
+                    "p6_review": ["Director", "Board Committee", "Other Committee"],
+                    "p7_review": ["Director", "Board Committee", "Other Committee"],
+                    "p8_review": ["Director", "Board Committee", "Other Committee"],
+                    "p9_review": ["Director", "Board Committee", "Other Committee"],
+                    "p1_freq": ["Annually", "Half yearly", "Quarterly", "Others"],
+                    "p2_freq": ["Annually", "Half yearly", "Quarterly", "Others"],
+                    "p3_freq": ["Annually", "Half yearly", "Quarterly", "Others"],
+                    "p4_freq": ["Annually", "Half yearly", "Quarterly", "Others"],
+                    "p5_freq": ["Annually", "Half yearly", "Quarterly", "Others"],
+                    "p6_freq": ["Annually", "Half yearly", "Quarterly", "Others"],
+                    "p7_freq": ["Annually", "Half yearly", "Quarterly", "Others"],
+                    "p8_freq": ["Annually", "Half yearly", "Quarterly", "Others"],
+                    "p9_freq": ["Annually", "Half yearly", "Quarterly", "Others"]
                   }
                 }
               }
