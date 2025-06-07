@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Aarav Sharma",
+    "employeeId": "EMP001",
+    "email": "aarav.sharma@example.com",
+    "department": "Human Resources",
+    "roles": ["HR"]
+  },
+  {
+    "name": "Meera Verma",
+    "employeeId": "EMP002",
+    "email": "meera.verma@example.com",
+    "department": "Finance",
+    "roles": ["HR", "Admin"]
+  },
+  {
+    "name": "Rohan Kapoor",
+    "employeeId": "EMP003",
+    "email": "rohan.kapoor@example.com",
+    "department": "IT",
+    "roles": ["Admin"]
+  },
+  {
+    "name": "Neha Singh",
+    "employeeId": "EMP004",
+    "email": "neha.singh@example.com",
+    "department": "Marketing",
+    "roles": ["HR", "Admin"]
+  },
+  {
+    "name": "Karan Patel",
+    "employeeId": "EMP005",
+    "email": "karan.patel@example.com",
+    "department": "Operations",
+    "roles": ["HR", "Admin"]
+  },
+  {
+    "name": "Priya Nair",
+    "employeeId": "EMP006",
+    "email": "priya.nair@example.com",
+    "department": "Customer Support",
+    "roles": ["HR"]
+  },
+  {
+    "name": "Vikram Das",
+    "employeeId": "EMP007",
+    "email": "vikram.das@example.com",
+    "department": "Sales",
+    "roles": ["Admin"]
+  },
+  {
+    "name": "Sneha Roy",
+    "employeeId": "EMP008",
+    "email": "sneha.roy@example.com",
+    "department": "Legal",
+    "roles": ["HR", "Admin"]
+  },
+  {
+    "name": "Arjun Mehta",
+    "employeeId": "EMP009",
+    "email": "arjun.mehta@example.com",
+    "department": "Engineering",
+    "roles": ["HR", "Admin"]
+  },
+  {
+    "name": "Divya Bhatia",
+    "employeeId": "EMP010",
+    "email": "divya.bhatia@example.com",
+    "department": "Procurement",
+    "roles": ["HR"]
+  }
+]

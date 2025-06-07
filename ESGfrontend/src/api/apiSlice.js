@@ -155,21 +155,7 @@ export const apiSlice = createApi({
       },
     }),
     
-    createEmployee: builder.mutation({
-      query: ({ company_id, plant_id, financial_year, employee }) => ({
-        url: `/plants/${plant_id}/employees/${financial_year}?company_id=${company_id}`,
-        method: "POST",
-        body: employee,
-      }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          console.log("Employee created successfully:", data);
-        } catch (error) {
-          console.error("Create employee error:", error);
-        }
-      },
-    }),
+
     getSubmodulesByModuleId: builder.query({
       query: (moduleId) => {
         if (!moduleId) {
@@ -184,6 +170,7 @@ export const apiSlice = createApi({
           }
         };
       },
+
       transformResponse: (response) => {
         if (Array.isArray(response)) {
           console.log('📥 Submodules Response:', response);
@@ -312,6 +299,42 @@ export const apiSlice = createApi({
         }
       }
     }),
+
+getAllPlantEmployees: builder.query({
+  query: () => {
+    console.log('🔄 Fetching employees for authenticated user’s plant');
+    return {
+      url: '/plants/employees',
+      method: 'GET',
+    };
+  },
+}),
+
+
+createEmployee: builder.mutation({
+      query: (employee) => {
+        console.log('🔄 Creating employee:', employee);
+        return {
+          url: '/plants/employees',
+          method: 'POST',
+          body: employee,
+        };
+      },
+      invalidatesTags: ['Employees'], // Refetch employees after creation
+    }),
+
+      updateEmployeeRoles: builder.mutation({
+      query: ({ employee_id, roles }) => {
+        console.log('🔄 Updating roles for employee:', { employee_id, roles });
+        return {
+          url: '/plants/employees/updateRole',
+          method: 'PUT',
+          body: { employee_id, roles },
+        };
+      },
+      invalidatesTags: ['Employees'],
+    }),
+
     createGenerateStream: builder.mutation({
       query: ({ message, context }) => ({
         url: '/api/generate_stream',
@@ -354,4 +377,7 @@ export const {
   useGetStoredQuestionsQuery,
   useGenerateTextMutation,
   useCreateGenerateStreamMutation,
+  useGetAllPlantEmployeesQuery,
+  useUpdateEmployeeRolesMutation,
+  
 } = apiSlice;

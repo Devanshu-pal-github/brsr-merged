@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, ChevronDown, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import EmployeeListPopup from './employeeListPopup'; // Assuming you have a CSS file for styling
 
 const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
     const navigate = useNavigate();
@@ -62,6 +63,8 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
         return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
     };
 
+    const [showEmployeeList, setShowEmployeeList] = useState(false);
+
     return (
         <div className="w-full flex items-center justify-between px-3 md:px-5 h-[48px] bg-[#000D30] shadow-md border-b z-40">
             <div className="flex items-center gap-4">
@@ -104,6 +107,13 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                     )}
                 </div>
             </div>
+
+            <button 
+                onClick={() => setShowEmployeeList(true)}
+                className="lg:flex items-center gap-2 px-3 py-2 rounded-md text-[12px] text-[#FFFFFF] font-medium bg-[#20305D] border border-gray-200 shadow-sm hover:bg-[#345678] transition-colors cursor-pointer ml-auto mr-3"
+            >
+                Manage Access
+            </button>
 
             {/* Right: Notifications & User Profile */}
             <div className="flex items-center gap-4">
@@ -159,6 +169,9 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                     )}
                 </div>
             </div>
+            {showEmployeeList && (
+                <EmployeeListPopup onClose={() => setShowEmployeeList(false)} />
+            )}
         </div>
     );
 };
