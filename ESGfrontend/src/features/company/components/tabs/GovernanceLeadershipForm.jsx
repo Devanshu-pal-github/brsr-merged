@@ -4,58 +4,86 @@ import { FormInput, FormTextArea } from '../common/FormComponents';
 import TableActionButtons from '../common/TableActionButtons';
 
 const GovernanceLeadershipForm = () => {
-  // State for director's statement
-  const [directorStatement, setDirectorStatement] = useState('');
-  
-  // State for highest authority details
-  const [highestAuthority, setHighestAuthority] = useState({
-    name: '',
-    designation: '',
-    details: ''
-  });
-  
-  // State for committee details
-  const [committeeDetails, setCommitteeDetails] = useState({
-    hasCommittee: 'No',
-    name: '',
-    description: ''
+  const [formData, setFormData] = useState({
+    Q7_B: { 
+      string_value: '', 
+      bool_value: null, 
+      decimal_value: null,
+      note: null
+    },
+    Q8_B: {
+      table: [
+        {
+          row: 'authority_name',
+          col: 'name',
+          value: ''
+        },
+        {
+          row: 'designation',
+          col: 'designation',
+          value: ''
+        },
+        {
+          row: 'additional_details',
+          col: 'details',
+          value: ''
+        }
+      ]
+    },
+    Q9_B: {
+      string_value: '',
+      bool_value: false,
+      decimal_value: null,
+      followUp: {
+        string_value: ''
+      }
+    }
   });
 
-  const handleHighestAuthorityChange = (field, value) => {
-    setHighestAuthority(prev => ({
+  const handleChange = (questionId, value, field = 'string_value') => {
+    setFormData(prev => ({
       ...prev,
-      [field]: value
+      [questionId]: {
+        ...prev[questionId],
+        [field]: value
+      }
     }));
   };
 
-  const handleCommitteeChange = (field, value) => {
-    setCommitteeDetails(prev => ({
+  const handleTableChange = (questionId, rowId, value) => {
+    setFormData(prev => ({
       ...prev,
-      [field]: value
+      [questionId]: {
+        ...prev[questionId],
+        table: prev[questionId].table.map(row => 
+          row.row === rowId ? { ...row, value } : row
+        )
+      }
     }));
   };
 
   const handleReset = () => {
-    setDirectorStatement('');
-    setHighestAuthority({
-      name: '',
-      designation: '',
-      details: ''
-    });
-    setCommitteeDetails({
-      hasCommittee: 'No',
-      name: '',
-      description: ''
+    setFormData({
+      Q7_B: { string_value: '', bool_value: null, decimal_value: null, note: null },
+      Q8_B: {
+        table: [
+          { row: 'authority_name', col: 'name', value: '' },
+          { row: 'designation', col: 'designation', value: '' },
+          { row: 'additional_details', col: 'details', value: '' }
+        ]
+      },
+      Q9_B: {
+        string_value: '',
+        bool_value: false,
+        decimal_value: null,
+        followUp: { string_value: '' }
+      }
     });
   };
 
   const handleSave = () => {
     // TODO: Implement save functionality
-    console.log('Saving governance details:', {
-      directorStatement,
-      highestAuthority,
-      committeeDetails
-    });
+    console.log('Saving governance details:', formData);
   };
 
   return (
@@ -68,8 +96,8 @@ const GovernanceLeadershipForm = () => {
         />
         <CardContent>
           <FormTextArea
-            value={directorStatement}
-            onChange={(e) => setDirectorStatement(e.target.value)}
+            value={formData.Q7_B.string_value}
+            onChange={(e) => handleChange('Q7_B', e.target.value)}
             placeholder="Enter the director's statement here..."
             rows={6}
             className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-vertical min-h-[150px]"
@@ -92,8 +120,8 @@ const GovernanceLeadershipForm = () => {
                 </label>
                 <FormInput
                   name="authorityName"
-                  value={highestAuthority.name}
-                  onChange={(e) => handleHighestAuthorityChange('name', e.target.value)}
+                  value={formData.Q8_B.table[0].value}
+                  onChange={(e) => handleTableChange('Q8_B', 'authority_name', e.target.value)}
                   placeholder="Enter name"
                 />
               </div>
@@ -103,8 +131,8 @@ const GovernanceLeadershipForm = () => {
                 </label>
                 <FormInput
                   name="designation"
-                  value={highestAuthority.designation}
-                  onChange={(e) => handleHighestAuthorityChange('designation', e.target.value)}
+                  value={formData.Q8_B.table[1].value}
+                  onChange={(e) => handleTableChange('Q8_B', 'designation', e.target.value)}
                   placeholder="Enter designation"
                 />
               </div>
@@ -115,8 +143,8 @@ const GovernanceLeadershipForm = () => {
               </label>
               <FormTextArea
                 name="details"
-                value={highestAuthority.details}
-                onChange={(e) => handleHighestAuthorityChange('details', e.target.value)}
+                value={formData.Q8_B.table[2].value}
+                onChange={(e) => handleTableChange('Q8_B', 'additional_details', e.target.value)}
                 placeholder="Enter additional details about the authority's role and responsibilities"
                 rows={4}
               />
@@ -143,9 +171,9 @@ const GovernanceLeadershipForm = () => {
                     type="radio"
                     className="form-radio text-indigo-600"
                     name="hasCommittee"
-                    value="Yes"
-                    checked={committeeDetails.hasCommittee === 'Yes'}
-                    onChange={(e) => handleCommitteeChange('hasCommittee', e.target.value)}
+                    value="true"
+                    checked={formData.Q9_B.bool_value === true}
+                    onChange={(e) => handleChange('Q9_B', e.target.value === 'true', 'bool_value')}
                   />
                   <span className="ml-2">Yes</span>
                 </label>
@@ -154,36 +182,31 @@ const GovernanceLeadershipForm = () => {
                     type="radio"
                     className="form-radio text-indigo-600"
                     name="hasCommittee"
-                    value="No"
-                    checked={committeeDetails.hasCommittee === 'No'}
-                    onChange={(e) => handleCommitteeChange('hasCommittee', e.target.value)}
+                    value="false"
+                    checked={formData.Q9_B.bool_value === false}
+                    onChange={(e) => handleChange('Q9_B', e.target.value === 'true', 'bool_value')}
                   />
                   <span className="ml-2">No</span>
                 </label>
               </div>
             </div>
 
-            {committeeDetails.hasCommittee === 'Yes' && (
+            {formData.Q9_B.bool_value && (
               <div className="space-y-4 mt-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Committee Name
-                  </label>
-                  <FormInput
-                    name="committeeName"
-                    value={committeeDetails.name}
-                    onChange={(e) => handleCommitteeChange('name', e.target.value)}
-                    placeholder="Enter committee name"
-                  />
-                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Committee Details
                   </label>
                   <FormTextArea
-                    name="committeeDescription"
-                    value={committeeDetails.description}
-                    onChange={(e) => handleCommitteeChange('description', e.target.value)}
+                    name="committeeDetails"
+                    value={formData.Q9_B.followUp.string_value}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      Q9_B: {
+                        ...prev.Q9_B,
+                        followUp: { string_value: e.target.value }
+                      }
+                    }))}
                     placeholder="Enter detailed information about the committee's role, composition, and responsibilities"
                     rows={4}
                   />

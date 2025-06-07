@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormSection, FormField, FormInput, FormTextArea, FormButton } from '../common/FormComponents';
 import { Card, CardContent, CardFooter } from '../common/CardComponents';
 import TableActionButtons from '../common/TableActionButtons';
 
 const GeneralDetailsForm = () => {
+  const [questions, setQuestions] = useState(null);
   const [formData, setFormData] = useState({
     Q1_A: { string_value: '', bool_value: null, decimal_value: null },
     Q2_A: { string_value: '', bool_value: null, decimal_value: null },
@@ -23,26 +24,80 @@ const GeneralDetailsForm = () => {
     Q22iii_A: { string_value: null, bool_value: null, decimal_value: null }
   });
 
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Load questions
+        const questionsResponse = await fetch('/src/data/landingFlow/questions.json');
+        if (!questionsResponse.ok) throw new Error('Failed to load questions');
+        const questionsData = await questionsResponse.json();
+        
+        // Extract general details questions
+        const generalDetailsQuestions = questionsData.modules
+          .find(m => m.id === 'landing_flow')
+          ?.submodules
+          .find(sm => sm.id === 'general_details')
+          ?.question_categories[0]
+          ?.questions;
+          
+        setQuestions(generalDetailsQuestions);
+
+        // Load answers
+        const answersResponse = await fetch('/src/data/landingFlow/answers.json');
+        if (!answersResponse.ok) throw new Error('Failed to load answers');
+        const answersData = await answersResponse.json();
+        
+        // Set form data from answers
+        setFormData(prev => ({
+          ...prev,
+          ...answersData.responses.general_details
+        }));
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    };
+
+    loadData();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     
+    // Handle different input types according to questions.json structure
+    let updatedValue = {
+      ...formData[name],
+      string_value: type === 'text' || type === 'email' || type === 'tel' || type === 'url' ? value : formData[name]?.string_value,
+      decimal_value: type === 'number' ? parseFloat(value) || null : formData[name]?.decimal_value,
+      bool_value: type === 'checkbox' ? checked : type === 'radio' ? value === 'yes' : formData[name]?.bool_value
+    };
+
+    // Special handling for radios
+    if (name === 'Q13_A') { // Reporting Boundary
+      updatedValue = {
+        ...updatedValue,
+        string_value: value,
+        bool_value: null
+      };
+    } else if (name === 'Q22i_A') { // CSR Applicable
+      updatedValue = {
+        ...updatedValue,
+        bool_value: value === 'yes',
+        string_value: null
+      };
+    }
+
     setFormData(prev => ({
       ...prev,
-      [name]: {
-        ...prev[name],
-        string_value: type === 'text' || type === 'email' || type === 'tel' || type === 'url' ? value : prev[name]?.string_value,
-        decimal_value: type === 'number' ? parseFloat(value) : prev[name]?.decimal_value,
-        bool_value: type === 'checkbox' || type === 'radio' ? checked : prev[name]?.bool_value
-      }
+      [name]: updatedValue
     }));
 
     // Special handling for same as registered address
-    if (name === 'Q5_A' && checked) {
+    if (name === 'Q6_A' && checked) {
       setFormData(prev => ({
         ...prev,
-        Q5_A: {
-          ...prev.Q5_A,
-          string_value: prev.Q4_A.string_value
+        Q7_A: {
+          ...prev.Q7_A,
+          string_value: prev.Q5_A.string_value
         }
       }));
     }
@@ -82,45 +137,19 @@ const GeneralDetailsForm = () => {
           {/* Company Identity Section */}
           <FormSection title="Company Identity">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField label="Corporate Identity Number (CIN)" required>
-                <FormInput
-                  name="Q1_A"
-                  value={formData.Q1_A}
-                  onChange={handleChange}
-                  placeholder="Enter CIN"
-                  required
-                />
-              </FormField>
-              <FormField label="Name of Listed Entity" required>
-                <FormInput
-                  name="Q2_A"
-                  value={formData.Q2_A}
-                  onChange={handleChange}
-                  placeholder="Enter company name"
-                  required
-                />
-              </FormField>
-              <FormField label="Year of Incorporation" required>
-                <FormInput
-                  name="Q3_A"
-                  type="number"
-                  value={formData.Q3_A}
-                  onChange={handleChange}
-                  placeholder="YYYY"
-                  required
-                  min="1800"
-                  max="2100"
-                />
-              </FormField>
-              <FormField label="Financial Year for Reporting" required>
-                <FormInput
-                  name="Q4_A"
-                  value={formData.Q4_A}
-                  onChange={handleChange}
-                  placeholder="e.g., 2024-25"
-                  required
-                />
-              </FormField>
+              {questions?.filter(q => ['Q1_A', 'Q2_A', 'Q3_A', 'Q9_A'].includes(q.question_id))
+                .map(question => (
+                <FormField key={question.question_id} label={question.question} required={question.string_value_required || question.decimal_value_required}>
+                  <FormInput
+                    name={question.question_id}
+                    value={formData[question.question_id]}
+                    onChange={handleChange}
+                    type={question.has_decimal_value ? 'number' : 'text'}
+                    placeholder={`Enter ${question.question.toLowerCase()}`}
+                    required={question.string_value_required || question.decimal_value_required}
+                  />
+                </FormField>
+              ))}
             </div>
           </FormSection>
 
@@ -291,9 +320,9 @@ const GeneralDetailsForm = () => {
                   <label className="flex items-center">
                     <input
                       type="radio"
-                      name="reportingBoundary"
+                      name="Q13_A"
                       value="standalone"
-                      checked={formData.reportingBoundary === 'standalone'}
+                      checked={formData.Q13_A?.string_value === 'standalone'}
                       onChange={handleChange}
                       className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                     />
@@ -302,9 +331,9 @@ const GeneralDetailsForm = () => {
                   <label className="flex items-center">
                     <input
                       type="radio"
-                      name="reportingBoundary"
+                      name="Q13_A"
                       value="consolidated"
-                      checked={formData.reportingBoundary === 'consolidated'}
+                      checked={formData.Q13_A?.string_value === 'consolidated'}
                       onChange={handleChange}
                       className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                     />
@@ -318,9 +347,9 @@ const GeneralDetailsForm = () => {
                   <label className="flex items-center">
                     <input
                       type="radio"
-                      name="csrApplicable"
+                      name="Q22i_A"
                       value="yes"
-                      checked={formData.csrApplicable === 'yes'}
+                      checked={formData.Q22i_A?.bool_value === true}
                       onChange={handleChange}
                       className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                     />
@@ -329,9 +358,9 @@ const GeneralDetailsForm = () => {
                   <label className="flex items-center">
                     <input
                       type="radio"
-                      name="csrApplicable"
+                      name="Q22i_A"
                       value="no"
-                      checked={formData.csrApplicable === 'no'}
+                      checked={formData.Q22i_A?.bool_value === false}
                       onChange={handleChange}
                       className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                     />
@@ -341,12 +370,11 @@ const GeneralDetailsForm = () => {
               </FormField>
             </div>
           </FormSection>
-        </CardContent>        <CardFooter>          <TableActionButtons 
+        </CardContent>
+        <CardFooter>
+          <TableActionButtons 
             onReset={handleReset}
-            onSave={(e) => {
-              e?.preventDefault();
-              console.log('Saving form data:', formData);
-            }}
+            onSave={handleSubmit}
           />
         </CardFooter>
       </form>
