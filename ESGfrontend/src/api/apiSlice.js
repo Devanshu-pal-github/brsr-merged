@@ -33,6 +33,7 @@ const baseQuery = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery,
+  tagTypes: ['PolicyAnswers', 'Questions', 'Answers', 'Responses'],
   endpoints: (builder) => ({
     bulkUploadQuestions: builder.mutation({
       query: (questions) => ({
@@ -334,7 +335,6 @@ createEmployee: builder.mutation({
       },
       invalidatesTags: ['Employees'],
     }),
-
     createGenerateStream: builder.mutation({
       query: ({ message, context }) => ({
         url: '/api/generate_stream',
@@ -360,10 +360,127 @@ createEmployee: builder.mutation({
         }
       }
     }),
+    updatePolicyAnswers: builder.mutation({
+      query: ({ questionId, response }) => {
+        const company_id = localStorage.getItem("company_id");
+        const plant_id = localStorage.getItem("plant_id");
+        const financial_year = localStorage.getItem("financial_year");
+
+        if (!company_id || !plant_id || !financial_year) {
+          throw new Error('Missing required context: company_id, plant_id, or financial_year');
+        }
+
+        const answerUpdate = {
+          question_id: questionId,
+          response: response
+        };
+
+        return {
+          url: `/company/${company_id}/plants/${plant_id}/reportsNew/${financial_year}`,
+          method: "PATCH",
+          body: [answerUpdate],
+        };
+      },
+      transformResponse: (response) => {
+        return { success: true, data: response };
+      },      async onQueryStarted({ questionId, response }, { dispatch, getState }) {
+        try {
+          // Import answers.json data
+          const answersData = JSON.parse(localStorage.getItem('answers') || '{}');
+          const tabId = 'policy_management'; // or determine dynamically based on question
+
+          // Update the answers structure
+          if (!answersData.responses) {
+            answersData.responses = {};
+          }
+          if (!answersData.responses[tabId]) {
+            answersData.responses[tabId] = {};
+          }
+
+          // Update the specific answer
+          answersData.responses[tabId][questionId] = {
+            ...response,
+            timestamp: new Date().toISOString(),
+            updated_by: localStorage.getItem('user_id') || 'current_user',
+            status: 'draft'
+          };
+
+          // Update metadata
+          if (!answersData.meta) {
+            answersData.meta = {};
+          }
+          answersData.meta = {
+            ...answersData.meta,
+            version: "1.0.0",
+            last_updated: new Date().toISOString(),
+            updated_by: localStorage.getItem('user_id') || 'current_user',
+          };
+
+          // Store back in localStorage
+          localStorage.setItem('answers', JSON.stringify(answersData));
+
+          // Log update for debugging
+          console.log('✅ Updated answers data:', { questionId, newValue: response });
+        } catch (error) {
+          console.error('❌ Error updating answers:', error);
+        }
+      },
+      invalidatesTags: (result) => result?.success 
+        ? ['PolicyAnswers', 'Answers', 'Responses'] 
+        : [],
+    }),
+    getAnswers: builder.query({
+      query: () => {
+        const company_id = localStorage.getItem("company_id");
+        const plant_id = localStorage.getItem("plant_id");
+        const financial_year = localStorage.getItem("financial_year");
+
+        if (!company_id || !plant_id || !financial_year) {
+          throw new Error('Missing required context');
+        }
+
+        return {
+          url: `/company/${company_id}/plants/${plant_id}/reportsNew/${financial_year}`,
+          method: 'GET',
+        };
+      },      transformResponse: (response) => {
+        try {
+          // Get stored answers with proper structure
+          const storedAnswers = JSON.parse(localStorage.getItem('answers') || '{"responses":{},"meta":{}}');
+          
+          // Convert backend response to our local format
+          const backendAnswers = response?.answers || {};
+          
+          // Deep merge responses
+          const mergedAnswers = {
+            responses: {
+              ...backendAnswers,
+              ...storedAnswers.responses,
+            },
+            meta: {
+              version: "1.0.0",
+              last_updated: new Date().toISOString(),
+              updated_by: localStorage.getItem('user_id') || 'current_user',
+              ...storedAnswers.meta,
+            }
+          };
+
+          // Update local storage with merged data
+          localStorage.setItem('answers', JSON.stringify(mergedAnswers));
+          
+          console.log('✅ Merged answers data:', mergedAnswers);
+          return mergedAnswers;
+        } catch (error) {
+          console.error('❌ Error transforming answers:', error);
+          return { responses: {}, meta: {} };
+        }
+      },
+      providesTags: ['Answers', 'PolicyAnswers', 'Responses']
+    }),
   }),
 });
 
-// Export the auto-generated hooks
+// Export all hooks
 export const {
   useBulkUploadQuestionsMutation,
   useLoginMutation,
@@ -379,5 +496,6 @@ export const {
   useCreateGenerateStreamMutation,
   useGetAllPlantEmployeesQuery,
   useUpdateEmployeeRolesMutation,
-  
+  useUpdatePolicyAnswersMutation,
+  useGetAnswersQuery,
 } = apiSlice;

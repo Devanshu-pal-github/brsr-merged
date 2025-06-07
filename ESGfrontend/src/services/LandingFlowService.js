@@ -23,31 +23,46 @@ class LandingFlowService {    // Get all questions for a specific tab
     // Save answer for a question
     static async saveAnswer(tabId, questionId, answer) {
         try {
-            // Validate the tab exists
-            if (!answersData.responses[tabId]) {
-                answersData.responses[tabId] = {};
+            const storedAnswers = JSON.parse(localStorage.getItem('answers') || '{}');
+            
+            // Initialize tab if it doesn't exist
+            if (!storedAnswers[tabId]) {
+                storedAnswers[tabId] = {};
             }
 
-            // Update local state first for immediate feedback
-            answersData.responses[tabId][questionId] = {
+            // Update local storage with new answer
+            storedAnswers[tabId][questionId] = {
                 ...answer,
                 timestamp: new Date().toISOString(),
-                updated_by: "current_user" // TODO: Get from auth context
-            };
-            
-            // Update metadata
-            answersData.metadata = {
-                ...answersData.metadata,
-                last_updated: new Date().toISOString(),
-                last_updated_by: "current_user", // TODO: Get from auth context
-                status: "draft"
+                updated_by: localStorage.getItem('user_id') || 'current_user',
+                status: 'draft'
             };
 
-            // Sync with backend
-            const response = await axios.patch(`${BASE_URL}/landing-flow/responses`, {
-                tab_id: tabId,
+            // Update local storage
+            localStorage.setItem('answers', JSON.stringify(storedAnswers));
+
+            // Create the answer update object
+            const answerUpdate = {
                 question_id: questionId,
                 response: answer
+            };
+
+            const company_id = localStorage.getItem("company_id");
+            const plant_id = localStorage.getItem("plant_id");
+            const financial_year = localStorage.getItem("financial_year");
+
+            if (!company_id || !plant_id || !financial_year) {
+                throw new Error('Missing required context: company_id, plant_id, or financial_year');
+            }
+
+            // Use the standardized endpoint
+            const response = await fetch(`${BASE_URL}/company/${company_id}/plants/${plant_id}/reportsNew/${financial_year}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("access_token")}`
+                },
+                body: JSON.stringify([answerUpdate])
             });
 
             return response.data;
