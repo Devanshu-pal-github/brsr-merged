@@ -154,6 +154,7 @@ export const apiSlice = createApi({
         }
       },
     }),
+    
     createEmployee: builder.mutation({
       query: ({ company_id, plant_id, financial_year, employee }) => ({
         url: `/plants/${plant_id}/employees/${financial_year}?company_id=${company_id}`,

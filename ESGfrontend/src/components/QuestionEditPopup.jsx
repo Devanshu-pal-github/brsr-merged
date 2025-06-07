@@ -34,6 +34,7 @@ const QuestionEditPopup = ({
     const [errors, setErrors] = useState({});
     const [isVisible, setIsVisible] = useState(false);
     const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+    const [isSaveLoading, setIsSaveLoading] = useState(false); // New state for save button
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
     const [storeQuestionData] = useStoreQuestionDataMutation();
 
@@ -57,7 +58,7 @@ const QuestionEditPopup = ({
         }
     }, [initialAnswer, question]);
     const [generateText] = useGenerateTextMutation();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState({ left: false, right: false }); // Updated to object
     const [error, setError] = useState(null);
     const [isTextareaFocused, setIsTextareaFocused] = useState(false);
     const [selectedTextInTextarea, setSelectedTextInTextarea] = useState(null);
@@ -88,7 +89,7 @@ const QuestionEditPopup = ({
             setAiMessage(null);
             setLeftAiMessage(null);
             setError(null);
-            setIsLoading(false);
+            setIsLoading({ left: false, right: false });
         },
     });
 
@@ -123,8 +124,10 @@ const QuestionEditPopup = ({
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (question.type === "table") {
-            try {
+        setIsSaveLoading(true); // Set save button loading state
+        setError(null); // Clear any previous errors
+        try {
+            if (question.type === "table") {
                 const response = {
                     question_id: question.question_id,
                     type: "table",
@@ -133,36 +136,30 @@ const QuestionEditPopup = ({
                         meta_version: question.table_metadata?.version,
                     },
                 };
-                await onSuccess?.(question.question_id, response.response); // Pass only the response object for consistency
+                await onSuccess?.(question.question_id, response.response);
                 onClose();
-            } catch (error) {
-                setErrors((prev) => ({
-                    ...prev,
-                    form: "Failed to submit table answer. Please try again.",
-                }));
+                return;
             }
-            return;
-        }
-        const hasErrors = Object.values(errors).some((error) => error);
-        const requiredFields = [];
 
-        if (question.string_value_required && !formData.string_value)
-            requiredFields.push("String value is required.");
-        if (question.decimal_value_required && !formData.decimal_value)
-            requiredFields.push("Decimal value is required.");
-        if (question.boolean_value_required && formData.boolean_value === undefined)
-            requiredFields.push("Boolean value is required.");
-        if (question.link_required && !formData.link)
-            requiredFields.push("Link is required.");
-        if (question.note_required && !formData.note)
-            requiredFields.push("Note is required.");
+            const hasErrors = Object.values(errors).some((error) => error);
+            const requiredFields = [];
 
-        if (hasErrors || requiredFields.length > 0) {
-            setErrors((prev) => ({ ...prev, form: requiredFields.join(" ") }));
-            return;
-        }
+            if (question.string_value_required && !formData.string_value)
+                requiredFields.push("String value is required.");
+            if (question.decimal_value_required && !formData.decimal_value)
+                requiredFields.push("Decimal value is required.");
+            if (question.boolean_value_required && formData.boolean_value === undefined)
+                requiredFields.push("Boolean value is required.");
+            if (question.link_required && !formData.link)
+                requiredFields.push("Link is required.");
+            if (question.note_required && !formData.note)
+                requiredFields.push("Note is required.");
 
-        try {
+            if (hasErrors || requiredFields.length > 0) {
+                setErrors((prev) => ({ ...prev, form: requiredFields.join(" ") }));
+                return;
+            }
+
             const response = {
                 question_id: question.question_id,
                 response: {
@@ -218,6 +215,8 @@ const QuestionEditPopup = ({
                 ...prev,
                 form: "Failed to submit answer. Please try again.",
             }));
+        } finally {
+            setIsSaveLoading(false); // Reset save button loading state
         }
     };
 
@@ -266,7 +265,6 @@ const QuestionEditPopup = ({
     // Table rendering logic extracted for clarity
     const renderTable = () => {
         if (question.type !== "table") return null;
-        // Remove duplicate S No. columns (flexible match)
         let meta = transformTableMetadata(question);
         let columns = meta.columns.filter((col, idx, arr) => {
             const isSNo =
@@ -281,7 +279,6 @@ const QuestionEditPopup = ({
                 ) === idx
             );
         });
-        // Ensure 'S No.' is always the first column
         if (
             !columns.length ||
             !(
@@ -291,7 +288,6 @@ const QuestionEditPopup = ({
         ) {
             columns = [{ col_id: "s_no", label: "S No." }, ...columns];
         }
-        // Ensure '% turnover of the entity' column is present (flexible match)
         let turnoverCol = columns.find((col) =>
             col.col_id.toLowerCase().includes("turnover")
         );
@@ -301,7 +297,6 @@ const QuestionEditPopup = ({
                 label: "% turnover of the entity",
             });
         }
-        // Build the table response with S No. auto-filled and non-editable
         const currentTable =
             currentValue?.table || createEmptyTableResponse({ ...meta, columns });
         const tableWithSNo = {
@@ -320,7 +315,6 @@ const QuestionEditPopup = ({
                             readOnly: true,
                         };
                     }
-                    // Find the cell value from currentTable
                     const found = row.cells?.find((cell) => cell.col_id === col.col_id);
                     return found
                         ? { ...found, col_id: col.col_id }
@@ -335,7 +329,6 @@ const QuestionEditPopup = ({
                     response={tableWithSNo}
                     editable={true}
                     onCellChange={(rowId, colId, value) => {
-                        // Prevent editing S No. column
                         if (colId === "s_no") return;
                         handleTableCellChange(rowId, colId, value);
                     }}
@@ -353,8 +346,7 @@ const QuestionEditPopup = ({
         >
             <div className="relative">
                 <motion.div
-                    className={`bg-white rounded-2xl shadow-xl transition-all duration-700 ease-in-out flex flex-col overflow-hidden ${isAIAssistantOpen ? "w-[90vw] max-w-6xl" : "w-[70vw] max-w-4xl"
-                        } h-[80vh]`}
+                    className={`bg-white rounded-2xl shadow-xl transition-all duration-700 ease-in-out flex flex-col overflow-hidden ${isAIAssistantOpen ? "w-[90vw] max-w-6xl" : "w-[70vw] max-w-4xl"} h-[75vh]`}
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: isVisible ? 1 : 0.95, opacity: isVisible ? 1 : 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -367,7 +359,7 @@ const QuestionEditPopup = ({
                     <div className="flex flex-1 overflow-hidden">
                         <div
                             ref={leftPanelRef}
-                            className="flex-1 flex flex-col overflow-y-auto px-6 py-4 border-r border-gray-200 bg-gray-50"
+                            className="flex-1 flex flex-col overflow-y-auto px-6 py-4 border-r border-gray-200 bg-gray-50 scrollbar-none"
                         >
                             <div className="flex-1">
                                 <div className="mb-4">
@@ -415,7 +407,7 @@ const QuestionEditPopup = ({
                                     leftAiMessage={leftAiMessage}
                                 />
                             </div>
-                            <div className="mt-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div>
                                 <LeftAIActions {...sharedAIActionsProps} />
                             </div>
                         </div>
@@ -446,12 +438,12 @@ const QuestionEditPopup = ({
                                 Cancel
                             </button>
                             <button
-                                onClick={handleSubmit}
-                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                type="submit"
+                                disabled={isSaveLoading}
+                                className={`px-4 py-2 text-sm font-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSaveLoading ? "bg-gray-400 cursor-not-allowed" : "bg-[#000D30] hover:bg-[#001A4D]"}`}
                                 aria-label="Save answer"
-                                disabled={isLoading}
                             >
-                                {isLoading ? "Submitting..." : "Save Answer"}
+                                {isSaveLoading ? "Submitting..." : "Save Answer"}
                             </button>
                         </div>
                         {errors.form && (
@@ -465,30 +457,17 @@ const QuestionEditPopup = ({
                                 <p className="text-red-600 text-xs mt-1">{errors.form}</p>
                             </div>
                         )}
-                        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="flex-1 sm:flex-none px-4 py-2 text-[#1A2341] border border-gray-200 rounded-[6px] hover:bg-gray-50 text-sm font-medium transition-all duration-200"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="flex-1 sm:flex-none px-4 py-2 bg-[#002A85] text-white rounded-[6px] hover:bg-[#0A2E87] text-sm font-medium transition-all duration-200"
-                            >
-                                Save
-                            </button>
-                        </div>
                     </form>
                 </motion.div>
                 <button
                     onClick={() => setIsAIAssistantOpen((prev) => !prev)}
-                    className="absolute top-1 right-[-40px] p-2 !rounded-full bg-blue-700   text-white hover:bg-blue-600 transition-colors duration-200 drop-shadow-[0_0_10px_rgba(79,70,229,0.5)] animate-spin-slow z-50  focus:outline-none focus:ring-1 focus:ring-white"
+                    className="absolute top-1 right-[-40px] w-10 h-10 !rounded-full bg-white text-blue-700 hover:bg-gray-100 transition-colors duration-200 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] z-50 focus:outline-none focus:ring-1 focus:ring-[#1A2B5C] flex items-center justify-center"
                     aria-label={isAIAssistantOpen ? "Hide Mini AI Assistant" : "Show Mini AI Assistant"}
-                    animate={{ rotate: 360 }}
+                    style={{
+                        animation: 'spin-smooth 8s ease-in-out infinite',
+                    }}
                 >
-                    <svg className="w-5 h-[25px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-6 h-6 text-[#1A2B5C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -496,10 +475,23 @@ const QuestionEditPopup = ({
                             d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
                         />
                     </svg>
+                    <style jsx>{`
+                        @keyframes spin-smooth {
+                            0% { transform: rotate(0deg); }
+                            15% { transform: rotate(260deg); }
+                            30% { transform: rotate(180deg); }
+                            50% { transform: rotate(180deg); }
+                            65% { transform: rotate(440deg); }
+                            80% { transform: rotate(360deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    `}</style>
                 </button>
             </div>
         </div>
     );
 };
+
+
 
 export default QuestionEditPopup;

@@ -3,23 +3,24 @@ import { MiniAIAssistantAction } from './MiniAIAssistantAction.js'; // Assuming 
 
 const AIActionButtons = ({ selectedTextInTextarea, handleQuickAIAction, actions, currentValue }) => {
     const allPanelActionsWithMetadata = [
-        { action: actions.EXPLAIN_THIS_QUESTION, label: "Explain Q", icon: 'InformationCircleIcon', title: "Explain current question." },
-        { action: actions.RECOMMEND_AI_ANSWER, label: "AI Draft", icon: 'SparklesIcon', title: "AI generates an answer." },
-        { action: actions.BREAK_DOWN_QUESTION, label: "Break Down Q", icon: 'ListBulletIcon', title: "Break question into parts." },
-        { action: actions.IDENTIFY_KEY_TERMS, label: "Key Terms", icon: 'TagIcon', title: "Identify key terms in your draft or the question.", requiresDraft: true },
-        { action: actions.CHECK_TONE_CONSISTENCY, label: "Check Tone", icon: 'AdjustmentsHorizontalIcon', title: "Check tone consistency of your draft.", requiresDraft: true },
-        { action: actions.SUGGEST_ALTERNATIVE_PHRASING, label: "Rephrase", icon: 'LanguageIcon', title: "Suggest alternative phrasing for your draft.", requiresDraft: true },
-        { action: actions.EXPLAIN_ACRONYMS, label: "Acronyms", icon: 'AcademicCapIcon', title: "Explain acronyms in your draft.", requiresDraft: true },
-        { action: actions.SUGGEST_DATA_SOURCES, label: "Data Sources", icon: 'BeakerIcon', title: "Suggest potential data sources for this question." },
-        { action: actions.SUGGEST_TABLE_STRUCTURE, label: "Suggest Table", icon: 'TableCellsIcon', title: "Suggest table structure for this question.", requiresTableQuestion: true },
-        { action: actions.ELABORATE_DRAFT, label: "Elaborate", icon: 'ArrowsPointingOutIcon', title: "Elaborate on your current draft.", requiresDraft: true },
-        { action: actions.CONDENSE_DRAFT, label: "Condense", icon: 'ArrowsPointingInIcon', title: "Condense your current draft.", requiresDraft: true },
-        { action: actions.GENERATE_FOLLOWUP_QUESTIONS_FOR_USER, label: "User Qs", icon: 'QuestionMarkCircleIcon', title: "Generate follow-up questions for you to consider." },
-        { action: actions.COMPARE_WITH_BEST_PRACTICE, label: "Best Practice", icon: 'CheckBadgeIcon', title: "Compare answer with generic best practices." },
-        { action: actions.SUMMARIZE_SELECTION, label: "Summ. Select", icon: 'DocumentDuplicateIcon', title: "Summarize selected text.", requiresSelection: true },
-        { action: actions.REFINE_SELECTION, label: "Refine Select", icon: 'AdjustmentsHorizontalIcon', title: "Refine selected text.", requiresSelection: true },
-        { action: actions.EXPLAIN_SELECTION, label: "Explain Select", icon: 'InformationCircleIcon', title: "Explain selected text.", requiresSelection: true },
-        { action: actions.QUICK_COMPLIANCE_CHECK, label: "Compliance", icon: 'ShieldCheckIcon', title: "Quick compliance check of your draft.", requiresDraft: true },
+        { action: MiniAIAssistantAction.EXPLAIN_THIS_QUESTION, label: "Explain Q", icon: 'InformationCircleIcon', title: "Explain current question." },
+        { action: MiniAIAssistantAction.RECOMMEND_AI_ANSWER_Left, label: "AI Draft", icon: 'SparklesIcon', title: "AI generates an answer." },
+        { action: MiniAIAssistantAction.RECOMMEND_AI_ANSWER_Right, label: "AI Draft ", icon: 'SparklesIcon', title: "AI generates an answer." },
+        { action: MiniAIAssistantAction.BREAK_DOWN_QUESTION, label: "Break Down Q", icon: 'ListBulletIcon', title: "Break question into parts." },
+        { action: MiniAIAssistantAction.IDENTIFY_KEY_TERMS, label: "Key Terms", icon: 'TagIcon', title: "Identify key terms in your draft or the question.", requiresDraft: true },
+        { action: MiniAIAssistantAction.CHECK_TONE_CONSISTENCY, label: "Check Tone", icon: 'AdjustmentsHorizontalIcon', title: "Check tone consistency of your draft.", requiresDraft: true },
+        { action: MiniAIAssistantAction.SUGGEST_ALTERNATIVE_PHRASING, label: "Rephrase", icon: 'LanguageIcon', title: "Suggest alternative phrasing for your draft.", requiresDraft: true },
+        { action: MiniAIAssistantAction.EXPLAIN_ACRONYMS, label: "Acronyms", icon: 'AcademicCapIcon', title: "Explain acronyms in your draft.", requiresDraft: true },
+        { action: MiniAIAssistantAction.SUGGEST_DATA_SOURCES, label: "Data Sources", icon: 'BeakerIcon', title: "Suggest potential data sources for this question." },
+        { action: MiniAIAssistantAction.SUGGEST_TABLE_STRUCTURE, label: "Suggest Table", icon: 'TableCellsIcon', title: "Suggest table structure for this question.", requiresTableQuestion: true },
+        { action: MiniAIAssistantAction.ELABORATE_DRAFT, label: "Elaborate", icon: 'ArrowsPointingOutIcon', title: "Elaborate on your current draft.", requiresDraft: true },
+        { action: MiniAIAssistantAction.CONDENSE_DRAFT, label: "Condense", icon: 'ArrowsPointingInIcon', title: "Condense your current draft.", requiresDraft: true },
+        { action: MiniAIAssistantAction.GENERATE_FOLLOWUP_QUESTIONS_FOR_USER, label: "User Qs", icon: 'QuestionMarkCircleIcon', title: "Generate follow-up questions for you to consider." },
+        { action: MiniAIAssistantAction.COMPARE_WITH_BEST_PRACTICE, label: "Best Practice", icon: 'CheckBadgeIcon', title: "Compare answer with generic best practices." },
+        { action: MiniAIAssistantAction.SUMMARIZE_SELECTION, label: "Summ. Select", icon: 'DocumentDuplicateIcon', title: "Summarize selected text.", requiresSelection: true },
+        { action: MiniAIAssistantAction.REFINE_SELECTION, label: "Refine Select", icon: 'AdjustmentsHorizontalIcon', title: "Refine selected text.", requiresSelection: true },
+        { action: MiniAIAssistantAction.EXPLAIN_SELECTION, label: "Explain Select", icon: 'InformationCircleIcon', title: "Explain selected text.", requiresSelection: true },
+        { action: MiniAIAssistantAction.QUICK_COMPLIANCE_CHECK, label: "Compliance", icon: 'ShieldCheckIcon', title: "Quick compliance check of your draft.", requiresDraft: true },
     ];
 
     const iconMap = {
@@ -106,8 +107,8 @@ const AIActionButtons = ({ selectedTextInTextarea, handleQuickAIAction, actions,
     };
 
     // Determine relevant actions based on conditions
-    const relevantActions = Object.values(actions).filter(action => {
-        const actionMeta = allPanelActionsWithMetadata.find(meta => meta.action === action);
+    const relevantActions = Object.keys(actions).filter(actionKey => {
+        const actionMeta = allPanelActionsWithMetadata.find(meta => meta.action === actionKey);
         if (!actionMeta) return false;
 
         const hasDraft = currentValue?.trim().length > 0;
@@ -121,18 +122,18 @@ const AIActionButtons = ({ selectedTextInTextarea, handleQuickAIAction, actions,
     });
 
     return (
-        <div className="border border-blue-200 rounded-lg p-4 bg-white mt-2">
-            <h5 className="text-sm font-medium text-gray-700 mb-2">Relevant AI Actions</h5>
+        <div className=" mt-2">
+            <h5 className="text-sm font-medium text-[#000D30] mb-2">Relevant AI Actions</h5>
             <div className="grid grid-cols-3 gap-2">
-                {relevantActions.map(action => {
-                    const actionMeta = allPanelActionsWithMetadata.find(meta => meta.action === action);
+                {relevantActions.map(actionKey => {
+                    const actionMeta = allPanelActionsWithMetadata.find(meta => meta.action === actionKey);
                     if (!actionMeta) return null;
                     return (
                         <button
-                            key={action}
-                            onClick={() => handleQuickAIAction(action)}
+                            key={actionKey}
+                            onClick={() => handleQuickAIAction(actionKey)} // Pass the action string directly
                             title={actionMeta.title}
-                            className="flex flex-col items-center px-2 py-2 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all border border-indigo-200"
+                            className="flex flex-col items-center px-2 py-2 text-xs font-medium text-[#000D30] bg-[#E6E8F0] hover:bg-[#D1D6E8] hover:scale-[1.02] transition-transform duration-150 ease-out  rounded-lg  border border-[#D1D6E8] "
                             aria-label={actionMeta.title}
                         >
                             {iconMap[actionMeta.icon] || iconMap.default}

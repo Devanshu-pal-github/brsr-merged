@@ -129,9 +129,9 @@ const FormFields = ({
 
         return (
             <div className="space-y-3">
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                {/* <label className="flex items-center gap-2 text-sm font-semibold text-gray-800">
                     {getFieldIcon("string")} Response {question.string_value_required && <span className="text-red-500 text-xs">*</span>}
-                </label>
+                </label> */}
                 <div className="relative">
                     <textarea
                         ref={textareaRef}
@@ -145,11 +145,11 @@ const FormFields = ({
                         onSelect={handleTextareaSelectionChange}
                         onTouchEnd={handleTextareaSelectionChange}
                         placeholder="Enter your response..."
-                        className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-gray-800 text-sm transition-all duration-200 resize-y min-h-[100px] max-h-[300px]"
+                        className="w-full p-3 flex-1 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-inner border border-slate-200/60 overflow-y-auto mt-2 backdrop-blur-sm scrollbar-none text-sm transition-all duration-200 resize-y min-h-[300px] max-h-[340px]"
                         rows={4}
                     />
                 </div>
-                {formData.string_value.trim().length > 0 && (
+                {/* {formData.string_value.trim().length > 0 && (
                     <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                         <h3 className="text-sm font-medium text-gray-600 mb-2">Answer Preview:</h3>
                         <div className="prose prose-sm max-w-none text-gray-700">
@@ -158,7 +158,7 @@ const FormFields = ({
                             </ReactMarkdown>
                         </div>
                     </div>
-                )}
+                )} */}
                 {errors?.string_value && (
                     <div className="flex items-center gap-1 text-red-600 text-xs">
                         <AlertCircle className="w-4 h-4" />

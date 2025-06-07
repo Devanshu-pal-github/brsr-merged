@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
+import { Brain } from 'lucide-react';
 
 const ModalHeader = ({ questionId, questionText, closeModal }) => (
-    <div className="relative flex justify-between items-center px-6 py-1 border-b border-gray-200 bg-white">
-        <h2 id={`question-${questionId}-title`} className="text-lg font-semibold text-blue-700 truncate">
+    <div className="relative flex justify-between items-center px-6 py-3 border-b border-gray-200 bg-white">
+        <h2 id={`question-${questionId}-title`} className="text-lg font-semibold text-[#000D30] truncate flex items-center gap-1">
+            <Brain className="w-5 h-5 text-[#000D30] mt-0.5 " />
             Edit Answer : AI Assistance
         </h2>
+
         <div className="flex items-center">
             <button
                 onClick={closeModal}

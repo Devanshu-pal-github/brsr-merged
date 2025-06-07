@@ -214,3 +214,14 @@ button, .custom-button, .action-btn {
 .animate-pulse-glow {
   animation: pulse-glow 2s infinite;
 }
+
+
+@layer utilities {
+  .scrollbar-none {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Webkit browsers */
+  }
+}
