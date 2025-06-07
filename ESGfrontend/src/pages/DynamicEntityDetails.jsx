@@ -5,7 +5,7 @@ import {
     useGetQuestionResponsesMutation,
     useSubmitQuestionAnswerMutation
 } from '../api/apiSlice';
-import { BarChart3, X } from 'lucide-react';
+import { BarChart3, X,Edit3 } from 'lucide-react';
 import Layout from '../components/Layout';
 import Breadcrumb from '../components/Breadcrumb';
 import SubHeader from '../components/SubHeader';
@@ -268,7 +268,7 @@ const DynamicEntityDetails = () => {
                                                         onClick={() => handleEditClick(question)}
                                                         aria-label="Edit"
                                                     >
-                                                        Edit
+                                                        <Edit3 className="w-3 h-3" />
                                                     </button>
                                                 </div>
                                             </div>

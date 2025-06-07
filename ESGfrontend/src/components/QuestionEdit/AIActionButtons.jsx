@@ -133,7 +133,7 @@ const AIActionButtons = ({ selectedTextInTextarea, handleQuickAIAction, actions,
                             key={actionKey}
                             onClick={() => handleQuickAIAction(actionKey)} // Pass the action string directly
                             title={actionMeta.title}
-                            className="flex flex-col items-center px-2 py-2 text-xs font-medium text-[#000D30] bg-[#E6E8F0] hover:bg-[#D1D6E8] hover:scale-[1.02] transition-transform duration-150 ease-out  rounded-lg  border border-[#D1D6E8] "
+                            className="flex flex-col items-center px-2 py-2 text-xs font-medium text-[#000D30] bg-[#E6E8F0] hover:bg-[#D1D6E8] hover:scale-[1.02] transition-transform duration-150 ease-out  rounded-lg  border border-[#D1D6E8] focus:ring-2 focus:ring-blue-500/50"
                             aria-label={actionMeta.title}
                         >
                             {iconMap[actionMeta.icon] || iconMap.default}

@@ -353,38 +353,58 @@ export const LeftAIActions = ({
                                     </ReactMarkdown>
                                 </div>
                                 <div className="mt-4 flex flex-wrap justify-end gap-3">
-                                    <button
-                                        onClick={() => setLeftAiMessage(null)}
-                                        className="
-                                            px-4 py-2 text-sm font-medium
-                                            text-gray-700 bg-gray-200
-                                            hover:bg-gray-300
-                                            rounded-lg
-                                            focus:outline-none focus:ring-2 focus:ring-indigo-300
-                                            transition-all duration-200
-                                        "
-                                        aria-label="Reject AI suggestion"
-                                    >
-                                        Reject
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            console.log("Using AI suggestion:", leftAiMessage.text);
-                                            handleQuickAIAction("USE_THIS", leftAiMessage.text);
-                                            setLeftAiMessage(null);
-                                        }}
-                                        className="
-                                            px-4 py-2 text-sm font-medium
-                                            text-white bg-[#0F1D42]
-                                            hover:bg-[#1A2B5C]
-                                            rounded-lg
-                                            focus:outline-none focus:ring-2 focus:ring-indigo-300
-                                            transition-all duration-200
-                                        "
-                                        aria-label="Accept AI suggestion"
-                                    >
-                                        Accept
-                                    </button>
+                                    {leftAiMessage.action === MiniAIAssistantAction.MAKE_MORE_CONCISE ||
+                                        leftAiMessage.action === MiniAIAssistantAction.RECOMMEND_AI_ANSWER_Left ? (
+                                        <>
+                                            <button
+                                                onClick={() => setLeftAiMessage(null)}
+                                                className="
+                                                    px-4 py-2 text-sm font-medium
+                                                    text-gray-700 bg-gray-200
+                                                    hover:bg-gray-300
+                                                    rounded-lg
+                                                    focus:outline-none focus:ring-2 focus:ring-indigo-300
+                                                    transition-all duration-200
+                                                "
+                                                aria-label="Reject AI suggestion"
+                                            >
+                                                Reject
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    console.log("Using AI suggestion:", leftAiMessage.text);
+                                                    handleQuickAIAction("USE_THIS", leftAiMessage.text);
+                                                    setLeftAiMessage(null);
+                                                }}
+                                                className="
+                                                    px-4 py-2 text-sm font-medium
+                                                    text-white bg-[#0F1D42]
+                                                    hover:bg-[#1A2B5C]
+                                                    rounded-lg
+                                                    focus:outline-none focus:ring-2 focus:ring-indigo-300
+                                                    transition-all duration-200
+                                                "
+                                                aria-label="Accept AI suggestion"
+                                            >
+                                                Accept
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <button
+                                            onClick={() => setLeftAiMessage(null)}
+                                            className="
+                                                px-4 py-2 text-sm font-medium
+                                                text-white bg-[#0F1D42]
+                                                hover:bg-[#1A2B5C]
+                                                rounded-lg
+                                                focus:outline-none focus:ring-2 focus:ring-indigo-300
+                                                transition-all duration-200
+                                            "
+                                            aria-label="Acknowledge AI suggestion"
+                                        >
+                                            Okay
+                                        </button>
+                                    )}
                                 </div>
                                 {leftAiMessage.suggestion && renderProactiveFollowUps(leftAiMessage.suggestion)}
                             </div>

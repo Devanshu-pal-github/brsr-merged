@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { CheckCircle, AlertCircle, LinkIcon, FileText, Hash, Type } from "lucide-react";
+import { CheckCircle, AlertCircle, LinkIcon, FileText, Hash, Type , FileDigit} from "lucide-react";
 import FormField from "./FormField";
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
@@ -129,9 +129,7 @@ const FormFields = ({
 
         return (
             <div className="space-y-3">
-                {/* <label className="flex items-center gap-2 text-sm font-semibold text-gray-800">
-                    {getFieldIcon("string")} Response {question.string_value_required && <span className="text-red-500 text-xs">*</span>}
-                </label> */}
+                
                 <div className="relative">
                     <textarea
                         ref={textareaRef}
@@ -145,58 +143,55 @@ const FormFields = ({
                         onSelect={handleTextareaSelectionChange}
                         onTouchEnd={handleTextareaSelectionChange}
                         placeholder="Enter your response..."
-                        className="w-full p-3 flex-1 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-inner border border-slate-200/60 overflow-y-auto mt-2 backdrop-blur-sm scrollbar-none text-sm transition-all duration-200 resize-y min-h-[300px] max-h-[340px]"
+                       className="w-full p-3 flex-1 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-inner overflow-y-auto mt-2 backdrop-blur-sm scrollbar-none text-sm transition-all duration-200 resize-y min-h-[300px] max-h-[340px] focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                         rows={4}
                     />
                 </div>
-                {/* {formData.string_value.trim().length > 0 && (
-                    <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                        <h3 className="text-sm font-medium text-gray-600 mb-2">Answer Preview:</h3>
-                        <div className="prose prose-sm max-w-none text-gray-700">
-                            <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
-                                {formData.string_value}
-                            </ReactMarkdown>
-                        </div>
-                    </div>
-                )} */}
-                {errors?.string_value && (
-                    <div className="flex items-center gap-1 text-red-600 text-xs">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.string_value}
-                    </div>
-                )}
             </div>
         );
     };
 
     const renderDecimalValueField = () => (
-        <FormField
-            type="number"
-            name="decimal_value"
-            label="Numeric Value"
-            icon={getFieldIcon("decimal")}
-            value={formData.decimal_value}
-            onChange={(e) => handleInputChange(e, "decimal")}
-            placeholder="Enter a number"
-            required={question.decimal_value_required}
-            error={errors?.decimal_value}
-            step="any"
-            className="space-y-3"
-        />
+        <div className="space-y-3 ">
+            {/* <label className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+            
+            <FileDigit className="w-4 h-4 text-gray-500" />
+                Value {question.decimal_value_required && <span className="text-red-500 text-xs">*</span>}
+            </label> */}
+            <div className="relative">
+                <input
+                    type="number"
+                    name="decimal_value"
+                    value={formData.decimal_value || ""}
+                    onChange={(e) => handleInputChange(e, "decimal")}
+                    placeholder="Enter a number"
+                    step="any"
+                    className="w-full p-3 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-inner border border-slate-200/60 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 "
+                    aria-label="Decimal value"
+                />
+            </div>
+            {errors?.decimal_value && (
+                <div className="flex items-center gap-1 text-red-600 text-xs">
+                    <AlertCircle className="w-4 h-4" />
+                    {errors.decimal_value}
+                </div>
+            )}
+        </div>
     );
 
     const renderBooleanValueField = () => (
         <div className="space-y-3">
-            <label className="flex items-center gap-2 text-sm font-semibold text-gray-800">
-                {getFieldIcon("boolean")} Yes/No Response {question.boolean_value_required && <span className="text-red-500 text-xs">*</span>}
-            </label>
-            <div className="flex items-center gap-2">
+            {/* <label className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                {getFieldIcon("boolean")} Yes/No {question.boolean_value_required && <span className="text-red-500 text-xs">*</span>}
+            </label> */}
+            <div className="relative flex items-center gap-3 p-3 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-inner border border-slate-200/60">
                 <input
                     type="checkbox"
                     name="boolean_value"
                     checked={formData.boolean_value || false}
                     onChange={(e) => handleInputChange(e, "boolean")}
                     className="w-4 h-4 accent-blue-500 rounded focus:ring-2 focus:ring-blue-500/50"
+                    aria-label="Boolean value"
                 />
                 <span className="text-sm text-gray-800">{formData.boolean_value ? "Yes" : "No"}</span>
             </div>
@@ -210,42 +205,66 @@ const FormFields = ({
     );
 
     const renderLinkField = () => (
-        <FormField
-            type="text"
-            name="link"
-            label="Link/URL"
-            icon={getFieldIcon("link")}
-            value={formData.link}
-            onChange={(e) => handleInputChange(e, "link")}
-            placeholder="Enter a URL"
-            required={question.link_required}
-            error={errors.link}
-            className="space-y-3"
-        />
+        <div className="space-y-3 w-full max-w-2xs ">
+            {/* <label className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                {getFieldIcon("link")} Link {question.link_required && <span className="text-red-500 text-xs">*</span>}
+            </label> */}
+            <div className="relative">
+                <input
+                    type="text"
+                    name="link"
+                    value={formData.link || ""}
+                    onChange={(e) => handleInputChange(e, "link")}
+                    placeholder="Enter a URL"
+                    className="w-full p-3 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-inner border border-slate-200/60 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    aria-label="Link"
+                />
+            </div>
+            {errors?.link && (
+                <div className="flex items-center gap-1 text-red-600 text-xs">
+                    <AlertCircle className="w-4 h-4" />
+                    {errors.link}
+                </div>
+            )}
+        </div>
     );
 
     const renderNoteField = () => (
-        <FormField
-            type="textarea"
-            name="note"
-            label="Additional Notes"
-            icon={getFieldIcon("note")}
-            value={formData.note}
-            onChange={(e) => handleInputChange(e, "note")}
-            placeholder="Enter additional notes..."
-            required={question.note_required}
-            error={errors.note}
-            className="space-y-3"
-        />
-    );
+    <div className="space-y-3 w-full max-w-md">
+        {/* <label className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+            {getFieldIcon("note")} Note {question.note_required && <span className="text-red-500 text-xs">*</span>}
+        </label> */}
+        <div className="relative">
+            <textarea
+                name="note"
+                value={formData.note || ""}
+                onChange={(e) => handleInputChange(e, "note")}
+                placeholder="Enter additional notes..."
+                className="w-full p-3 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-inner border border-slate-200/60 text-sm transition-all duration-200 resize-y min-h-[100px] max-h-[200px] focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                rows={3}
+                aria-label="Note"
+            />
+        </div>
+        {errors?.note && (
+            <div className="flex items-center gap-1 text-red-600 text-xs">
+                <AlertCircle className="w-4 h-4" />
+                {errors.note}
+            </div>
+        )}
+    </div>
+);
 
     return (
         <form className="space-y-4">
             {question.has_string_value && renderStringValueField()}
-            {question.has_decimal_value && renderDecimalValueField()}
-            {question.has_boolean_value && renderBooleanValueField()}
-            {question.has_link && renderLinkField()}
-            {question.has_note && renderNoteField()}
+            {(question.has_decimal_value || question.has_boolean_value || question.has_link || question.has_note) && (
+                <div className="flex flex-wrap gap-4 justify-center">
+                    {question.has_decimal_value && renderDecimalValueField()}
+                    {question.has_boolean_value && renderBooleanValueField()}
+                    {question.has_link && renderLinkField()}
+                    {question.has_note && renderNoteField()}
+                </div>
+            )}
             {errors?.form && (
                 <div className="mt-4 flex items-center gap-1 text-red-600 text-sm">
                     <AlertCircle className="w-4 h-4" />
