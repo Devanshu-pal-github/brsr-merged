@@ -1,1089 +1,1234 @@
 {
   "version": "1.0.0",
-  "tabs": [
+  "modules": [
     {
-      "id": "general_details",
-      "name": "General Details",
-      "questions": [
-        {          "question_id": "Q1_A",
-          "question": "Corporate Identity Number (CIN)",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q2_A",
-          "question": "Name of Listed Entity",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q3_A",
-          "question": "Year of Incorporation",
-          "type": "subjective",
-          "has_decimal_value": true,
-          "decimal_value_required": true
-        },
-        {          "question_id": "Q9_A",
-          "question": "Financial Year for Reporting",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q4_A",
-          "question": "Registered Office Address",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q5_A",
-          "question": "Corporate Address",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true,
-          "has_boolean_value": true,
-          "guidance": "Check if same as registered address"
-        },
-        {          "question_id": "Q6_A",
-          "question": "E-mail",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q7_A",
-          "question": "Telephone",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q8_A",
-          "question": "Website",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": false,
-          "has_link": true
-        },
-        {          "question_id": "Q10_A",
-          "question": "Stock Exchange(s) Listed",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q11_A",
-          "question": "Paid-up Capital",
-          "type": "subjective",
-          "has_decimal_value": true,
-          "decimal_value_required": true
-        },
-        {          "question_id": "Q12_A",
-          "question": "Contact Person Details",
-          "type": "subjective",
-          "has_multiple_fields": true,
-          "fields": [
+      "id": "landing_flow",
+      "name": "Landing Flow",
+      "submodules": [
+        {
+          "id": "general_details",
+          "submodule_name": "General Details",
+          "question_categories": [
             {
-              "id": "name",
-              "question": "Contact Person Name",
-              "has_string_value": true,
-              "string_value_required": true
-            },
-            {
-              "id": "email",
-              "question": "Contact Person Email",
-              "has_string_value": true,
-              "string_value_required": true
-            },
-            {
-              "id": "phone",
-              "question": "Contact Person Phone",
-              "has_string_value": true,
-              "string_value_required": true
+              "id": "corporate_identity",
+              "category_name": "Corporate Identity and Contact",
+              "questions": [
+                {
+                  "question_id": "Q1_A",
+                  "question": "Corporate Identity Number (CIN)",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q2_A",
+                  "question": "Name of Listed Entity",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q3_A",
+                  "question": "Year of Incorporation",
+                  "type": "subjective",
+                  "has_string_value": false,
+                  "string_value_required": false,
+                  "has_decimal_value": true,
+                  "decimal_value_required": true,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q9_A",
+                  "question": "Financial Year for Reporting",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q4_A",
+                  "question": "Registered Office Address",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q5_A",
+                  "question": "Corporate Address",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": true,
+                  "boolean_value_required": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "link_required": false,
+                  "note_required": false,
+                  "guidance": "Check if same as registered address"
+                },
+                {
+                  "question_id": "Q6_A",
+                  "question": "E-mail",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q7_A",
+                  "question": "Telephone",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q8_A",
+                  "question": "Website",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": false,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": true,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q10_A",
+                  "question": "Stock Exchange(s) Listed",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q11_A",
+                  "question": "Paid-up Capital Details",
+                  "type": "table",
+                  "table_metadata": {
+                    "columns": [
+                      {
+                        "id": "s_no",
+                        "label": "S No.",
+                        "type": "string",
+                        "calc": false
+                      },
+                      {
+                        "id": "capital_type",
+                        "label": "Category",
+                        "type": "string",
+                        "calc": false
+                      },
+                      {
+                        "id": "amount",
+                        "label": "Amount (Rs.)",
+                        "type": "decimal",
+                        "calc": false,
+                        "required": true
+                      }
+                    ],
+                    "rows": [
+                      {
+                        "row_id": "authorized",
+                        "name": "Authorized Capital"
+                      },
+                      {
+                        "row_id": "paid_up",
+                        "name": "Paid-up Capital"
+                      }
+                    ],
+                    "restrictions": {
+                      "min_rows": 2,
+                      "max_rows": 2
+                    }
+                  }
+                },
+                {
+                  "question_id": "Q12_A",
+                  "question": "Contact Person Details",
+                  "type": "subjective",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "name",
+                      "question": "Contact Person Name",
+                      "has_string_value": true,
+                      "string_value_required": true,
+                      "has_decimal_value": false,
+                      "has_boolean_value": false,
+                      "has_link": false,
+                      "has_note": false,
+                      "decimal_value_required": false,
+                      "boolean_value_required": false,
+                      "link_required": false,
+                      "note_required": false
+                    },
+                    {
+                      "id": "email",
+                      "question": "Contact Person Email",
+                      "has_string_value": true,
+                      "string_value_required": true,
+                      "has_decimal_value": false,
+                      "has_boolean_value": false,
+                      "has_link": false,
+                      "has_note": false,
+                      "decimal_value_required": false,
+                      "boolean_value_required": false,
+                      "link_required": false,
+                      "note_required": false
+                    },
+                    {
+                      "id": "phone",
+                      "question": "Contact Person Phone",
+                      "has_string_value": true,
+                      "string_value_required": true,
+                      "has_decimal_value": false,
+                      "has_boolean_value": false,
+                      "has_link": false,
+                      "has_note": false,
+                      "decimal_value_required": false,
+                      "boolean_value_required": false,
+                      "link_required": false,
+                      "note_required": false
+                    }
+                  ]
+                },
+                {
+                  "question_id": "Q13_A",
+                  "question": "Reporting Boundary",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_decimal_value": false,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "boolean_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q22i_A",
+                  "question": "CSR Applicable as per section 135",
+                  "type": "subjective",
+                  "has_string_value": false,
+                  "has_decimal_value": false,
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_link": false,
+                  "has_note": false,
+                  "decimal_value_required": false,
+                  "string_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q22ii_A",
+                  "question": "Turnover (in Rs.)",
+                  "type": "subjective",
+                  "has_string_value": false,
+                  "has_decimal_value": true,
+                  "decimal_value_required": true,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "boolean_value_required": false,
+                  "string_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                },
+                {
+                  "question_id": "Q22iii_A",
+                  "question": "Net Worth (in Rs.)",
+                  "type": "subjective",
+                  "has_string_value": false,
+                  "has_decimal_value": true,
+                  "decimal_value_required": true,
+                  "has_boolean_value": false,
+                  "has_link": false,
+                  "has_note": false,
+                  "boolean_value_required": false,
+                  "string_value_required": false,
+                  "link_required": false,
+                  "note_required": false
+                }
+              ]
             }
           ]
-        },
-        {          "question_id": "Q13_A",
-          "question": "Reporting Boundary",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q22i_A",
-          "question": "CSR Applicable as per section 135",
-          "type": "subjective",
-          "has_boolean_value": true,
-          "boolean_value_required": true
-        },
-        {          "question_id": "Q22ii_A",
-          "question": "Turnover (in Rs.)",
-          "type": "subjective",
-          "has_decimal_value": true,
-          "decimal_value_required": true
-        },
-        {          "question_id": "Q22iii_A",
-          "question": "Net Worth (in Rs.)",
-          "type": "subjective",
-          "has_decimal_value": true,
-          "decimal_value_required": true
         }
       ]
     },
     {
       "id": "policy_management",
-      "name": "Policy and Management",
-      "questions": [
-        {          "question_id": "Q1a_B",
-          "question": "Whether your entity's policy/policies cover each principle and its core elements of the NGRBCs. (Yes/No)",
-          "type": "subjective",
-          "has_boolean_value": true,
-          "boolean_value_required": true
-        },
-        {          "question_id": "Q1b_B",
-          "question": "Has the policy been approved by the Board? (Yes/No)",
-          "type": "subjective",
-          "has_boolean_value": true,
-          "boolean_value_required": true
-        },
-        {          "question_id": "Q1c_B",
-          "question": "Web Link of the Policies, if available",
-          "type": "subjective",
-          "has_link": true,
-          "link_required": false
-        },
-        {          "question_id": "Q2_B",
-          "question": "Whether the entity has translated the policy into procedures. (Yes/No)",
-          "type": "subjective",
-          "has_boolean_value": true,
-          "boolean_value_required": true
-        },
-        {          "question_id": "Q3_B",
-          "question": "Do the enlisted policies extend to your value chain partners?",
-          "type": "subjective",
-          "has_boolean_value": true,
-          "boolean_value_required": true
-        },
-        {          "question_id": "Q4_B",
-          "question": "Name of the national and international codes/certifications/labels/standards adopted by your entity and mapped to each principle.",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q5_B",
-          "question": "Specific commitments, goals and targets set by the entity with defined timelines, if any.",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },
-        {          "question_id": "Q6_B",
-          "question": "Performance of the entity against the specific commitments, goals and targets along-with reasons in case the same are not met.",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        }
-      ]
-    },
-    {
-      "id": "governance",
-      "name": "Governance Leadership and Oversight",
-      "questions": [
-        {          "question_id": "Q7_B",
-          "question": "Director's Statement highlighting ESG related challenges, targets and achievements",
-          "type": "subjective",
-          "has_string_value": true,
-          "string_value_required": true
-        },        {          "question_id": "Q8_B",
-          "question": "Details of the highest authority responsible for implementation and oversight",
-          "type": "subjective",
-          "has_multiple_fields": true,
-          "fields": [
-            {
-              "id": "name",
-              "question": "Name of the highest authority",
-              "has_string_value": true,
-              "string_value_required": true
-            },
-            {
-              "id": "designation",
-              "question": "Designation of the highest authority",
-              "has_string_value": true,
-              "string_value_required": true
-            },
-            {
-              "id": "details",
-              "question": "Additional details about the authority's role and responsibilities",
-              "has_string_value": true,
-              "string_value_required": false
-            }
-          ]
-        },        {          "question_id": "Q9_B",
-          "question": "Details of the Committee responsible for sustainability related decision making",
-          "type": "subjective",
-          "has_boolean_value": true,
-          "boolean_value_required": true,
-          "has_multiple_fields": true,
-          "fields": [
-            {
-              "id": "exists",
-              "question": "Does the entity have a specified Committee of the Board/Director responsible for decision making on sustainability related issues?",
-              "has_boolean_value": true,
-              "boolean_value_required": true
-            },
-            {
-              "id": "name",
-              "question": "Committee Name",
-              "has_string_value": true,
-              "string_value_required": true
-            },
-            {
-              "id": "description",
-              "question": "Committee Description",
-              "has_string_value": true,
-              "string_value_required": true
-            }
-          ]
-        }
-      ]
-    },    {
-      "id": "policy_review",
-      "name": "Policy Review",
-      "questions": [        {          "question_id": "Q10_B",
-          "question": "Policy Review Details",
-          "type": "subjective",
-          "has_multiple_fields": true,
-          "fields": [
-            {
-              "id": "not_material",
-              "question": "The entity does not consider the Principles material to its business",
-              "has_boolean_value": true,
-              "boolean_value_required": true
-            },
-            {
-              "id": "not_at_stage",
-              "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-              "has_boolean_value": true,
-              "boolean_value_required": true
-            },
-            {
-              "id": "no_resources",
-              "question": "The entity does not have financial or/human and technical resources available for the task",
-              "has_boolean_value": true,
-              "boolean_value_required": true
-            },
-            {
-              "id": "planned_next_year",
-              "question": "It is planned to be done in the next financial year",
-              "has_boolean_value": true,
-              "boolean_value_required": true
-            },
-            {
-              "id": "other_reason",
-              "question": "Any other reason (please specify)",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            },
-            {
-              "id": "reach_implementation",
-              "question": "Reach and implementation of policies and processes",
-              "has_string_value": true,
-              "string_value_required": true
-            },
-            {
-              "id": "review_frequency",
-              "question": "How frequently policies and processes are evaluated and reviewed",
-              "has_string_value": true,
-              "string_value_required": true
-            },
-            {              "id": "performance_review",
-              "question": "Performance against above policies and follow up action",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "P1",
-                  "question": "P1",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P2",
-                  "question": "P2",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P3",
-                  "question": "P3",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P4",
-                  "question": "P4",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P5",
-                  "question": "P5",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P6",
-                  "question": "P6",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P7",
-                  "question": "P7",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P8",
-                  "question": "P8",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P9",
-                  "question": "P9",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "id": "compliance_review",
-              "question": "Compliance with statutory requirements of relevance to the principles, and rectification of any non-compliances",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "P1",
-                  "question": "P1",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P2",
-                  "question": "P2",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P3",
-                  "question": "P3",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P4",
-                  "question": "P4",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P5",
-                  "question": "P5",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P6",
-                  "question": "P6",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P7",
-                  "question": "P7",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P8",
-                  "question": "P8",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                },
-                {
-                  "id": "P9",
-                  "question": "P9",
-                  "has_multiple_fields": true,
-                  "fields": [
-                    {
-                      "id": "review_by",
-                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    },
-                    {
-                      "id": "frequency",
-                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
-                      "has_string_value": true,
-                      "string_value_required": true
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
+      "submodule_name": "Policy and Management",
+      "question_categories": [
         {
-          "question_id": "Q11_B",
-          "question": "Has the entity carried out independent assessment/ evaluation of the working of its policies by an external agency? (Yes/No). If yes, provide name of the agency.",
-          "type": "subjective",
-          "has_multiple_fields": true,
-          "fields": [
+          "id": "policy_details",
+          "category_name": "Policy Details",
+          "questions": [
             {
-              "id": "P1",
-              "question": "P1",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            },
-            {
-              "id": "P2",
-              "question": "P2",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            },
-            {
-              "id": "P3",
-              "question": "P3",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            },
-            {
-              "id": "P4",
-              "question": "P4",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            },
-            {
-              "id": "P5",
-              "question": "P5",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            },
-            {
-              "id": "P6",
-              "question": "P6",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            },
-            {
-              "id": "P7",
-              "question": "P7",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            },
-            {
-              "id": "P8",
-              "question": "P8",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            },
-            {
-              "id": "P9",
-              "question": "P9",
-              "has_boolean_value": true,
-              "boolean_value_required": true,
-              "has_string_value": true,
-              "string_value_required": false
-            }
-          ]
-        },
-        {
-          "question_id": "Q12_B",
-          "question": "If answer to question (1) above is \"No\" i.e. not all Principles are covered by a policy, reasons to be stated:",
-          "type": "subjective",
-          "has_multiple_fields": true,          "fields": [
-            {
-              "id": "P1",
-              "question": "P1",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "not_material",
-                  "question": "The entity does not consider the Principles material to its business",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "not_at_stage",
-                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "no_resources",
-                  "question": "The entity does not have financial or/human and technical resources available for the task",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "planned_next_year",
-                  "question": "It is planned to be done in the next financial year",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "other_reason",
-                  "question": "Any other reason (please specify)",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true,
-                  "has_string_value": true,
-                  "string_value_required": false
+              "question_id": "Q1_B",
+              "question": "Policy Coverage Details",
+              "type": "table",
+              "table_metadata": {
+                "columns": [
+                  {
+                    "id": "disclosure",
+                    "label": "Disclosure Questions",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p1",
+                    "label": "P1",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p2",
+                    "label": "P2",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p3",
+                    "label": "P3",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p4",
+                    "label": "P4",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p5",
+                    "label": "P5",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p6",
+                    "label": "P6",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p7",
+                    "label": "P7",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p8",
+                    "label": "P8",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p9",
+                    "label": "P9",
+                    "type": "string",
+                    "calc": false
+                  }
+                ],
+                "rows": [
+                  {
+                    "row_id": "policy_coverage",
+                    "name": "Whether your entity's policy/policies cover each principle and its core elements of the NGRBCs"
+                  },
+                  {
+                    "row_id": "board_approval",
+                    "name": "Has the policy been approved by the Board?"
+                  },
+                  {
+                    "row_id": "web_link",
+                    "name": "Web Link of the Policies, if available"
+                  }
+                ],
+                "restrictions": {
+                  "min_rows": 3,
+                  "max_rows": 3,
+                  "allowed_values": {
+                    "p1": ["Yes", "No"],
+                    "p2": ["Yes", "No"],
+                    "p3": ["Yes", "No"],
+                    "p4": ["Yes", "No"],
+                    "p5": ["Yes", "No"],
+                    "p6": ["Yes", "No"],
+                    "p7": ["Yes", "No"],
+                    "p8": ["Yes", "No"],
+                    "p9": ["Yes", "No"]
+                  }
                 }
-              ]
+              }
             },
             {
-              "id": "P2",
-              "question": "P2",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "not_material",
-                  "question": "The entity does not consider the Principles material to its business",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "not_at_stage",
-                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "no_resources",
-                  "question": "The entity does not have financial or/human and technical resources available for the task",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "planned_next_year",
-                  "question": "It is planned to be done in the next financial year",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "other_reason",
-                  "question": "Any other reason (please specify)",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true,
-                  "has_string_value": true,
-                  "string_value_required": false
+              "question_id": "Q2_B",
+              "question": "Whether the entity has translated the policy into procedures",
+              "type": "table",
+              "table_metadata": {
+                "columns": [
+                  {
+                    "id": "p1",
+                    "label": "P1",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p2",
+                    "label": "P2",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p3",
+                    "label": "P3",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p4",
+                    "label": "P4",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p5",
+                    "label": "P5",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p6",
+                    "label": "P6",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p7",
+                    "label": "P7",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p8",
+                    "label": "P8",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p9",
+                    "label": "P9",
+                    "type": "string",
+                    "calc": false
+                  }
+                ],
+                "rows": [
+                  {
+                    "row_id": "procedures",
+                    "name": "Policy translated to procedures"
+                  }
+                ],
+                "restrictions": {
+                  "min_rows": 1,
+                  "max_rows": 1,
+                  "allowed_values": {
+                    "p1": ["Yes", "No"],
+                    "p2": ["Yes", "No"],
+                    "p3": ["Yes", "No"],
+                    "p4": ["Yes", "No"],
+                    "p5": ["Yes", "No"],
+                    "p6": ["Yes", "No"],
+                    "p7": ["Yes", "No"],
+                    "p8": ["Yes", "No"],
+                    "p9": ["Yes", "No"]
+                  }
                 }
-              ]
+              }
             },
             {
-              "id": "P3",
-              "question": "P3",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "not_material",
-                  "question": "The entity does not consider the Principles material to its business",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "not_at_stage",
-                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "no_resources",
-                  "question": "The entity does not have financial or/human and technical resources available for the task",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "planned_next_year",
-                  "question": "It is planned to be done in the next financial year",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "other_reason",
-                  "question": "Any other reason (please specify)",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true,
-                  "has_string_value": true,
-                  "string_value_required": false
+              "question_id": "Q3_B",
+              "question": "Do the enlisted policies extend to your value chain partners?",
+              "type": "table",
+              "table_metadata": {
+                "columns": [
+                  {
+                    "id": "p1",
+                    "label": "P1",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p2",
+                    "label": "P2",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p3",
+                    "label": "P3",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p4",
+                    "label": "P4",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p5",
+                    "label": "P5",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p6",
+                    "label": "P6",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p7",
+                    "label": "P7",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p8",
+                    "label": "P8",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p9",
+                    "label": "P9",
+                    "type": "string",
+                    "calc": false
+                  }
+                ],
+                "rows": [
+                  {
+                    "row_id": "value_chain",
+                    "name": "Policies extend to value chain partners"
+                  }
+                ],
+                "restrictions": {
+                  "min_rows": 1,
+                  "max_rows": 1,
+                  "allowed_values": {
+                    "p1": ["Yes", "No"],
+                    "p2": ["Yes", "No"],
+                    "p3": ["Yes", "No"],
+                    "p4": ["Yes", "No"],
+                    "p5": ["Yes", "No"],
+                    "p6": ["Yes", "No"],
+                    "p7": ["Yes", "No"],
+                    "p8": ["Yes", "No"],
+                    "p9": ["Yes", "No"]
+                  }
                 }
-              ]
+              }
             },
             {
-              "id": "P4",
-              "question": "P4",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "not_material",
-                  "question": "The entity does not consider the Principles material to its business",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "not_at_stage",
-                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "no_resources",
-                  "question": "The entity does not have financial or/human and technical resources available for the task",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "planned_next_year",
-                  "question": "It is planned to be done in the next financial year",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "other_reason",
-                  "question": "Any other reason (please specify)",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true,
-                  "has_string_value": true,
-                  "string_value_required": false
+              "question_id": "Q4_B",
+              "question": "Name of the national and international codes/certifications/labels/standards adopted by your entity and mapped to each principle",
+              "type": "table",
+              "table_metadata": {
+                "columns": [
+                  {
+                    "id": "principle",
+                    "label": "Principle",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "codes",
+                    "label": "National/International Standards",
+                    "type": "string",
+                    "calc": false
+                  }
+                ],
+                "rows": [
+                  {
+                    "row_id": "p1",
+                    "name": "P1"
+                  },
+                  {
+                    "row_id": "p2",
+                    "name": "P2"
+                  },
+                  {
+                    "row_id": "p3",
+                    "name": "P3"
+                  },
+                  {
+                    "row_id": "p4",
+                    "name": "P4"
+                  },
+                  {
+                    "row_id": "p5",
+                    "name": "P5"
+                  },
+                  {
+                    "row_id": "p6",
+                    "name": "P6"
+                  },
+                  {
+                    "row_id": "p7",
+                    "name": "P7"
+                  },
+                  {
+                    "row_id": "p8",
+                    "name": "P8"
+                  },
+                  {
+                    "row_id": "p9",
+                    "name": "P9"
+                  }
+                ],
+                "restrictions": {
+                  "min_rows": 9,
+                  "max_rows": 9
                 }
-              ]
+              }
             },
             {
-              "id": "P5",
-              "question": "P5",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "not_material",
-                  "question": "The entity does not consider the Principles material to its business",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "not_at_stage",
-                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "no_resources",
-                  "question": "The entity does not have financial or/human and technical resources available for the task",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "planned_next_year",
-                  "question": "It is planned to be done in the next financial year",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "other_reason",
-                  "question": "Any other reason (please specify)",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true,
-                  "has_string_value": true,
-                  "string_value_required": false
+              "question_id": "Q5_B",
+              "question": "Specific commitments, goals and targets set by the entity with defined timelines",
+              "type": "table",
+              "table_metadata": {
+                "columns": [
+                  {
+                    "id": "principle",
+                    "label": "Principle",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "commitment",
+                    "label": "Name of the Commitment/Goal/Target",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "timeline",
+                    "label": "Timeline",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "status",
+                    "label": "Status (Implemented/In Progress)",
+                    "type": "string",
+                    "calc": false
+                  }
+                ],
+                "rows": [
+                  {
+                    "row_id": "p1",
+                    "name": "P1"
+                  },
+                  {
+                    "row_id": "p2",
+                    "name": "P2"
+                  },
+                  {
+                    "row_id": "p3",
+                    "name": "P3"
+                  },
+                  {
+                    "row_id": "p4",
+                    "name": "P4"
+                  },
+                  {
+                    "row_id": "p5",
+                    "name": "P5"
+                  },
+                  {
+                    "row_id": "p6",
+                    "name": "P6"
+                  },
+                  {
+                    "row_id": "p7",
+                    "name": "P7"
+                  },
+                  {
+                    "row_id": "p8",
+                    "name": "P8"
+                  },
+                  {
+                    "row_id": "p9",
+                    "name": "P9"
+                  }
+                ],
+                "restrictions": {
+                  "min_rows": 9,
+                  "max_rows": 9,
+                  "allowed_values": {
+                    "status": ["Implemented", "In Progress", "Not Started"]
+                  }
                 }
-              ]
+              }
             },
             {
-              "id": "P6",
-              "question": "P6",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "not_material",
-                  "question": "The entity does not consider the Principles material to its business",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "not_at_stage",
-                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "no_resources",
-                  "question": "The entity does not have financial or/human and technical resources available for the task",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "planned_next_year",
-                  "question": "It is planned to be done in the next financial year",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "other_reason",
-                  "question": "Any other reason (please specify)",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true,
-                  "has_string_value": true,
-                  "string_value_required": false
+              "question_id": "Q6_B",
+              "question": "Performance of the entity against the specific commitments, goals and targets along-with reasons in case the same are not met",
+              "type": "table",
+              "table_metadata": {
+                "columns": [
+                  {
+                    "id": "principle",
+                    "label": "Principle",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "commitment",
+                    "label": "Commitment/Goal/Target",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "performance",
+                    "label": "Performance",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "reason",
+                    "label": "Reason if not met",
+                    "type": "string",
+                    "calc": false,
+                    "required": false
+                  }
+                ],
+                "rows": [
+                  {
+                    "row_id": "p1",
+                    "name": "P1"
+                  },
+                  {
+                    "row_id": "p2",
+                    "name": "P2"
+                  },
+                  {
+                    "row_id": "p3",
+                    "name": "P3"
+                  },
+                  {
+                    "row_id": "p4",
+                    "name": "P4"
+                  },
+                  {
+                    "row_id": "p5",
+                    "name": "P5"
+                  },
+                  {
+                    "row_id": "p6",
+                    "name": "P6"
+                  },
+                  {
+                    "row_id": "p7",
+                    "name": "P7"
+                  },
+                  {
+                    "row_id": "p8",
+                    "name": "P8"
+                  },
+                  {
+                    "row_id": "p9",
+                    "name": "P9"
+                  }
+                ],
+                "restrictions": {
+                  "min_rows": 9,
+                  "max_rows": 9
                 }
-              ]
+              }
             },
             {
-              "id": "P7",
-              "question": "P7",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "not_material",
-                  "question": "The entity does not consider the Principles material to its business",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "not_at_stage",
-                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "no_resources",
-                  "question": "The entity does not have financial or/human and technical resources available for the task",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "planned_next_year",
-                  "question": "It is planned to be done in the next financial year",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "other_reason",
-                  "question": "Any other reason (please specify)",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true,
-                  "has_string_value": true,
-                  "string_value_required": false
+              "question_id": "Q10_B",
+              "question": "Details of Review of NGRBCs by the Company",
+              "type": "table",
+              "table_metadata": {
+                "columns": [
+                  {
+                    "id": "subject",
+                    "label": "Subject for Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p1_review",
+                    "label": "P1 Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p1_freq",
+                    "label": "P1 Frequency",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p2_review",
+                    "label": "P2 Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p2_freq",
+                    "label": "P2 Frequency",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p3_review",
+                    "label": "P3 Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p3_freq",
+                    "label": "P3 Frequency",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p4_review",
+                    "label": "P4 Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p4_freq",
+                    "label": "P4 Frequency",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p5_review",
+                    "label": "P5 Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p5_freq",
+                    "label": "P5 Frequency",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p6_review",
+                    "label": "P6 Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p6_freq",
+                    "label": "P6 Frequency",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p7_review",
+                    "label": "P7 Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p7_freq",
+                    "label": "P7 Frequency",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p8_review",
+                    "label": "P8 Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p8_freq",
+                    "label": "P8 Frequency",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p9_review",
+                    "label": "P9 Review",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p9_freq",
+                    "label": "P9 Frequency",
+                    "type": "string",
+                    "calc": false
+                  }
+                ],
+                "rows": [
+                  {
+                    "row_id": "performance",
+                    "name": "Performance against above policies and follow up action"
+                  },
+                  {
+                    "row_id": "compliance",
+                    "name": "Compliance with statutory requirements of relevance to the principles, and rectification of any non-compliances"
+                  }
+                ],
+                "restrictions": {
+                  "min_rows": 2,
+                  "max_rows": 2,
+                  "allowed_values": {
+                    "p1_review": [
+                      "Director",
+                      "Board Committee",
+                      "Other Committee"
+                    ],
+                    "p2_review": [
+                      "Director",
+                      "Board Committee",
+                      "Other Committee"
+                    ],
+                    "p3_review": [
+                      "Director",
+                      "Board Committee",
+                      "Other Committee"
+                    ],
+                    "p4_review": [
+                      "Director",
+                      "Board Committee",
+                      "Other Committee"
+                    ],
+                    "p5_review": [
+                      "Director",
+                      "Board Committee",
+                      "Other Committee"
+                    ],
+                    "p6_review": [
+                      "Director",
+                      "Board Committee",
+                      "Other Committee"
+                    ],
+                    "p7_review": [
+                      "Director",
+                      "Board Committee",
+                      "Other Committee"
+                    ],
+                    "p8_review": [
+                      "Director",
+                      "Board Committee",
+                      "Other Committee"
+                    ],
+                    "p9_review": [
+                      "Director",
+                      "Board Committee",
+                      "Other Committee"
+                    ],
+                    "p1_freq": [
+                      "Annually",
+                      "Half yearly",
+                      "Quarterly",
+                      "Others"
+                    ],
+                    "p2_freq": [
+                      "Annually",
+                      "Half yearly",
+                      "Quarterly",
+                      "Others"
+                    ],
+                    "p3_freq": [
+                      "Annually",
+                      "Half yearly",
+                      "Quarterly",
+                      "Others"
+                    ],
+                    "p4_freq": [
+                      "Annually",
+                      "Half yearly",
+                      "Quarterly",
+                      "Others"
+                    ],
+                    "p5_freq": [
+                      "Annually",
+                      "Half yearly",
+                      "Quarterly",
+                      "Others"
+                    ],
+                    "p6_freq": [
+                      "Annually",
+                      "Half yearly",
+                      "Quarterly",
+                      "Others"
+                    ],
+                    "p7_freq": [
+                      "Annually",
+                      "Half yearly",
+                      "Quarterly",
+                      "Others"
+                    ],
+                    "p8_freq": [
+                      "Annually",
+                      "Half yearly",
+                      "Quarterly",
+                      "Others"
+                    ],
+                    "p9_freq": [
+                      "Annually",
+                      "Half yearly",
+                      "Quarterly",
+                      "Others"
+                    ]
+                  }
                 }
-              ]
+              }
             },
             {
-              "id": "P8",
-              "question": "P8",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "not_material",
-                  "question": "The entity does not consider the Principles material to its business",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "not_at_stage",
-                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "no_resources",
-                  "question": "The entity does not have financial or/human and technical resources available for the task",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "planned_next_year",
-                  "question": "It is planned to be done in the next financial year",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "other_reason",
-                  "question": "Any other reason (please specify)",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true,
-                  "has_string_value": true,
-                  "string_value_required": false
+              "question_id": "Q11_B",
+              "question": "Has the entity carried out independent assessment/evaluation of the working of its policies by an external agency? (Yes/No). If yes, provide name of the agency.",
+              "type": "table",
+              "table_metadata": {
+                "columns": [
+                  {
+                    "id": "principle",
+                    "label": "Principle",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "assessment",
+                    "label": "Independent Assessment",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "agency",
+                    "label": "Agency Name",
+                    "type": "string",
+                    "calc": false,
+                    "required": false
+                  }
+                ],
+                "rows": [
+                  {
+                    "row_id": "p1",
+                    "name": "P1"
+                  },
+                  {
+                    "row_id": "p2",
+                    "name": "P2"
+                  },
+                  {
+                    "row_id": "p3",
+                    "name": "P3"
+                  },
+                  {
+                    "row_id": "p4",
+                    "name": "P4"
+                  },
+                  {
+                    "row_id": "p5",
+                    "name": "P5"
+                  },
+                  {
+                    "row_id": "p6",
+                    "name": "P6"
+                  },
+                  {
+                    "row_id": "p7",
+                    "name": "P7"
+                  },
+                  {
+                    "row_id": "p8",
+                    "name": "P8"
+                  },
+                  {
+                    "row_id": "p9",
+                    "name": "P9"
+                  }
+                ],
+                "restrictions": {
+                  "min_rows": 9,
+                  "max_rows": 9,
+                  "allowed_values": {
+                    "assessment": ["Yes", "No"]
+                  }
                 }
-              ]
+              }
             },
             {
-              "id": "P9",
-              "question": "P9",
-              "has_multiple_fields": true,
-              "fields": [
-                {
-                  "id": "not_material",
-                  "question": "The entity does not consider the Principles material to its business",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "not_at_stage",
-                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "no_resources",
-                  "question": "The entity does not have financial or/human and technical resources available for the task",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "planned_next_year",
-                  "question": "It is planned to be done in the next financial year",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true
-                },
-                {
-                  "id": "other_reason",
-                  "question": "Any other reason (please specify)",
-                  "has_boolean_value": true,
-                  "boolean_value_required": true,
-                  "has_string_value": true,
-                  "string_value_required": false
+              "question_id": "Q12_B",
+              "question": "If answer to question (1) above is \"No\" i.e. not all Principles are covered by a policy, reasons to be stated:",
+              "type": "table",
+              "table_metadata": {
+                "columns": [
+                  {
+                    "id": "reason",
+                    "label": "Questions",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p1",
+                    "label": "P1",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p2",
+                    "label": "P2",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p3",
+                    "label": "P3",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p4",
+                    "label": "P4",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p5",
+                    "label": "P5",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p6",
+                    "label": "P6",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p7",
+                    "label": "P7",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p8",
+                    "label": "P8",
+                    "type": "string",
+                    "calc": false
+                  },
+                  {
+                    "id": "p9",
+                    "label": "P9",
+                    "type": "string",
+                    "calc": false
+                  }
+                ],
+                "rows": [
+                  {
+                    "row_id": "not_material",
+                    "name": "The entity does not consider the Principles material to its business (Yes/No)"
+                  },
+                  {
+                    "row_id": "not_at_stage",
+                    "name": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles (Yes/No)"
+                  },
+                  {
+                    "row_id": "no_resources",
+                    "name": "The entity does not have the financial or/human and technical resources available for the task (Yes/No)"
+                  },
+                  {
+                    "row_id": "next_year",
+                    "name": "It is planned to be done in the next financial year (Yes/No)"
+                  },
+                  {
+                    "row_id": "other",
+                    "name": "Any other reason (please specify)"
+                  }
+                ],
+                "restrictions": {
+                  "min_rows": 5,
+                  "max_rows": 5,
+                  "allowed_values": {
+                    "p1": ["Yes", "No"],
+                    "p2": ["Yes", "No"],
+                    "p3": ["Yes", "No"],
+                    "p4": ["Yes", "No"],
+                    "p5": ["Yes", "No"],
+                    "p6": ["Yes", "No"],
+                    "p7": ["Yes", "No"],
+                    "p8": ["Yes", "No"],
+                    "p9": ["Yes", "No"]
+                  }
                 }
-              ]
+              }
             }
           ]
         }
