@@ -4,860 +4,2853 @@
     "general_details": {
       "Q1_A": {
         "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q2_A": {
         "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q3_A": {
+        "string_value": null,
+        "bool_value": null,
         "decimal_value": null,
-        "timestamp": null,
-        "updated_by": null
-      },
-      "Q9_A": {
-        "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q4_A": {
         "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q5_A": {
         "string_value": "",
-        "bool_value": false,
-        "timestamp": null,
-        "updated_by": null
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q6_A": {
         "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q7_A": {
         "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q8_A": {
         "string_value": "",
+        "bool_value": null,
+        "decimal_value": null,
         "link": null,
-        "timestamp": null,
-        "updated_by": null
+        "note": null,
+        "table": null
+      },
+      "Q9_A": {
+        "string_value": "",
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q10_A": {
         "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q11_A": {
-        "decimal_value": null,
-        "timestamp": null,
-        "updated_by": null
+        "question_id": "Q11_A",
+        "columns": [
+          {
+            "col_id": "s_no",
+            "label": "S No.",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "capital_type",
+            "label": "Category",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "amount",
+            "label": "Amount (Rs.)",
+            "type": "decimal",
+            "calc": false,
+            "note": null
+          }
+        ],
+        "rows": [
+          {
+            "row_id": "authorized",
+            "cells": [
+              {
+                "row_id": "authorized",
+                "col_id": "s_no",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "authorized",
+                "col_id": "capital_type",
+                "value": "Authorized Capital",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "authorized",
+                "col_id": "amount",
+                "value": null,
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "paid_up",
+            "cells": [
+              {
+                "row_id": "paid_up",
+                "col_id": "s_no",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "paid_up",
+                "col_id": "capital_type",
+                "value": "Paid-up Capital",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "paid_up",
+                "col_id": "amount",
+                "value": null,
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          }
+        ],
+        "meta_version": null,
+        "last_updated": null,
+        "updated_by": null,
+        "notes": null
       },
       "Q12_A": {
-        "fields": {
-          "name": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+        "string_value": null,
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": [
+          {
+            "row": "name",
+            "col": "name",
+            "value": ""
           },
-          "email": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "row": "email",
+            "col": "email",
+            "value": ""
           },
-          "phone": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "row": "phone",
+            "col": "phone",
+            "value": ""
           }
-        },
-        "timestamp": null,
-        "updated_by": null
+        ]
       },
       "Q13_A": {
-        "string_value": "standalone",
-        "timestamp": null,
-        "updated_by": null
+        "string_value": "",
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q22i_A": {
-        "bool_value": false,
-        "timestamp": null,
-        "updated_by": null
+        "string_value": null,
+        "bool_value": null,
+        "decimal_value": null,
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q22ii_A": {
+        "string_value": null,
+        "bool_value": null,
         "decimal_value": null,
-        "timestamp": null,
-        "updated_by": null
+        "link": null,
+        "note": null,
+        "table": null
       },
       "Q22iii_A": {
+        "string_value": null,
+        "bool_value": null,
         "decimal_value": null,
-        "timestamp": null,
-        "updated_by": null
+        "link": null,
+        "note": null,
+        "table": null
       }
     },
     "policy_management": {
-      "Q1a_B": {
-        "bool_value": null,
-        "timestamp": null,
-        "updated_by": null
-      },
-      "Q1b_B": {
-        "bool_value": null,
-        "timestamp": null,
-        "updated_by": null
-      },
-      "Q1c_B": {
-        "link": null,
-        "timestamp": null,
-        "updated_by": null
+      "Q1_B": {
+        "question_id": "Q1_B",
+        "columns": [
+          {
+            "col_id": "disclosure",
+            "label": "Disclosure Questions",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p1",
+            "label": "P1",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p2",
+            "label": "P2",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p3",
+            "label": "P3",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p4",
+            "label": "P4",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p5",
+            "label": "P5",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p6",
+            "label": "P6",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p7",
+            "label": "P7",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p8",
+            "label": "P8",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p9",
+            "label": "P9",
+            "type": "string",
+            "calc": false,
+            "note": null
+          }
+        ],
+        "rows": [
+          {
+            "row_id": "policy_coverage",
+            "cells": [
+              {
+                "row_id": "policy_coverage",
+                "col_id": "disclosure",
+                "value": "Whether your entity's policy/policies cover each principle and its core elements of the NGRBCs",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "policy_coverage",
+                "col_id": "p1",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "policy_coverage",
+                "col_id": "p2",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "policy_coverage",
+                "col_id": "p3",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "policy_coverage",
+                "col_id": "p4",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "policy_coverage",
+                "col_id": "p5",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "policy_coverage",
+                "col_id": "p6",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "policy_coverage",
+                "col_id": "p7",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "policy_coverage",
+                "col_id": "p8",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "policy_coverage",
+                "col_id": "p9",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "board_approval",
+            "cells": [
+              {
+                "row_id": "board_approval",
+                "col_id": "disclosure",
+                "value": "Has the policy been approved by the Board?",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "board_approval",
+                "col_id": "p1",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "board_approval",
+                "col_id": "p2",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "board_approval",
+                "col_id": "p3",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "board_approval",
+                "col_id": "p4",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "board_approval",
+                "col_id": "p5",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "board_approval",
+                "col_id": "p6",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "board_approval",
+                "col_id": "p7",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "board_approval",
+                "col_id": "p8",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "board_approval",
+                "col_id": "p9",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "web_link",
+            "cells": [
+              {
+                "row_id": "web_link",
+                "col_id": "disclosure",
+                "value": "Web Link of the Policies, if available",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "web_link",
+                "col_id": "p1",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "web_link",
+                "col_id": "p2",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "web_link",
+                "col_id": "p3",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "web_link",
+                "col_id": "p4",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "web_link",
+                "col_id": "p5",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "web_link",
+                "col_id": "p6",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "web_link",
+                "col_id": "p7",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "web_link",
+                "col_id": "p8",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "web_link",
+                "col_id": "p9",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          }
+        ],
+        "meta_version": null,
+        "last_updated": null,
+        "updated_by": null,
+        "notes": null
       },
       "Q2_B": {
-        "bool_value": null,
-        "timestamp": null,
-        "updated_by": null
+        "question_id": "Q2_B",
+        "columns": [
+          {
+            "col_id": "p1",
+            "label": "P1",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p2",
+            "label": "P2",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p3",
+            "label": "P3",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p4",
+            "label": "P4",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p5",
+            "label": "P5",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p6",
+            "label": "P6",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p7",
+            "label": "P7",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p8",
+            "label": "P8",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p9",
+            "label": "P9",
+            "type": "string",
+            "calc": false,
+            "note": null
+          }
+        ],
+        "rows": [
+          {
+            "row_id": "procedures",
+            "cells": [
+              {
+                "row_id": "procedures",
+                "col_id": "p1",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "procedures",
+                "col_id": "p2",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "procedures",
+                "col_id": "p3",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "procedures",
+                "col_id": "p4",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "procedures",
+                "col_id": "p5",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "procedures",
+                "col_id": "p6",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "procedures",
+                "col_id": "p7",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "procedures",
+                "col_id": "p8",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "procedures",
+                "col_id": "p9",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          }
+        ],
+        "meta_version": null,
+        "last_updated": null,
+        "updated_by": null,
+        "notes": null
       },
       "Q3_B": {
-        "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "question_id": "Q3_B",
+        "columns": [
+          {
+            "col_id": "p1",
+            "label": "P1",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p2",
+            "label": "P2",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p3",
+            "label": "P3",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p4",
+            "label": "P4",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p5",
+            "label": "P5",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p6",
+            "label": "P6",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p7",
+            "label": "P7",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p8",
+            "label": "P8",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p9",
+            "label": "P9",
+            "type": "string",
+            "calc": false,
+            "note": null
+          }
+        ],
+        "rows": [
+          {
+            "row_id": "value_chain",
+            "cells": [
+              {
+                "row_id": "value_chain",
+                "col_id": "p1",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "value_chain",
+                "col_id": "p2",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "value_chain",
+                "col_id": "p3",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "value_chain",
+                "col_id": "p4",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "value_chain",
+                "col_id": "p5",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "value_chain",
+                "col_id": "p6",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "value_chain",
+                "col_id": "p7",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "value_chain",
+                "col_id": "p8",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "value_chain",
+                "col_id": "p9",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          }
+        ],
+        "meta_version": null,
+        "last_updated": null,
+        "updated_by": null,
+        "notes": null
       },
       "Q4_B": {
-        "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "question_id": "Q4_B",
+        "columns": [
+          {
+            "col_id": "principle",
+            "label": "Principle",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "codes",
+            "label": "National/International Standards",
+            "type": "string",
+            "calc": false,
+            "note": null
+          }
+        ],
+        "rows": [
+          {
+            "row_id": "p1",
+            "cells": [
+              {
+                "row_id": "p1",
+                "col_id": "principle",
+                "value": "P1",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p1",
+                "col_id": "codes",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p2",
+            "cells": [
+              {
+                "row_id": "p2",
+                "col_id": "principle",
+                "value": "P2",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p2",
+                "col_id": "codes",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p3",
+            "cells": [
+              {
+                "row_id": "p3",
+                "col_id": "principle",
+                "value": "P3",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p3",
+                "col_id": "codes",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p4",
+            "cells": [
+              {
+                "row_id": "p4",
+                "col_id": "principle",
+                "value": "P4",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p4",
+                "col_id": "codes",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p5",
+            "cells": [
+              {
+                "row_id": "p5",
+                "col_id": "principle",
+                "value": "P5",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p5",
+                "col_id": "codes",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p6",
+            "cells": [
+              {
+                "row_id": "p6",
+                "col_id": "principle",
+                "value": "P6",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p6",
+                "col_id": "codes",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p7",
+            "cells": [
+              {
+                "row_id": "p7",
+                "col_id": "principle",
+                "value": "P7",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p7",
+                "col_id": "codes",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p8",
+            "cells": [
+              {
+                "row_id": "p8",
+                "col_id": "principle",
+                "value": "P8",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p8",
+                "col_id": "codes",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p9",
+            "cells": [
+              {
+                "row_id": "p9",
+                "col_id": "principle",
+                "value": "P9",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p9",
+                "col_id": "codes",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          }
+        ],
+        "meta_version": null,
+        "last_updated": null,
+        "updated_by": null,
+        "notes": null
       },
       "Q5_B": {
-        "string_value": "",
-        "timestamp": null,
-        "updated_by": null
+        "question_id": "Q5_B",
+        "columns": [
+          {
+            "col_id": "principle",
+            "label": "Principle",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "commitment",
+            "label": "Name of the Commitment/Goal/Target",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "timeline",
+            "label": "Timeline",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "status",
+            "label": "Status (Implemented/In Progress)",
+            "type": "string",
+            "calc": false,
+            "note": null
+          }
+        ],
+        "rows": [
+          {
+            "row_id": "p1",
+            "cells": [
+              {
+                "row_id": "p1",
+                "col_id": "principle",
+                "value": "P1",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p1",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p1",
+                "col_id": "timeline",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p1",
+                "col_id": "status",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p2",
+            "cells": [
+              {
+                "row_id": "p2",
+                "col_id": "principle",
+                "value": "P2",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p2",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p2",
+                "col_id": "timeline",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p2",
+                "col_id": "status",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p3",
+            "cells": [
+              {
+                "row_id": "p3",
+                "col_id": "principle",
+                "value": "P3",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p3",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p3",
+                "col_id": "timeline",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p3",
+                "col_id": "status",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p4",
+            "cells": [
+              {
+                "row_id": "p4",
+                "col_id": "principle",
+                "value": "P4",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p4",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p4",
+                "col_id": "timeline",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p4",
+                "col_id": "status",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p5",
+            "cells": [
+              {
+                "row_id": "p5",
+                "col_id": "principle",
+                "value": "P5",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p5",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p5",
+                "col_id": "timeline",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p5",
+                "col_id": "status",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p6",
+            "cells": [
+              {
+                "row_id": "p6",
+                "col_id": "principle",
+                "value": "P6",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p6",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p6",
+                "col_id": "timeline",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p6",
+                "col_id": "status",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p7",
+            "cells": [
+              {
+                "row_id": "p7",
+                "col_id": "principle",
+                "value": "P7",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p7",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p7",
+                "col_id": "timeline",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p7",
+                "col_id": "status",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p8",
+            "cells": [
+              {
+                "row_id": "p8",
+                "col_id": "principle",
+                "value": "P8",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p8",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p8",
+                "col_id": "timeline",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p8",
+                "col_id": "status",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p9",
+            "cells": [
+              {
+                "row_id": "p9",
+                "col_id": "principle",
+                "value": "P9",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p9",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p9",
+                "col_id": "timeline",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p9",
+                "col_id": "status",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          }
+        ],
+        "meta_version": null,
+        "last_updated": null,
+        "updated_by": null,
+        "notes": null
       },
       "Q6_B": {
-        "string_value": "",
-        "timestamp": null,
-        "updated_by": null
-      }
-    },
-    "governance": {
-      "Q7_B": {
-        "string_value": "",
-        "timestamp": null,
-        "updated_by": null
-      },
-      "Q8_B": {
-        "fields": {
-          "name": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+        "question_id": "Q6_B",
+        "columns": [
+          {
+            "col_id": "principle",
+            "label": "Principle",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "designation": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "commitment",
+            "label": "Commitment/Goal/Target",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "details": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "performance",
+            "label": "Performance",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "reason",
+            "label": "Reason if not met",
+            "type": "string",
+            "calc": false,
+            "note": null
           }
-        },
-        "timestamp": null,
-        "updated_by": null
-      },
-      "Q9_B": {
-        "fields": {
-          "exists": {
-            "bool_value": null,
-            "timestamp": null,
-            "updated_by": null
+        ],
+        "rows": [
+          {
+            "row_id": "p1",
+            "cells": [
+              {
+                "row_id": "p1",
+                "col_id": "principle",
+                "value": "P1",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p1",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p1",
+                "col_id": "performance",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p1",
+                "col_id": "reason",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
           },
-          "name": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "row_id": "p2",
+            "cells": [
+              {
+                "row_id": "p2",
+                "col_id": "principle",
+                "value": "P2",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p2",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p2",
+                "col_id": "performance",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p2",
+                "col_id": "reason",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
           },
-          "description": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "row_id": "p3",
+            "cells": [
+              {
+                "row_id": "p3",
+                "col_id": "principle",
+                "value": "P3",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p3",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p3",
+                "col_id": "performance",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p3",
+                "col_id": "reason",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p4",
+            "cells": [
+              {
+                "row_id": "p4",
+                "col_id": "principle",
+                "value": "P4",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p4",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p4",
+                "col_id": "performance",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p4",
+                "col_id": "reason",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p5",
+            "cells": [
+              {
+                "row_id": "p5",
+                "col_id": "principle",
+                "value": "P5",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p5",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p5",
+                "col_id": "performance",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p5",
+                "col_id": "reason",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p6",
+            "cells": [
+              {
+                "row_id": "p6",
+                "col_id": "principle",
+                "value": "P6",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p6",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p6",
+                "col_id": "performance",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p6",
+                "col_id": "reason",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p7",
+            "cells": [
+              {
+                "row_id": "p7",
+                "col_id": "principle",
+                "value": "P7",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p7",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p7",
+                "col_id": "performance",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p7",
+                "col_id": "reason",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p8",
+            "cells": [
+              {
+                "row_id": "p8",
+                "col_id": "principle",
+                "value": "P8",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p8",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p8",
+                "col_id": "performance",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p8",
+                "col_id": "reason",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p9",
+            "cells": [
+              {
+                "row_id": "p9",
+                "col_id": "principle",
+                "value": "P9",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p9",
+                "col_id": "commitment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p9",
+                "col_id": "performance",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p9",
+                "col_id": "reason",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
           }
-        },
-        "timestamp": null,
-        "updated_by": null
-      }
-    },
-    "policy_review": {
+        ],
+        "meta_version": null,
+        "last_updated": null,
+        "updated_by": null,
+        "notes": null
+      },
       "Q10_B": {
-        "fields": {
-          "not_material": {
-            "bool_value": null,
-            "timestamp": null,
-            "updated_by": null
+        "question_id": "Q10_B",
+        "columns": [
+          {
+            "col_id": "subject",
+            "label": "Subject for Review",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "not_at_stage": {
-            "bool_value": null,
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p1_review",
+            "label": "P1 Review",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "no_resources": {
-            "bool_value": null,
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p1_freq",
+            "label": "P1 Frequency",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "planned_next_year": {
-            "bool_value": null,
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p2_review",
+            "label": "P2 Review",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "other_reason": {
-            "bool_value": null,
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p2_freq",
+            "label": "P2 Frequency",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "other_reason_text": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p3_review",
+            "label": "P3 Review",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "reach_implementation": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p3_freq",
+            "label": "P3 Frequency",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "review_frequency": {
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p4_review",
+            "label": "P4 Review",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "performance_review": {
-            "fields": {
-              "P1": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P2": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P3": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P4": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P5": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P6": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P7": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P8": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P9": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              }
-            }
+          {
+            "col_id": "p4_freq",
+            "label": "P4 Frequency",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "compliance_review": {
-            "fields": {
-              "P1": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P2": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P3": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P4": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P5": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P6": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P7": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P8": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              },
-              "P9": {
-                "fields": {
-                  "review_by": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  },
-                  "frequency": {
-                    "string_value": "",
-                    "timestamp": null,
-                    "updated_by": null
-                  }
-                }
-              }
-            }
+          {
+            "col_id": "p5_review",
+            "label": "P5 Review",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p5_freq",
+            "label": "P5 Frequency",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p6_review",
+            "label": "P6 Review",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p6_freq",
+            "label": "P6 Frequency",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p7_review",
+            "label": "P7 Review",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p7_freq",
+            "label": "P7 Frequency",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p8_review",
+            "label": "P8 Review",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p8_freq",
+            "label": "P8 Frequency",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p9_review",
+            "label": "P9 Review",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p9_freq",
+            "label": "P9 Frequency",
+            "type": "string",
+            "calc": false,
+            "note": null
           }
-        },
-        "timestamp": null,
-        "updated_by": null
+        ],
+        "rows": [
+          {
+            "row_id": "performance",
+            "cells": [
+              {
+                "row_id": "performance",
+                "col_id": "subject",
+                "value": "Performance against above policies and follow up action",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p1_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p1_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p2_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p2_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p3_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p3_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p4_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p4_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p5_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p5_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p6_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p6_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p7_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p7_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p8_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p8_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p9_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "performance",
+                "col_id": "p9_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "compliance",
+            "cells": [
+              {
+                "row_id": "compliance",
+                "col_id": "subject",
+                "value": "Compliance with statutory requirements of relevance to the principles, and rectification of any non-compliances",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p1_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p1_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p2_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p2_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p3_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p3_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p4_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p4_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p5_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p5_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p6_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p6_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p7_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p7_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p8_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p8_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p9_review",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "compliance",
+                "col_id": "p9_freq",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          }
+        ],
+        "meta_version": null,
+        "last_updated": null,
+        "updated_by": null,
+        "notes": null
       },
       "Q11_B": {
-        "fields": {
-          "P1": {
-            "bool_value": null,
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+        "question_id": "Q11_B",
+        "columns": [
+          {
+            "col_id": "principle",
+            "label": "Principle",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P2": {
-            "bool_value": null,
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "assessment",
+            "label": "Independent Assessment",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P3": {
-            "bool_value": null,
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
-          },
-          "P4": {
-            "bool_value": null,
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
-          },
-          "P5": {
-            "bool_value": null,
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
-          },
-          "P6": {
-            "bool_value": null,
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
-          },
-          "P7": {
-            "bool_value": null,
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
-          },
-          "P8": {
-            "bool_value": null,
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
-          },
-          "P9": {
-            "bool_value": null,
-            "string_value": "",
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "agency",
+            "label": "Agency Name",
+            "type": "string",
+            "calc": false,
+            "note": null
           }
-        },
-        "timestamp": null,
-        "updated_by": null
+        ],
+        "rows": [
+          {
+            "row_id": "p1",
+            "cells": [
+              {
+                "row_id": "p1",
+                "col_id": "principle",
+                "value": "P1",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p1",
+                "col_id": "assessment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p1",
+                "col_id": "agency",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p2",
+            "cells": [
+              {
+                "row_id": "p2",
+                "col_id": "principle",
+                "value": "P2",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p2",
+                "col_id": "assessment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p2",
+                "col_id": "agency",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p3",
+            "cells": [
+              {
+                "row_id": "p3",
+                "col_id": "principle",
+                "value": "P3",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p3",
+                "col_id": "assessment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p3",
+                "col_id": "agency",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p4",
+            "cells": [
+              {
+                "row_id": "p4",
+                "col_id": "principle",
+                "value": "P4",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p4",
+                "col_id": "assessment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p4",
+                "col_id": "agency",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p5",
+            "cells": [
+              {
+                "row_id": "p5",
+                "col_id": "principle",
+                "value": "P5",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p5",
+                "col_id": "assessment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p5",
+                "col_id": "agency",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p6",
+            "cells": [
+              {
+                "row_id": "p6",
+                "col_id": "principle",
+                "value": "P6",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p6",
+                "col_id": "assessment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p6",
+                "col_id": "agency",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p7",
+            "cells": [
+              {
+                "row_id": "p7",
+                "col_id": "principle",
+                "value": "P7",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p7",
+                "col_id": "assessment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p7",
+                "col_id": "agency",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p8",
+            "cells": [
+              {
+                "row_id": "p8",
+                "col_id": "principle",
+                "value": "P8",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p8",
+                "col_id": "assessment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p8",
+                "col_id": "agency",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "p9",
+            "cells": [
+              {
+                "row_id": "p9",
+                "col_id": "principle",
+                "value": "P9",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p9",
+                "col_id": "assessment",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "p9",
+                "col_id": "agency",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          }
+        ],
+        "meta_version": null,
+        "last_updated": null,
+        "updated_by": null,
+        "notes": null
       },
       "Q12_B": {
-        "fields": {
-          "P1": {
-            "fields": {
-              "not_material": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "not_at_stage": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "no_resources": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "planned_next_year": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "other_reason": {
-                "bool_value": null,
-                "string_value": "",
-                "timestamp": null,
-                "updated_by": null
-              }
-            },
-            "timestamp": null,
-            "updated_by": null
+        "question_id": "Q12_B",
+        "columns": [
+          {
+            "col_id": "reason",
+            "label": "Questions",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P2": {
-            "fields": {
-              "not_material": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "not_at_stage": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "no_resources": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "planned_next_year": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "other_reason": {
-                "bool_value": null,
-                "string_value": "",
-                "timestamp": null,
-                "updated_by": null
-              }
-            },
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p1",
+            "label": "P1",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P3": {
-            "fields": {
-              "not_material": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "not_at_stage": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "no_resources": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "planned_next_year": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "other_reason": {
-                "bool_value": null,
-                "string_value": "",
-                "timestamp": null,
-                "updated_by": null
-              }
-            },
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p2",
+            "label": "P2",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P4": {
-            "fields": {
-              "not_material": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "not_at_stage": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "no_resources": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "planned_next_year": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "other_reason": {
-                "bool_value": null,
-                "string_value": "",
-                "timestamp": null,
-                "updated_by": null
-              }
-            },
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p3",
+            "label": "P3",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P5": {
-            "fields": {
-              "not_material": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "not_at_stage": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "no_resources": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "planned_next_year": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "other_reason": {
-                "bool_value": null,
-                "string_value": "",
-                "timestamp": null,
-                "updated_by": null
-              }
-            },
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p4",
+            "label": "P4",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P6": {
-            "fields": {
-              "not_material": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "not_at_stage": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "no_resources": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "planned_next_year": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "other_reason": {
-                "bool_value": null,
-                "string_value": "",
-                "timestamp": null,
-                "updated_by": null
-              }
-            },
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p5",
+            "label": "P5",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P7": {
-            "fields": {
-              "not_material": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "not_at_stage": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "no_resources": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "planned_next_year": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "other_reason": {
-                "bool_value": null,
-                "string_value": "",
-                "timestamp": null,
-                "updated_by": null
-              }
-            },
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p6",
+            "label": "P6",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P8": {
-            "fields": {
-              "not_material": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "not_at_stage": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "no_resources": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "planned_next_year": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "other_reason": {
-                "bool_value": null,
-                "string_value": "",
-                "timestamp": null,
-                "updated_by": null
-              }
-            },
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p7",
+            "label": "P7",
+            "type": "string",
+            "calc": false,
+            "note": null
           },
-          "P9": {
-            "fields": {
-              "not_material": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "not_at_stage": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "no_resources": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "planned_next_year": {
-                "bool_value": null,
-                "timestamp": null,
-                "updated_by": null
-              },
-              "other_reason": {
-                "bool_value": null,
-                "string_value": "",
-                "timestamp": null,
-                "updated_by": null
-              }
-            },
-            "timestamp": null,
-            "updated_by": null
+          {
+            "col_id": "p8",
+            "label": "P8",
+            "type": "string",
+            "calc": false,
+            "note": null
+          },
+          {
+            "col_id": "p9",
+            "label": "P9",
+            "type": "string",
+            "calc": false,
+            "note": null
           }
-        },
-        "timestamp": null,
-        "updated_by": null
+        ],
+        "rows": [
+          {
+            "row_id": "not_material",
+            "cells": [
+              {
+                "row_id": "not_material",
+                "col_id": "reason",
+                "value": "The entity does not consider the Principles material to its business (Yes/No)",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_material",
+                "col_id": "p1",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_material",
+                "col_id": "p2",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_material",
+                "col_id": "p3",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_material",
+                "col_id": "p4",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_material",
+                "col_id": "p5",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_material",
+                "col_id": "p6",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_material",
+                "col_id": "p7",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_material",
+                "col_id": "p8",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_material",
+                "col_id": "p9",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "not_at_stage",
+            "cells": [
+              {
+                "row_id": "not_at_stage",
+                "col_id": "reason",
+                "value": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles (Yes/No)",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_at_stage",
+                "col_id": "p1",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_at_stage",
+                "col_id": "p2",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_at_stage",
+                "col_id": "p3",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_at_stage",
+                "col_id": "p4",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_at_stage",
+                "col_id": "p5",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_at_stage",
+                "col_id": "p6",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_at_stage",
+                "col_id": "p7",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_at_stage",
+                "col_id": "p8",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "not_at_stage",
+                "col_id": "p9",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "no_resources",
+            "cells": [
+              {
+                "row_id": "no_resources",
+                "col_id": "reason",
+                "value": "The entity does not have the financial or/human and technical resources available for the task (Yes/No)",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "no_resources",
+                "col_id": "p1",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "no_resources",
+                "col_id": "p2",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "no_resources",
+                "col_id": "p3",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "no_resources",
+                "col_id": "p4",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "no_resources",
+                "col_id": "p5",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "no_resources",
+                "col_id": "p6",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "no_resources",
+                "col_id": "p7",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "no_resources",
+                "col_id": "p8",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "no_resources",
+                "col_id": "p9",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          },
+          {
+            "row_id": "next_year",
+            "cells": [
+              {
+                "row_id": "next_year",
+                "col_id": "reason",
+                "value": "It is planned to be done in the next financial year (Yes/No)",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "next_year",
+                "col_id": "p1",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "next_year",
+                "col_id": "p2",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "next_year",
+                "col_id": "p3",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "next_year",
+                "col_id": "p4",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "next_year",
+                "col_id": "p5",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "next_year",
+                "col id": "p6",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "next_year",
+                "col_id": "p7",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "next_year",
+                "col_id": "p8",
+                "value": "",
+                "calc": false,
+                "note": null
+              },
+              {
+                "row_id": "next_year",
+                "col_id": "p9",
+                "value": "",
+                "calc": false,
+                "note": null
+              }
+            ],
+            "calc": false,
+            "note": null
+          }
+        ]
       }
     }
   },
-  "metadata": {
-    "last_updated": null,
-    "last_updated_by": null,
-    "status": "draft"
-  }
+  "meta": {
+    "version": "1.0.0",
+    "last_updated": "2023-10-01T00:00:00Z",
+    "updated_by": "admin",
+    "notes": "Initial data load for landing flow questions and answers."
+  },
+  "created_at": "2023-10-01T00:00:00Z",
+  "updated_at": "2023-10-01T00:00:00Z"
 }
