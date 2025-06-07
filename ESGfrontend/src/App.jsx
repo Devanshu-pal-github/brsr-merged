@@ -2,22 +2,25 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/PlantPages/Dashboard';
 import LoginPage from './pages/LoginPage';
+import LandingPage from './pages/LandingPage';
 import DynamicModulePage from './components/DynamicModulePage';
 import CreateEmployee from './pages/createEmployee';
 import DynamicEntityDetails from './pages/DynamicEntityDetails';
 import TestHarness from './features/temp';
-import ChatbotButton from './AICHATBOT/ChatbotButton'; // Corrected import
-import { AppProvider } from './AICHATBOT/AppProvider'; // Import AppProvider
-import CompanyPage from './features/company/pages/CompanyPage'; // Import CompanyPage
+import ChatbotButton from './AICHATBOT/ChatbotButton';
+import { AppProvider } from './AICHATBOT/AppProvider';
+import CompanyPage from './features/company/pages/CompanyPage';
 
 function App() {
   return (
-    <AppProvider> {/* Wrap the app with AppProvider */}
+    <AppProvider>
       <Router>
         <Routes>
           <Route path="/" element={<LoginPage />} />
-          <Route path="/company" element={<CompanyPage />} /> {/* New company page route */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/company" element={<CompanyPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/:moduleName" element={<DynamicModulePage />} />
           <Route path="/createEmployee" element={<CreateEmployee />} />
           <Route path="/module/:moduleId" element={<DynamicEntityDetails />} />

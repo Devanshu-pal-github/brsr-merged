@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Menu, ChevronDown, Bell } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
+    const navigate = useNavigate();
     // Initialize financial year and user name from localStorage
     const [selectedFY, setSelectedFY] = useState(() => {
         return localStorage.getItem('financial_year') || '2025-26'; // Fallback if not in localStorage
@@ -44,15 +46,13 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
 
     const toggleUserDropdown = () => {
         setIsUserDropdownOpen(!isUserDropdownOpen);
-    };
-
-    // Redirect to login if no token is present
+    };    // Redirect to login if no token is present
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (!token) {
-            window.location.href = '/login';
+            navigate('/login');
         }
-    }, []);
+    }, [navigate]);
 
     // Extract user initials for the avatar
     const getUserInitials = (name) => {
@@ -133,7 +133,7 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                         <ul className="absolute right-0 mt-2 w-36 sm:w-44 bg-[#000D30] rounded-md shadow-md z-50 overflow-hidden">                            <li
                                 className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
                                 onClick={() => {
-                                    window.location.href = '/landing';
+                                    navigate('/landing');
                                     setIsUserDropdownOpen(false);
                                 }}
                             >
@@ -145,12 +145,11 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                             >
                                 Settings
                             </li>
-                            <li
-                                className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
+                            <li                                className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
                                 onClick={() => {
                                     // Clear localStorage and redirect to login on logout
                                     localStorage.clear();
-                                    window.location.href = '/login';
+                                    navigate('/login');
                                     setIsUserDropdownOpen(false);
                                 }}
                             >
