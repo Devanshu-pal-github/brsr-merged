@@ -5,41 +5,74 @@ import TableActionButtons from '../common/TableActionButtons';
 
 const GeneralDetailsForm = () => {
   const [formData, setFormData] = useState({
-    cin: '',
-    companyName: '',
-    incorporationYear: '',
-    registeredAddress: '',
-    corporateAddress: '',
-    sameAsRegistered: false,
-    email: '',
-    telephone: '',
-    website: '',
-    financialYear: '',
-    stockExchanges: '',
-    paidUpCapital: '',
-    contactPersonName: '',
-    contactPersonEmail: '',
-    contactPersonPhone: '',
-    reportingBoundary: 'standalone',
-    csrApplicable: 'no',
-    turnover: '',
-    netWorth: ''
+    Q1_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q2_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q3_A: { string_value: null, bool_value: null, decimal_value: null },
+    Q4_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q5_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q6_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q7_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q8_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q9_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q10_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q11_A: { table: { rows: [] } },
+    Q12_A: { table: [] },
+    Q13_A: { string_value: '', bool_value: null, decimal_value: null },
+    Q22i_A: { string_value: null, bool_value: null, decimal_value: null },
+    Q22ii_A: { string_value: null, bool_value: null, decimal_value: null },
+    Q22iii_A: { string_value: null, bool_value: null, decimal_value: null }
   });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-      ...(name === 'sameAsRegistered' && checked 
-        ? { corporateAddress: prev.registeredAddress }
-        : {})
+      [name]: {
+        ...prev[name],
+        string_value: type === 'text' || type === 'email' || type === 'tel' || type === 'url' ? value : prev[name]?.string_value,
+        decimal_value: type === 'number' ? parseFloat(value) : prev[name]?.decimal_value,
+        bool_value: type === 'checkbox' || type === 'radio' ? checked : prev[name]?.bool_value
+      }
     }));
+
+    // Special handling for same as registered address
+    if (name === 'Q5_A' && checked) {
+      setFormData(prev => ({
+        ...prev,
+        Q5_A: {
+          ...prev.Q5_A,
+          string_value: prev.Q4_A.string_value
+        }
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form data:', formData);
+  };
+
+  // Update the reset handler in TableActionButtons
+  const handleReset = () => {
+    setFormData({
+      Q1_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q2_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q3_A: { string_value: null, bool_value: null, decimal_value: null },
+      Q4_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q5_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q6_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q7_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q8_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q9_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q10_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q11_A: { table: { rows: [] } },
+      Q12_A: { table: [] },
+      Q13_A: { string_value: '', bool_value: null, decimal_value: null },
+      Q22i_A: { string_value: null, bool_value: null, decimal_value: null },
+      Q22ii_A: { string_value: null, bool_value: null, decimal_value: null },
+      Q22iii_A: { string_value: null, bool_value: null, decimal_value: null }
+    });
   };
 
   return (
@@ -51,8 +84,8 @@ const GeneralDetailsForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField label="Corporate Identity Number (CIN)" required>
                 <FormInput
-                  name="cin"
-                  value={formData.cin}
+                  name="Q1_A"
+                  value={formData.Q1_A}
                   onChange={handleChange}
                   placeholder="Enter CIN"
                   required
@@ -60,8 +93,8 @@ const GeneralDetailsForm = () => {
               </FormField>
               <FormField label="Name of Listed Entity" required>
                 <FormInput
-                  name="companyName"
-                  value={formData.companyName}
+                  name="Q2_A"
+                  value={formData.Q2_A}
                   onChange={handleChange}
                   placeholder="Enter company name"
                   required
@@ -69,9 +102,9 @@ const GeneralDetailsForm = () => {
               </FormField>
               <FormField label="Year of Incorporation" required>
                 <FormInput
-                  name="incorporationYear"
+                  name="Q3_A"
                   type="number"
-                  value={formData.incorporationYear}
+                  value={formData.Q3_A}
                   onChange={handleChange}
                   placeholder="YYYY"
                   required
@@ -81,8 +114,8 @@ const GeneralDetailsForm = () => {
               </FormField>
               <FormField label="Financial Year for Reporting" required>
                 <FormInput
-                  name="financialYear"
-                  value={formData.financialYear}
+                  name="Q4_A"
+                  value={formData.Q4_A}
                   onChange={handleChange}
                   placeholder="e.g., 2024-25"
                   required
@@ -96,8 +129,8 @@ const GeneralDetailsForm = () => {
             <div className="space-y-6">
               <FormField label="Registered Office Address" required>
                 <FormTextArea
-                  name="registeredAddress"
-                  value={formData.registeredAddress}
+                  name="Q5_A"
+                  value={formData.Q5_A}
                   onChange={handleChange}
                   placeholder="Enter complete registered office address"
                   required
@@ -108,8 +141,8 @@ const GeneralDetailsForm = () => {
                 <input
                   type="checkbox"
                   id="sameAsRegistered"
-                  name="sameAsRegistered"
-                  checked={formData.sameAsRegistered}
+                  name="Q6_A"
+                  checked={formData.Q6_A}
                   onChange={handleChange}
                   className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 />
@@ -119,13 +152,13 @@ const GeneralDetailsForm = () => {
               </div>
               <FormField label="Corporate Address" required>
                 <FormTextArea
-                  name="corporateAddress"
-                  value={formData.corporateAddress}
+                  name="Q7_A"
+                  value={formData.Q7_A}
                   onChange={handleChange}
                   placeholder="Enter corporate address"
                   required
                   rows={3}
-                  disabled={formData.sameAsRegistered}
+                  disabled={formData.Q6_A}
                 />
               </FormField>
             </div>
@@ -137,8 +170,8 @@ const GeneralDetailsForm = () => {
               <FormField label="E-mail" required>
                 <FormInput
                   type="email"
-                  name="email"
-                  value={formData.email}
+                  name="Q8_A"
+                  value={formData.Q8_A}
                   onChange={handleChange}
                   placeholder="Enter email address"
                   required
@@ -147,8 +180,8 @@ const GeneralDetailsForm = () => {
               <FormField label="Telephone" required>
                 <FormInput
                   type="tel"
-                  name="telephone"
-                  value={formData.telephone}
+                  name="Q9_A"
+                  value={formData.Q9_A}
                   onChange={handleChange}
                   placeholder="Enter telephone number"
                   required
@@ -157,8 +190,8 @@ const GeneralDetailsForm = () => {
               <FormField label="Website">
                 <FormInput
                   type="url"
-                  name="website"
-                  value={formData.website}
+                  name="Q10_A"
+                  value={formData.Q10_A}
                   onChange={handleChange}
                   placeholder="Enter website URL"
                 />
@@ -172,8 +205,8 @@ const GeneralDetailsForm = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField label="Stock Exchange(s) Listed" required>
                   <FormInput
-                    name="stockExchanges"
-                    value={formData.stockExchanges}
+                    name="Q11_A"
+                    value={formData.Q11_A}
                     onChange={handleChange}
                     placeholder="Enter stock exchanges"
                     required
@@ -181,8 +214,8 @@ const GeneralDetailsForm = () => {
                 </FormField>
                 <FormField label="Paid-up Capital" required>
                   <FormInput
-                    name="paidUpCapital"
-                    value={formData.paidUpCapital}
+                    name="Q12_A"
+                    value={formData.Q12_A}
                     onChange={handleChange}
                     placeholder="Enter paid-up capital"
                     required
@@ -194,8 +227,8 @@ const GeneralDetailsForm = () => {
                 <FormField label="Turnover (in Rs.)" required>
                   <FormInput
                     type="number"
-                    name="turnover"
-                    value={formData.turnover}
+                    name="Q13_A"
+                    value={formData.Q13_A}
                     onChange={handleChange}
                     placeholder="Enter turnover amount"
                     required
@@ -204,8 +237,8 @@ const GeneralDetailsForm = () => {
                 <FormField label="Net Worth (in Rs.)" required>
                   <FormInput
                     type="number"
-                    name="netWorth"
-                    value={formData.netWorth}
+                    name="Q22i_A"
+                    value={formData.Q22i_A}
                     onChange={handleChange}
                     placeholder="Enter net worth"
                     required
@@ -220,8 +253,8 @@ const GeneralDetailsForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FormField label="Contact Person Name" required>
                 <FormInput
-                  name="contactPersonName"
-                  value={formData.contactPersonName}
+                  name="Q22ii_A"
+                  value={formData.Q22ii_A}
                   onChange={handleChange}
                   placeholder="Enter name"
                   required
@@ -230,8 +263,8 @@ const GeneralDetailsForm = () => {
               <FormField label="Contact Person Email" required>
                 <FormInput
                   type="email"
-                  name="contactPersonEmail"
-                  value={formData.contactPersonEmail}
+                  name="Q22iii_A"
+                  value={formData.Q22iii_A}
                   onChange={handleChange}
                   placeholder="Enter email"
                   required
@@ -240,8 +273,8 @@ const GeneralDetailsForm = () => {
               <FormField label="Contact Person Phone" required>
                 <FormInput
                   type="tel"
-                  name="contactPersonPhone"
-                  value={formData.contactPersonPhone}
+                  name="Q22_A"
+                  value={formData.Q22_A}
                   onChange={handleChange}
                   placeholder="Enter phone number"
                   required
@@ -309,27 +342,7 @@ const GeneralDetailsForm = () => {
             </div>
           </FormSection>
         </CardContent>        <CardFooter>          <TableActionButtons 
-            onReset={() => setFormData({
-              cin: '',
-              companyName: '',
-              incorporationYear: '',
-              registeredAddress: '',
-              corporateAddress: '',
-              sameAsRegistered: false,
-              email: '',
-              telephone: '',
-              website: '',
-              financialYear: '',
-              stockExchanges: '',
-              paidUpCapital: '',
-              contactPersonName: '',
-              contactPersonEmail: '',
-              contactPersonPhone: '',
-              reportingBoundary: 'standalone',
-              csrApplicable: 'no',
-              turnover: '',
-              netWorth: ''
-            })}
+            onReset={handleReset}
             onSave={(e) => {
               e?.preventDefault();
               console.log('Saving form data:', formData);
