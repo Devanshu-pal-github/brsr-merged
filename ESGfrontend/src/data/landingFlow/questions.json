@@ -1,0 +1,1093 @@
+{
+  "version": "1.0.0",
+  "tabs": [
+    {
+      "id": "general_details",
+      "name": "General Details",
+      "questions": [
+        {          "question_id": "Q1_A",
+          "question": "Corporate Identity Number (CIN)",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q2_A",
+          "question": "Name of Listed Entity",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q3_A",
+          "question": "Year of Incorporation",
+          "type": "subjective",
+          "has_decimal_value": true,
+          "decimal_value_required": true
+        },
+        {          "question_id": "Q9_A",
+          "question": "Financial Year for Reporting",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q4_A",
+          "question": "Registered Office Address",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q5_A",
+          "question": "Corporate Address",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true,
+          "has_boolean_value": true,
+          "guidance": "Check if same as registered address"
+        },
+        {          "question_id": "Q6_A",
+          "question": "E-mail",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q7_A",
+          "question": "Telephone",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q8_A",
+          "question": "Website",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": false,
+          "has_link": true
+        },
+        {          "question_id": "Q10_A",
+          "question": "Stock Exchange(s) Listed",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q11_A",
+          "question": "Paid-up Capital",
+          "type": "subjective",
+          "has_decimal_value": true,
+          "decimal_value_required": true
+        },
+        {          "question_id": "Q12_A",
+          "question": "Contact Person Details",
+          "type": "subjective",
+          "has_multiple_fields": true,
+          "fields": [
+            {
+              "id": "name",
+              "question": "Contact Person Name",
+              "has_string_value": true,
+              "string_value_required": true
+            },
+            {
+              "id": "email",
+              "question": "Contact Person Email",
+              "has_string_value": true,
+              "string_value_required": true
+            },
+            {
+              "id": "phone",
+              "question": "Contact Person Phone",
+              "has_string_value": true,
+              "string_value_required": true
+            }
+          ]
+        },
+        {          "question_id": "Q13_A",
+          "question": "Reporting Boundary",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q22i_A",
+          "question": "CSR Applicable as per section 135",
+          "type": "subjective",
+          "has_boolean_value": true,
+          "boolean_value_required": true
+        },
+        {          "question_id": "Q22ii_A",
+          "question": "Turnover (in Rs.)",
+          "type": "subjective",
+          "has_decimal_value": true,
+          "decimal_value_required": true
+        },
+        {          "question_id": "Q22iii_A",
+          "question": "Net Worth (in Rs.)",
+          "type": "subjective",
+          "has_decimal_value": true,
+          "decimal_value_required": true
+        }
+      ]
+    },
+    {
+      "id": "policy_management",
+      "name": "Policy and Management",
+      "questions": [
+        {          "question_id": "Q1a_B",
+          "question": "Whether your entity's policy/policies cover each principle and its core elements of the NGRBCs. (Yes/No)",
+          "type": "subjective",
+          "has_boolean_value": true,
+          "boolean_value_required": true
+        },
+        {          "question_id": "Q1b_B",
+          "question": "Has the policy been approved by the Board? (Yes/No)",
+          "type": "subjective",
+          "has_boolean_value": true,
+          "boolean_value_required": true
+        },
+        {          "question_id": "Q1c_B",
+          "question": "Web Link of the Policies, if available",
+          "type": "subjective",
+          "has_link": true,
+          "link_required": false
+        },
+        {          "question_id": "Q2_B",
+          "question": "Whether the entity has translated the policy into procedures. (Yes/No)",
+          "type": "subjective",
+          "has_boolean_value": true,
+          "boolean_value_required": true
+        },
+        {          "question_id": "Q3_B",
+          "question": "Do the enlisted policies extend to your value chain partners?",
+          "type": "subjective",
+          "has_boolean_value": true,
+          "boolean_value_required": true
+        },
+        {          "question_id": "Q4_B",
+          "question": "Name of the national and international codes/certifications/labels/standards adopted by your entity and mapped to each principle.",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q5_B",
+          "question": "Specific commitments, goals and targets set by the entity with defined timelines, if any.",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },
+        {          "question_id": "Q6_B",
+          "question": "Performance of the entity against the specific commitments, goals and targets along-with reasons in case the same are not met.",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        }
+      ]
+    },
+    {
+      "id": "governance",
+      "name": "Governance Leadership and Oversight",
+      "questions": [
+        {          "question_id": "Q7_B",
+          "question": "Director's Statement highlighting ESG related challenges, targets and achievements",
+          "type": "subjective",
+          "has_string_value": true,
+          "string_value_required": true
+        },        {          "question_id": "Q8_B",
+          "question": "Details of the highest authority responsible for implementation and oversight",
+          "type": "subjective",
+          "has_multiple_fields": true,
+          "fields": [
+            {
+              "id": "name",
+              "question": "Name of the highest authority",
+              "has_string_value": true,
+              "string_value_required": true
+            },
+            {
+              "id": "designation",
+              "question": "Designation of the highest authority",
+              "has_string_value": true,
+              "string_value_required": true
+            },
+            {
+              "id": "details",
+              "question": "Additional details about the authority's role and responsibilities",
+              "has_string_value": true,
+              "string_value_required": false
+            }
+          ]
+        },        {          "question_id": "Q9_B",
+          "question": "Details of the Committee responsible for sustainability related decision making",
+          "type": "subjective",
+          "has_boolean_value": true,
+          "boolean_value_required": true,
+          "has_multiple_fields": true,
+          "fields": [
+            {
+              "id": "exists",
+              "question": "Does the entity have a specified Committee of the Board/Director responsible for decision making on sustainability related issues?",
+              "has_boolean_value": true,
+              "boolean_value_required": true
+            },
+            {
+              "id": "name",
+              "question": "Committee Name",
+              "has_string_value": true,
+              "string_value_required": true
+            },
+            {
+              "id": "description",
+              "question": "Committee Description",
+              "has_string_value": true,
+              "string_value_required": true
+            }
+          ]
+        }
+      ]
+    },    {
+      "id": "policy_review",
+      "name": "Policy Review",
+      "questions": [        {          "question_id": "Q10_B",
+          "question": "Policy Review Details",
+          "type": "subjective",
+          "has_multiple_fields": true,
+          "fields": [
+            {
+              "id": "not_material",
+              "question": "The entity does not consider the Principles material to its business",
+              "has_boolean_value": true,
+              "boolean_value_required": true
+            },
+            {
+              "id": "not_at_stage",
+              "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+              "has_boolean_value": true,
+              "boolean_value_required": true
+            },
+            {
+              "id": "no_resources",
+              "question": "The entity does not have financial or/human and technical resources available for the task",
+              "has_boolean_value": true,
+              "boolean_value_required": true
+            },
+            {
+              "id": "planned_next_year",
+              "question": "It is planned to be done in the next financial year",
+              "has_boolean_value": true,
+              "boolean_value_required": true
+            },
+            {
+              "id": "other_reason",
+              "question": "Any other reason (please specify)",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            },
+            {
+              "id": "reach_implementation",
+              "question": "Reach and implementation of policies and processes",
+              "has_string_value": true,
+              "string_value_required": true
+            },
+            {
+              "id": "review_frequency",
+              "question": "How frequently policies and processes are evaluated and reviewed",
+              "has_string_value": true,
+              "string_value_required": true
+            },
+            {              "id": "performance_review",
+              "question": "Performance against above policies and follow up action",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "P1",
+                  "question": "P1",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P2",
+                  "question": "P2",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P3",
+                  "question": "P3",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P4",
+                  "question": "P4",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P5",
+                  "question": "P5",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P6",
+                  "question": "P6",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P7",
+                  "question": "P7",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P8",
+                  "question": "P8",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P9",
+                  "question": "P9",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "compliance_review",
+              "question": "Compliance with statutory requirements of relevance to the principles, and rectification of any non-compliances",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "P1",
+                  "question": "P1",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P2",
+                  "question": "P2",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P3",
+                  "question": "P3",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P4",
+                  "question": "P4",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P5",
+                  "question": "P5",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P6",
+                  "question": "P6",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P7",
+                  "question": "P7",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P8",
+                  "question": "P8",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                },
+                {
+                  "id": "P9",
+                  "question": "P9",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "review_by",
+                      "question": "Indicate whether review was undertaken by Director/Committee/Any other Committee",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    },
+                    {
+                      "id": "frequency",
+                      "question": "Frequency (Annually/Half yearly/Quarterly/Any other – please specify)",
+                      "has_string_value": true,
+                      "string_value_required": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "question_id": "Q11_B",
+          "question": "Has the entity carried out independent assessment/ evaluation of the working of its policies by an external agency? (Yes/No). If yes, provide name of the agency.",
+          "type": "subjective",
+          "has_multiple_fields": true,
+          "fields": [
+            {
+              "id": "P1",
+              "question": "P1",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            },
+            {
+              "id": "P2",
+              "question": "P2",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            },
+            {
+              "id": "P3",
+              "question": "P3",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            },
+            {
+              "id": "P4",
+              "question": "P4",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            },
+            {
+              "id": "P5",
+              "question": "P5",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            },
+            {
+              "id": "P6",
+              "question": "P6",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            },
+            {
+              "id": "P7",
+              "question": "P7",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            },
+            {
+              "id": "P8",
+              "question": "P8",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            },
+            {
+              "id": "P9",
+              "question": "P9",
+              "has_boolean_value": true,
+              "boolean_value_required": true,
+              "has_string_value": true,
+              "string_value_required": false
+            }
+          ]
+        },
+        {
+          "question_id": "Q12_B",
+          "question": "If answer to question (1) above is \"No\" i.e. not all Principles are covered by a policy, reasons to be stated:",
+          "type": "subjective",
+          "has_multiple_fields": true,          "fields": [
+            {
+              "id": "P1",
+              "question": "P1",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "not_material",
+                  "question": "The entity does not consider the Principles material to its business",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "not_at_stage",
+                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "no_resources",
+                  "question": "The entity does not have financial or/human and technical resources available for the task",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "planned_next_year",
+                  "question": "It is planned to be done in the next financial year",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "other_reason",
+                  "question": "Any other reason (please specify)",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_string_value": true,
+                  "string_value_required": false
+                }
+              ]
+            },
+            {
+              "id": "P2",
+              "question": "P2",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "not_material",
+                  "question": "The entity does not consider the Principles material to its business",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "not_at_stage",
+                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "no_resources",
+                  "question": "The entity does not have financial or/human and technical resources available for the task",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "planned_next_year",
+                  "question": "It is planned to be done in the next financial year",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "other_reason",
+                  "question": "Any other reason (please specify)",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_string_value": true,
+                  "string_value_required": false
+                }
+              ]
+            },
+            {
+              "id": "P3",
+              "question": "P3",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "not_material",
+                  "question": "The entity does not consider the Principles material to its business",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "not_at_stage",
+                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "no_resources",
+                  "question": "The entity does not have financial or/human and technical resources available for the task",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "planned_next_year",
+                  "question": "It is planned to be done in the next financial year",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "other_reason",
+                  "question": "Any other reason (please specify)",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_string_value": true,
+                  "string_value_required": false
+                }
+              ]
+            },
+            {
+              "id": "P4",
+              "question": "P4",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "not_material",
+                  "question": "The entity does not consider the Principles material to its business",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "not_at_stage",
+                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "no_resources",
+                  "question": "The entity does not have financial or/human and technical resources available for the task",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "planned_next_year",
+                  "question": "It is planned to be done in the next financial year",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "other_reason",
+                  "question": "Any other reason (please specify)",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_string_value": true,
+                  "string_value_required": false
+                }
+              ]
+            },
+            {
+              "id": "P5",
+              "question": "P5",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "not_material",
+                  "question": "The entity does not consider the Principles material to its business",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "not_at_stage",
+                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "no_resources",
+                  "question": "The entity does not have financial or/human and technical resources available for the task",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "planned_next_year",
+                  "question": "It is planned to be done in the next financial year",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "other_reason",
+                  "question": "Any other reason (please specify)",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_string_value": true,
+                  "string_value_required": false
+                }
+              ]
+            },
+            {
+              "id": "P6",
+              "question": "P6",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "not_material",
+                  "question": "The entity does not consider the Principles material to its business",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "not_at_stage",
+                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "no_resources",
+                  "question": "The entity does not have financial or/human and technical resources available for the task",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "planned_next_year",
+                  "question": "It is planned to be done in the next financial year",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "other_reason",
+                  "question": "Any other reason (please specify)",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_string_value": true,
+                  "string_value_required": false
+                }
+              ]
+            },
+            {
+              "id": "P7",
+              "question": "P7",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "not_material",
+                  "question": "The entity does not consider the Principles material to its business",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "not_at_stage",
+                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "no_resources",
+                  "question": "The entity does not have financial or/human and technical resources available for the task",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "planned_next_year",
+                  "question": "It is planned to be done in the next financial year",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "other_reason",
+                  "question": "Any other reason (please specify)",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_string_value": true,
+                  "string_value_required": false
+                }
+              ]
+            },
+            {
+              "id": "P8",
+              "question": "P8",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "not_material",
+                  "question": "The entity does not consider the Principles material to its business",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "not_at_stage",
+                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "no_resources",
+                  "question": "The entity does not have financial or/human and technical resources available for the task",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "planned_next_year",
+                  "question": "It is planned to be done in the next financial year",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "other_reason",
+                  "question": "Any other reason (please specify)",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_string_value": true,
+                  "string_value_required": false
+                }
+              ]
+            },
+            {
+              "id": "P9",
+              "question": "P9",
+              "has_multiple_fields": true,
+              "fields": [
+                {
+                  "id": "not_material",
+                  "question": "The entity does not consider the Principles material to its business",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "not_at_stage",
+                  "question": "The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "no_resources",
+                  "question": "The entity does not have financial or/human and technical resources available for the task",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "planned_next_year",
+                  "question": "It is planned to be done in the next financial year",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true
+                },
+                {
+                  "id": "other_reason",
+                  "question": "Any other reason (please specify)",
+                  "has_boolean_value": true,
+                  "boolean_value_required": true,
+                  "has_string_value": true,
+                  "string_value_required": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

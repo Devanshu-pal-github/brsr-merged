@@ -1,0 +1,177 @@
+{
+  "version": "1.0.0",
+  "schema_version": "1.0.0",
+  "modules": {
+    "admin": {
+      "name": "Admin",
+      "sub_modules": {
+        "entity_details": {
+          "name": "Entity Details",
+          "categories": [
+            {
+              "name": "Corporate Identity and Contact",
+              "questions": [
+                {
+                  "question_id": "Q1_A",
+                  "question": "Corporate Identity Number (CIN)",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "validation": {
+                    "pattern": "^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$"
+                  }
+                },
+                {
+                  "question_id": "Q2_A",
+                  "question": "Name of the Listed Entity",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true
+                },
+                {
+                  "question_id": "Q3_A",
+                  "question": "Year of Incorporation",
+                  "type": "subjective",
+                  "has_decimal_value": true,
+                  "decimal_value_required": true,
+                  "validation": {
+                    "min": 1800,
+                    "max": 2100
+                  }
+                },
+                {
+                  "question_id": "Q4_A",
+                  "question": "Registered Office Address",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true
+                },
+                {
+                  "question_id": "Q5_A",
+                  "question": "Corporate Address",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "has_bool_value": true,
+                  "bool_value_required": false,
+                  "guidance": "Indicate if same as registered address"
+                },
+                {
+                  "question_id": "Q6_A",
+                  "question": "E-mail",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "validation": {
+                    "pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+                  }
+                },
+                {
+                  "question_id": "Q7_A",
+                  "question": "Telephone",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true
+                },
+                {
+                  "question_id": "Q8_A",
+                  "question": "Website",
+                  "type": "subjective",
+                  "has_link": true,
+                  "link_required": false
+                }
+              ]
+            },
+            {
+              "name": "Financial and Reporting Details",
+              "questions": [
+                {
+                  "question_id": "Q9_A",
+                  "question": "Financial Year",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "validation": {
+                    "pattern": "^\\d{4}-\\d{2}$"
+                  }
+                },
+                {
+                  "question_id": "Q10_A",
+                  "question": "Stock Exchange(s)",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true
+                },
+                {
+                  "question_id": "Q11_A",
+                  "question": "Paid-up Capital",
+                  "type": "tabular",
+                  "has_table": true,
+                  "table_metadata": {
+                    "columns": [
+                      {
+                        "id": "type",
+                        "label": "Type",
+                        "type": "string"
+                      },
+                      {
+                        "id": "amount",
+                        "label": "Amount (Rs.)",
+                        "type": "decimal",
+                        "required": true
+                      }
+                    ]
+                  }
+                },
+                {
+                  "question_id": "Q12_A",
+                  "question": "Contact Person Details",
+                  "type": "subjective",
+                  "has_multiple_fields": true,
+                  "fields": [
+                    {
+                      "id": "name",
+                      "label": "Name",
+                      "type": "string",
+                      "required": true
+                    },
+                    {
+                      "id": "email",
+                      "label": "Email",
+                      "type": "string",
+                      "required": true,
+                      "validation": {
+                        "pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+                      }
+                    },
+                    {
+                      "id": "phone",
+                      "label": "Phone",
+                      "type": "string",
+                      "required": true
+                    }
+                  ]
+                },
+                {
+                  "question_id": "Q13_A",
+                  "question": "Reporting Boundary",
+                  "type": "subjective",
+                  "has_string_value": true,
+                  "string_value_required": true,
+                  "options": ["standalone", "consolidated"],
+                  "default": "standalone"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "metadata": {
+    "created_at": null,
+    "updated_at": null,
+    "created_by": null,
+    "updated_by": null
+  }
+}

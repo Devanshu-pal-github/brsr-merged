@@ -1,0 +1,841 @@
+{
+  "version": "1.0.0",
+  "responses": {
+    "general_details": {
+      "Q1_A": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q2_A": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },      "Q3_A": {
+        "decimal_value": null,
+        "timestamp": null,
+        "updated_by": null
+      },      "Q9_A": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },      "Q4_A": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },      "Q5_A": {
+        "string_value": "",
+        "bool_value": false,
+        "timestamp": null,
+        "updated_by": null
+      },      "Q6_A": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },      "Q7_A": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },      "Q8_A": {
+        "string_value": "",
+        "link": null,
+        "timestamp": null,
+        "updated_by": null
+      },      "Q10_A": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },      "Q11_A": {
+        "decimal_value": null,
+        "timestamp": null,
+        "updated_by": null
+      },      "Q12_A": {
+        "fields": {
+          "name": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "email": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "phone": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          }
+        },
+        "timestamp": null,
+        "updated_by": null
+      },      "Q13_A": {
+        "string_value": "standalone",
+        "timestamp": null,
+        "updated_by": null
+      },      "Q22i_A": {
+        "bool_value": false,
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q22ii_A": {
+        "decimal_value": null,
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q22iii_A": {
+        "decimal_value": null,
+        "timestamp": null,
+        "updated_by": null
+      }
+    },    "policy_management": {
+      "Q1a_B": {
+        "bool_value": null,
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q1b_B": {
+        "bool_value": null,
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q1c_B": {
+        "link": null,
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q2_B": {
+        "bool_value": null,
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q3_B": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },      "Q4_B": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q5_B": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q6_B": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      }
+    },
+    "governance": {      "Q7_B": {
+        "string_value": "",
+        "timestamp": null,
+        "updated_by": null
+      },      "Q8_B": {
+        "fields": {
+          "name": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "designation": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "details": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          }
+        },
+        "timestamp": null,
+        "updated_by": null      },      "Q9_B": {
+        "fields": {
+          "exists": {
+            "bool_value": null,
+            "timestamp": null,
+            "updated_by": null
+          },
+          "name": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "description": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          }
+        },
+        "timestamp": null,
+        "updated_by": null
+      }
+    },    "policy_review": {      "Q10_B": {
+        "fields": {
+          "not_material": {
+            "bool_value": null,
+            "timestamp": null,
+            "updated_by": null
+          },
+          "not_at_stage": {
+            "bool_value": null,
+            "timestamp": null,
+            "updated_by": null
+          },
+          "no_resources": {
+            "bool_value": null,
+            "timestamp": null,
+            "updated_by": null
+          },
+          "planned_next_year": {
+            "bool_value": null,
+            "timestamp": null,
+            "updated_by": null
+          },
+          "other_reason": {
+            "bool_value": null,
+            "timestamp": null,
+            "updated_by": null
+          },
+          "other_reason_text": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "reach_implementation": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "review_frequency": {
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },          "performance_review": {
+            "fields": {
+              "P1": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P2": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P3": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P4": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P5": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P6": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P7": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P8": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P9": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              }
+            }
+          },
+          "compliance_review": {
+            "fields": {
+              "P1": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P2": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P3": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P4": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P5": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P6": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P7": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P8": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              },
+              "P9": {
+                "fields": {
+                  "review_by": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  },
+                  "frequency": {
+                    "string_value": "",
+                    "timestamp": null,
+                    "updated_by": null
+                  }
+                }
+              }
+            }
+          }
+        },
+        "timestamp": null,
+        "updated_by": null
+      },
+      "Q11_B": {
+        "fields": {
+          "P1": {
+            "bool_value": null,
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P2": {
+            "bool_value": null,
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P3": {
+            "bool_value": null,
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P4": {
+            "bool_value": null,
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P5": {
+            "bool_value": null,
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P6": {
+            "bool_value": null,
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P7": {
+            "bool_value": null,
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P8": {
+            "bool_value": null,
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P9": {
+            "bool_value": null,
+            "string_value": "",
+            "timestamp": null,
+            "updated_by": null
+          }
+        },
+        "timestamp": null,
+        "updated_by": null
+      },      "Q12_B": {
+        "fields": {
+          "P1": {
+            "fields": {
+              "not_material": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "not_at_stage": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "no_resources": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "planned_next_year": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "other_reason": {
+                "bool_value": null,
+                "string_value": "",
+                "timestamp": null,
+                "updated_by": null
+              }
+            },
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P2": {
+            "fields": {
+              "not_material": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "not_at_stage": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "no_resources": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "planned_next_year": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "other_reason": {
+                "bool_value": null,
+                "string_value": "",
+                "timestamp": null,
+                "updated_by": null
+              }
+            },
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P3": {
+            "fields": {
+              "not_material": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "not_at_stage": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "no_resources": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "planned_next_year": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "other_reason": {
+                "bool_value": null,
+                "string_value": "",
+                "timestamp": null,
+                "updated_by": null
+              }
+            },
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P4": {
+            "fields": {
+              "not_material": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "not_at_stage": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "no_resources": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "planned_next_year": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "other_reason": {
+                "bool_value": null,
+                "string_value": "",
+                "timestamp": null,
+                "updated_by": null
+              }
+            },
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P5": {
+            "fields": {
+              "not_material": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "not_at_stage": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "no_resources": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "planned_next_year": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "other_reason": {
+                "bool_value": null,
+                "string_value": "",
+                "timestamp": null,
+                "updated_by": null
+              }
+            },
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P6": {
+            "fields": {
+              "not_material": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "not_at_stage": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "no_resources": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "planned_next_year": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "other_reason": {
+                "bool_value": null,
+                "string_value": "",
+                "timestamp": null,
+                "updated_by": null
+              }
+            },
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P7": {
+            "fields": {
+              "not_material": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "not_at_stage": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "no_resources": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "planned_next_year": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "other_reason": {
+                "bool_value": null,
+                "string_value": "",
+                "timestamp": null,
+                "updated_by": null
+              }
+            },
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P8": {
+            "fields": {
+              "not_material": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "not_at_stage": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "no_resources": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "planned_next_year": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "other_reason": {
+                "bool_value": null,
+                "string_value": "",
+                "timestamp": null,
+                "updated_by": null
+              }
+            },
+            "timestamp": null,
+            "updated_by": null
+          },
+          "P9": {
+            "fields": {
+              "not_material": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "not_at_stage": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "no_resources": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "planned_next_year": {
+                "bool_value": null,
+                "timestamp": null,
+                "updated_by": null
+              },
+              "other_reason": {
+                "bool_value": null,
+                "string_value": "",
+                "timestamp": null,
+                "updated_by": null
+              }
+            },
+            "timestamp": null,
+            "updated_by": null
+          }
+        },
+        "timestamp": null,
+        "updated_by": null
+      }
+    }
+  },
+  "metadata": {
+    "last_updated": null,
+    "last_updated_by": null,
+    "status": "draft"
+  }
+}
