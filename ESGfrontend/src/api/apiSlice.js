@@ -477,6 +477,24 @@ createEmployee: builder.mutation({
       },
       providesTags: ['Answers', 'PolicyAnswers', 'Responses']
     }),
+    bulkUpdatePolicyAnswers: builder.mutation({
+      query: (answers) => {
+        const company_id = localStorage.getItem('company_id');
+        const plant_id = localStorage.getItem('plant_id');
+        const financial_year = localStorage.getItem('financial_year');
+        
+        if (!company_id || !plant_id || !financial_year) {
+          throw new Error('Required context missing');
+        }
+
+        return {
+          url: `/company/${company_id}/plants/${plant_id}/policies/${financial_year}/bulk`,
+          method: 'POST',
+          body: answers
+        };
+      },
+      invalidatesTags: ['PolicyAnswers']
+    }),
   }),
 });
 
@@ -498,4 +516,5 @@ export const {
   useUpdateEmployeeRolesMutation,
   useUpdatePolicyAnswersMutation,
   useGetAnswersQuery,
+  useBulkUpdatePolicyAnswersMutation,
 } = apiSlice;

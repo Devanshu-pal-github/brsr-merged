@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent } from '../common/CardComponents';
 import TableActionButtons from '../common/TableActionButtons';
+import { useBulkUpdatePolicyAnswersMutation } from '../../../../api/apiSlice';
 
 // Questions structure matching questions.json format
 const questions = {
@@ -30,7 +31,10 @@ const questions = {
   }
 };
 
-const PolicyManagementForm = () => {  // State for storing responses that match the questions.json format
+const PolicyManagementForm = () => {
+  const [bulkUpdatePolicyAnswers] = useBulkUpdatePolicyAnswersMutation();
+  
+  // State for storing responses that match the questions.json format
   const [responses, setResponses] = useState({
     Q1_B: { table: { rows: [], meta_version: "1.0" } },
     Q2_B: { table: { rows: [], meta_version: "1.0" } },
@@ -174,11 +178,17 @@ const PolicyManagementForm = () => {  // State for storing responses that match 
   };
   const handleSave = async (questionId) => {
     try {
-      const response = responses[questionId];
+      // Map the UI questionId to the actual question ID
+      const mappedQuestionId = {
+        'web_links': 'Q5_B',
+        'text_answers': 'Q6_B'
+      }[questionId] || questionId;
+
+      const response = responses[mappedQuestionId];
       
       // Validate response structure before saving
       if (!response?.table?.rows) {
-        console.error('Invalid response structure');
+        console.error('Invalid response structure for question:', mappedQuestionId);
         return;
       }
 
@@ -196,13 +206,19 @@ const PolicyManagementForm = () => {  // State for storing responses that match 
         }
       };
 
-      const success = await updatePolicyAnswers(questionId, cleanedResponse);
-      if (success) {
-        // Update local state to match what was saved
+      const result = await bulkUpdatePolicyAnswers([{
+        questionId: mappedQuestionId,
+        answer: cleanedResponse
+      }]);
+
+      if ('data' in result) {
         setResponses(prev => ({
           ...prev,
-          [questionId]: cleanedResponse
+          [mappedQuestionId]: cleanedResponse
         }));
+        console.log('Successfully saved response for question:', mappedQuestionId);
+      } else {
+        throw new Error(`Failed to save response for question: ${mappedQuestionId}`);
       }
     } catch (error) {
       console.error('Error saving response:', error);
@@ -252,33 +268,31 @@ const PolicyManagementForm = () => {  // State for storing responses that match 
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">                {Object.entries(questions).map(([questionId, { text }], idx) => (
-                  <tr key={questionId} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-4 py-4 text-sm text-gray-900 align-top">
-                      {text}
-                    </td>
-                    {principles.map(principle => {
-                      const value = responses[questionId]?.table?.rows?.find(r => r.row_id === principle)?.cells[0]?.value;
+              <tbody className="bg-white divide-y divide-gray-200">
+                {Object.entries(questions).map(([questionId, { text }], idx) => (
+                  <tr key={questionId} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                    <td className="px-4 py-4 text-sm text-gray-900 align-top">{text}</td>
+                    {principles.map((principle) => {
+                      const value = responses[questionId]?.table?.rows?.find(
+                        (r) => r.row_id === principle
+                      )?.cells[0]?.value;
                       return (
-                        <td 
+                        <td
                           key={principle}
                           onClick={() => handleYesNoClick(questionId, principle)}
                           className="px-4 py-4 text-center cursor-pointer hover:bg-gray-100"
                         >
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            value === 'Yes' 
-                              ? 'bg-green-100 text-green-800' 
-                              : value === 'No'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {value || 'N/A'}
-                          </span>
+                            value === "Yes" ? "bg-green-100 text-green-800"
+                            : value === "No" ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
+                          }`}>{value || "N/A"}</span>
                         </td>
                       );
                     })}
                   </tr>
-                ))}              </tbody>
+                ))}
+              </tbody>
             </table>            <TableActionButtons 
               onReset={() => Object.keys(questions).forEach(handleReset)}
               onSave={() => Object.keys(questions).forEach(handleSave)}
@@ -308,19 +322,20 @@ const PolicyManagementForm = () => {  // State for storing responses that match 
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">                {linkQuestions.map((question, idx) => (
-                  <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-4 py-4 text-sm text-gray-900 align-top">
-                      {question}
-                    </td>
-                    {principles.map(principle => {
-                      const value = responses.Q5_B?.table?.rows?.find(r => r.row_id === principle)?.cells[0]?.value;
+              <tbody className="bg-white divide-y divide-gray-200">
+                {linkQuestions.map((question, idx) => (
+                  <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                    <td className="px-4 py-4 text-sm text-gray-900 align-top">{question}</td>
+                    {principles.map((principle) => {
+                      const value = responses.Q5_B?.table?.rows?.find(
+                        (r) => r.row_id === principle
+                      )?.cells[0]?.value;
                       return (
                         <td key={principle} className="px-4 py-4">
                           <input
                             type="url"
-                            value={value || ''}
-                            onChange={(e) => handleLinkChange('Q5_B', principle, e.target.value)}
+                            value={value || ""}
+                            onChange={(e) => handleLinkChange("Q5_B", principle, e.target.value)}
                             placeholder="Enter URL"
                             className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                           />
@@ -328,10 +343,11 @@ const PolicyManagementForm = () => {  // State for storing responses that match 
                       );
                     })}
                   </tr>
-                ))}              </tbody>
+                ))}
+              </tbody>
             </table>            <TableActionButtons 
-              onReset={() => handleReset('web_links')}
-              onSave={() => handleSave('web_links')}
+              onReset={() => handleReset('Q5_B')}
+              onSave={() => handleSave('Q5_B')}
             />
           </div>
         </CardContent>
@@ -358,18 +374,19 @@ const PolicyManagementForm = () => {  // State for storing responses that match 
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">                {textQuestions.map((question, idx) => (
-                  <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-4 py-4 text-sm text-gray-900 align-top">
-                      {question}
-                    </td>
-                    {principles.map(principle => {
-                      const value = responses.Q6_B?.table?.rows?.find(r => r.row_id === principle)?.cells[0]?.value;
+              <tbody className="bg-white divide-y divide-gray-200">
+                {textQuestions.map((question, idx) => (
+                  <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                    <td className="px-4 py-4 text-sm text-gray-900 align-top">{question}</td>
+                    {principles.map((principle) => {
+                      const value = responses.Q6_B?.table?.rows?.find(
+                        (r) => r.row_id === principle
+                      )?.cells[0]?.value;
                       return (
                         <td key={principle} className="px-4 py-4">
                           <textarea
-                            value={value || ''}
-                            onChange={(e) => handleTextChange('Q6_B', principle, e.target.value)}
+                            value={value || ""}
+                            onChange={(e) => handleTextChange("Q6_B", principle, e.target.value)}
                             placeholder="Enter details"
                             rows={3}
                             className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
@@ -381,8 +398,8 @@ const PolicyManagementForm = () => {  // State for storing responses that match 
                 ))}
               </tbody>
             </table>            <TableActionButtons 
-              onReset={() => handleReset('text_answers')}
-              onSave={() => handleSave('text_answers')}
+              onReset={() => handleReset('Q6_B')}
+              onSave={() => handleSave('Q6_B')}
             />
           </div>
         </CardContent>
