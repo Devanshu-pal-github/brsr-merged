@@ -98,18 +98,14 @@ export const apiSlice = createApi({
         };
       },
       transformResponse: (response) => {
+        // Transform the response to match the expected format
         if (!response || !response.responses) {
-          console.warn('Response is not in expected format:', response);
           return [];
         }
-        
-        // Convert responses object to array format expected by the UI
-        const transformedResponses = Object.entries(response.responses).map(([questionId, responseData]) => ({
+        return Object.entries(response.responses).map(([questionId, response]) => ({
           question_id: questionId,
-          ...responseData
+          ...response
         }));
-        
-        return transformedResponses;
       },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
@@ -135,18 +131,9 @@ export const apiSlice = createApi({
           url: `/company/${companyId}/plants/${plantId}/reportsNew/${financialYear}`,
           method: 'PATCH',
           body: formattedResponses,
-          headers: {
-            'Content-Type': 'application/json'
-          }
         };
       },
-      transformResponse: (response, meta, arg) => {
-        if (response.error) {
-          throw new Error(response.error.message || 'Failed to update responses');
-        }
-        return response;
-      },
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           console.log('✅ Bulk update successful:', data);
