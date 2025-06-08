@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Shield } from 'lucide-react';
-import { useLoginMutation } from '../api/apiSlice';
+import { useLoginMutation } from '../api/apiSlice.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {

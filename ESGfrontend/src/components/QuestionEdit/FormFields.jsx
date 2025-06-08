@@ -54,6 +54,52 @@ const FormFields = ({
     const renderStringValueField = () => {
         const inputType = question.input_type || QuestionInputType.TEXTAREA;
 
+        if (inputType === QuestionInputType.EMAIL) {
+            return (
+                <div className="space-y-3">
+                    <div className="relative">
+                        <input
+                            type="email"
+                            name="string_value"
+                            value={formData.string_value || ""}
+                            onChange={(e) => handleInputChange(e, "string")}
+                            placeholder="Enter email address"
+                            className="w-full p-3 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-inner border border-slate-200/60 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                        />
+                    </div>
+                    {errors?.string_value && (
+                        <div className="flex items-center gap-1 text-red-600 text-xs">
+                            <AlertCircle className="w-4 h-4" />
+                            {errors.string_value}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        if (inputType === QuestionInputType.URL) {
+            return (
+                <div className="space-y-3">
+                    <div className="relative">
+                        <input
+                            type="url"
+                            name="string_value"
+                            value={formData.string_value || ""}
+                            onChange={(e) => handleInputChange(e, "string")}
+                            placeholder="Enter website URL"
+                            className="w-full p-3 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-inner border border-slate-200/60 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                        />
+                    </div>
+                    {errors?.string_value && (
+                        <div className="flex items-center gap-1 text-red-600 text-xs">
+                            <AlertCircle className="w-4 h-4" />
+                            {errors.string_value}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
         if (inputType === QuestionInputType.TABLE_LIKE) {
             const tableData = leftAiMessage?.action === "SUGGEST_TABLE_STRUCTURE"
                 ? (leftAiMessage.points || ['Category', 'Value', 'Description'])

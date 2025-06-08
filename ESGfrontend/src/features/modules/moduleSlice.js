@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { apiSlice } from '../../api/apiSlice';
+import { apiSlice } from '../../api/apiSlice.jsx';
 
 const initialState = {
     modules: [],

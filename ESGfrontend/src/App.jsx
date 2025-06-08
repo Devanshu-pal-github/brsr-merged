@@ -6,7 +6,6 @@ import LandingPage from './pages/LandingPage';
 import DynamicModulePage from './components/DynamicModulePage';
 import CreateEmployee from './pages/createEmployee';
 import DynamicEntityDetails from './pages/DynamicEntityDetails';
-import TestHarness from './features/temp';
 import ChatbotButton from './AICHATBOT/ChatbotButton';
 import { AppProvider } from './AICHATBOT/AppProvider';
 import CompanyPage from './features/company/pages/CompanyPage';
@@ -25,7 +24,6 @@ function App() {
           <Route path="/:moduleName" element={<DynamicModulePage />} />
           <Route path="/createEmployee" element={<CreateEmployee />} />
           <Route path="/module/:moduleId" element={<DynamicEntityDetails />} />
-          <Route path="/testHarness" element={<TestHarness />} />
           <Route path="/chatbot" element={<ChatbotButton />} />
           <Route path="/audit" element={<AuditLogPage />} />
         </Routes>

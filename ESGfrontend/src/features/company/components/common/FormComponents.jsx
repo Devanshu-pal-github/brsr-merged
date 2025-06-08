@@ -19,22 +19,24 @@ export const FormField = ({ label, error, children, required }) => (
 );
 
 const validateInput = (value, type) => {
+  // Return empty values as is
+  if (value === '') return value;
+
   switch (type) {
     case 'email':
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? value : '';
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? value : null;
     case 'tel':
-      // Allow numbers, spaces, dashes, and plus sign
-      return /^[0-9\s\-+()]*$/.test(value) ? value : '';
+      // Allow numbers, spaces, dashes, plus sign, and parentheses
+      return /^[0-9\s\-+()]*$/.test(value) ? value : null;
     case 'url':
-      // Basic URL validation
       try {
-        if (value) new URL(value);
+        new URL(value.startsWith('http') ? value : `https://${value}`);
         return value;
       } catch {
-        return '';
+        return null;
       }
     case 'number':
-      return !isNaN(value) ? value : '';
+      return !isNaN(value) && value !== '' ? value : null;
     default:
       return value;
   }
@@ -55,7 +57,7 @@ export const FormInput = ({ value, onChange, type = "text", ...props }) => {
 
   const handleInputChange = (e) => {
     const validatedValue = validateInput(e.target.value, type);
-    if (validatedValue !== undefined) {
+    if (validatedValue !== null) {
       e.target.value = validatedValue;
       onChange(e);
     }
