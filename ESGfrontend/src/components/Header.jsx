@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Menu, ChevronDown, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import EmployeeListPopup from './employeeListPopup'; // Assuming you have a CSS file for styling
+import EmployeeListPopup from '../pages/PlantPages/employeeListPopup'; // Assuming you have a CSS file for styling
+
 
 const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
         return localStorage.getItem('user_name') || 'User'; // Fallback if not in localStorage
     });
 
-    
+
     const [isFYDropdownOpen, setIsFYDropdownOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
@@ -96,9 +97,8 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                                 <li
                                     key={year}
                                     onClick={() => selectFY(year)}
-                                    className={`px-4 py-2 text-[#000D30] text-[12px] cursor-pointer hover:bg-[#20305D] hover:text-white font-medium transition-colors ${
-                                        selectedFY === year ? 'bg-[#FFFFFF]' : ''
-                                    }`}
+                                    className={`px-4 py-2 text-[#000D30] text-[12px] cursor-pointer hover:bg-[#20305D] hover:text-white font-medium transition-colors ${selectedFY === year ? 'bg-[#FFFFFF]' : ''
+                                        }`}
                                 >
                                     FY {year}
                                 </li>
@@ -108,7 +108,7 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                 </div>
             </div>
 
-            <button 
+            <button
                 onClick={() => setShowEmployeeList(true)}
                 className="lg:flex items-center gap-2 px-3 py-2 rounded-md text-[12px] text-[#FFFFFF] font-medium bg-[#20305D] border border-gray-200 shadow-sm hover:bg-[#345678] transition-colors cursor-pointer ml-auto mr-3"
             >
@@ -141,21 +141,21 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                     {/* User Dropdown Menu */}
                     {isUserDropdownOpen && (
                         <ul className="absolute right-0 mt-2 w-36 sm:w-44 bg-[#000D30] rounded-md shadow-md z-50 overflow-hidden">                            <li
-                                className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
-                                onClick={() => {
-                                    navigate('/landing');
-                                    setIsUserDropdownOpen(false);
-                                }}
-                            >
-                                Go to Landing Page
-                            </li>
+                            className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
+                            onClick={() => {
+                                navigate('/landing');
+                                setIsUserDropdownOpen(false);
+                            }}
+                        >
+                            Go to Landing Page
+                        </li>
                             <li
                                 className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
                                 onClick={() => setIsUserDropdownOpen(false)}
                             >
                                 Settings
                             </li>
-                            <li                                className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
+                            <li className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
                                 onClick={() => {
                                     // Clear localStorage and redirect to login on logout
                                     localStorage.clear();
@@ -164,6 +164,17 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                                 }}
                             >
                                 Logout
+                            </li>
+
+                            <li className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
+                                onClick={() => {
+                                    // Clear localStorage and redirect to login on logout
+                                    
+                                    navigate('/audit');
+                                    setIsUserDropdownOpen(false);
+                                }}
+                            >
+                                Audit Logs
                             </li>
                         </ul>
                     )}

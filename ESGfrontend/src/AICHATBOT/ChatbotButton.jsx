@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { FaRobot } from 'react-icons/fa';
 import ChatbotWindow from './ChatbotWindow';
-import EditModal from './EditModal';
 
 const ChatbotButton = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);

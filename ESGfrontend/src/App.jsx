@@ -10,6 +10,7 @@ import TestHarness from './features/temp';
 import ChatbotButton from './AICHATBOT/ChatbotButton';
 import { AppProvider } from './AICHATBOT/AppProvider';
 import CompanyPage from './features/company/pages/CompanyPage';
+import AuditLogPage from './pages/PlantPages/auditLogPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/module/:moduleId" element={<DynamicEntityDetails />} />
           <Route path="/testHarness" element={<TestHarness />} />
           <Route path="/chatbot" element={<ChatbotButton />} />
+          <Route path="/audit" element={<AuditLogPage />} />
         </Routes>
       </Router>
     </AppProvider>

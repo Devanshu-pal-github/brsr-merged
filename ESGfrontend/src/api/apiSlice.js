@@ -33,7 +33,6 @@ const baseQuery = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery,
-  tagTypes: ['PolicyAnswers', 'Questions', 'Answers', 'Responses'],
   endpoints: (builder) => ({
     bulkUploadQuestions: builder.mutation({
       query: (questions) => ({
@@ -91,12 +90,12 @@ export const apiSlice = createApi({
       query: () => {
         const moduleIds = JSON.parse(localStorage.getItem("module_ids") || "[]");
         console.log('🔄 Fetching module details for IDs:', moduleIds);
-        
+
         if (!moduleIds || moduleIds.length === 0) {
           console.warn('⚠️ No module IDs found in localStorage');
           throw new Error('No module IDs available');
         }
-        
+
         return {
           url: "/modules/details",
           method: "POST",
@@ -155,6 +154,8 @@ export const apiSlice = createApi({
         }
       },
     }),
+
+
     getSubmodulesByModuleId: builder.query({
       query: (moduleId) => {
         if (!moduleId) {
@@ -169,6 +170,7 @@ export const apiSlice = createApi({
           }
         };
       },
+
       transformResponse: (response) => {
         if (Array.isArray(response)) {
           console.log('📥 Submodules Response:', response);
@@ -195,52 +197,6 @@ export const apiSlice = createApi({
           'Content-Type': 'application/json',
         }
       }),
-      transformResponse: (response) => {
-        console.log('📥 Raw question responses:', JSON.stringify(response, null, 2));
-        if (Array.isArray(response)) {
-          return response.map(item => {
-            if (item.response?.table && Array.isArray(item.response.table)) {
-              // Extract unique columns and rows
-              const columns = [...new Set(item.response.table.map(cell => cell.col))].map(col_id => ({
-                col_id,
-                label: col_id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-                type: typeof item.response.table.find(c => c.col === col_id)?.value === 'number' ? 'number' : 'string',
-                calc: item.response.table.find(c => c.col === col_id)?.calc || false
-              }));
-              const rows = [...new Set(item.response.table.map(cell => cell.row))].map(row_id => ({
-                row_id,
-                calc: item.response.table.find(c => c.row === row_id)?.calc || false,
-                cells: columns.map(col => {
-                  const cell = item.response.table.find(c => c.row === row_id && c.col === col.col_id);
-                  return {
-                    row_id,
-                    col_id: col.col_id,
-                    value: cell?.value ?? '',
-                    calc: cell?.calc || false,
-                    note: cell?.note || null
-                  };
-                })
-              }));
-              return {
-                ...item,
-                response: {
-                  ...item.response,
-                  table: {
-                    columns,
-                    rows,
-                    meta_version: item.response.meta_version,
-                    last_updated: item.response.last_updated,
-                    updated_by: item.response.updated_by
-                  }
-                }
-              };
-            }
-            return item;
-          });
-        }
-        console.warn('⚠️ Invalid response format:', response);
-        return [];
-      },
     }),
     submitQuestionAnswer: builder.mutation({
       query: ({ questionId, answerData }) => {
@@ -255,52 +211,11 @@ export const apiSlice = createApi({
           throw new Error('Missing required context: company_id, plant_id, or financial_year');
         }
 
-        // Flatten and transform table data
-        let transformedAnswerData = { ...answerData };
-        if (answerData.table && answerData.table.rows && Array.isArray(answerData.table.rows)) {
-          transformedAnswerData = {
-            ...answerData,
-            table: answerData.table.rows.flatMap(row =>
-              row.cells.map(cell => {
-                // Infer value type based on col_id
-                let value = cell.value;
-                if (value === null || value === undefined) {
-                  // Default values based on column
-                  if (cell.col_id === 's_no') {
-                    value = (answerData.table.rows.indexOf(row) + 1).toString();
-                  } else if (cell.col_id.includes('number_of_participants') || cell.col_id.includes('percent_turnover')) {
-                    value = '0';
-                  } else {
-                    value = '';
-                  }
-                }
-                // Convert to appropriate type
-                if (cell.col_id.includes('number_of_participants') || cell.col_id.includes('percent_turnover')) {
-                  value = Number(value) || 0;
-                } else if (cell.col_id.includes('date_conducted')) {
-                  value = value || '';
-                } else {
-                  value = String(value);
-                }
-
-                return {
-                  row: row.row_id,
-                  col: cell.col_id,
-                  value,
-                  calc: cell.calc || false,
-                  note: cell.note || null
-                };
-              })
-            )
-          };
-        }
-
         const questionUpdate = {
           question_id: questionId,
-          response: transformedAnswerData
+          response: answerData
         };
 
-        console.log('Submitting question update:', JSON.stringify(questionUpdate, null, 2));
         return {
           url: `/company/${company_id}/plants/${plant_id}/reportsNew/${financial_year}`,
           method: 'PATCH',
@@ -384,6 +299,7 @@ export const apiSlice = createApi({
         }
       }
     }),
+
     getAllPlantEmployees: builder.query({
       query: () => {
         console.log('🔄 Fetching employees for authenticated user’s plant');
@@ -392,7 +308,26 @@ export const apiSlice = createApi({
           method: 'GET',
         };
       },
+      providesTags: ['Employees'], // Enable cache tagging for refetch
     }),
+
+
+    deleteEmployee: builder.mutation({
+      query: ({ employee_id }) => {
+        console.log('🔄 Deleting employee:', employee_id);
+        return {
+          url: `/plants/employees/delete`,
+          method: 'DELETE',
+          body: { employee_id }, // Ensure key matches Pydantic model
+          headers: {
+            "Content-Type": "application/json", // Explicitly set
+          },
+        };
+      },
+      invalidatesTags: ['Employees'],
+    }),
+
+
     createEmployee: builder.mutation({
       query: (employee) => {
         console.log('🔄 Creating employee:', employee);
@@ -404,6 +339,7 @@ export const apiSlice = createApi({
       },
       invalidatesTags: ['Employees'], // Refetch employees after creation
     }),
+
     updateEmployeeRoles: builder.mutation({
       query: ({ employee_id, roles }) => {
         console.log('🔄 Updating roles for employee:', { employee_id, roles });
@@ -415,6 +351,21 @@ export const apiSlice = createApi({
       },
       invalidatesTags: ['Employees'],
     }),
+
+    updateEmployee: builder.mutation({
+      query: (employee) => {
+        console.log('🔄 Updating employee:', employee);
+        return {
+          url: '/plants/employees',
+          method: 'PATCH',
+          body: employee,
+        };
+      },
+      invalidatesTags: ['Employees'],
+    }),
+
+
+
     createGenerateStream: builder.mutation({
       query: ({ message, context }) => ({
         url: '/api/generate_stream',
@@ -440,147 +391,27 @@ export const apiSlice = createApi({
         }
       }
     }),
-    updatePolicyAnswers: builder.mutation({
-      query: ({ questionId, response }) => {
-        const company_id = localStorage.getItem("company_id");
-        const plant_id = localStorage.getItem("plant_id");
-        const financial_year = localStorage.getItem("financial_year");
 
-        if (!company_id || !plant_id || !financial_year) {
-          throw new Error('Missing required context: company_id, plant_id, or financial_year');
-        }
-
-        const answerUpdate = {
-          question_id: questionId,
-          response: response
-        };
-
-        return {
-          url: `/company/${company_id}/plants/${plant_id}/reportsNew/${financial_year}`,
-          method: "PATCH",
-          body: [answerUpdate],
-        };
-      },
-      transformResponse: (response) => {
-        return { success: true, data: response };
-      },
-      async onQueryStarted({ questionId, response }, { dispatch, getState }) {
-        try {
-          // Import answers.json data
-          const answersData = JSON.parse(localStorage.getItem('answers') || '{}');
-          const tabId = 'policy_management'; // or determine dynamically based on question
-
-          // Update the answers structure
-          if (!answersData.responses) {
-            answersData.responses = {};
-          }
-          if (!answersData.responses[tabId]) {
-            answersData.responses[tabId] = {};
-          }
-
-          // Update the specific answer
-          answersData.responses[tabId][questionId] = {
-            ...response,
-            timestamp: new Date().toISOString(),
-            updated_by: localStorage.getItem('user_id') || 'current_user',
-            status: 'draft'
-          };
-
-          // Update metadata
-          if (!answersData.meta) {
-            answersData.meta = {};
-          }
-          answersData.meta = {
-            ...answersData.meta,
-            version: "1.0.0",
-            last_updated: new Date().toISOString(),
-            updated_by: localStorage.getItem('user_id') || 'current_user',
-          };
-
-          // Store back in localStorage
-          localStorage.setItem('answers', JSON.stringify(answersData));
-
-          // Log update for debugging
-          console.log('✅ Updated answers data:', { questionId, newValue: response });
-        } catch (error) {
-          console.error('❌ Error updating answers:', error);
-        }
-      },
-      invalidatesTags: (result) => result?.success 
-        ? ['PolicyAnswers', 'Answers', 'Responses'] 
-        : [],
+    getAuditLog: builder.query({
+      query: () => ({
+        url: "/audit",
+        method: "GET",
+      }),
+      providesTags: ["AuditLog"],
     }),
-    getAnswers: builder.query({
-      query: () => {
-        const company_id = localStorage.getItem("company_id");
-        const plant_id = localStorage.getItem("plant_id");
-        const financial_year = localStorage.getItem("financial_year");
-
-        if (!company_id || !plant_id || !financial_year) {
-          throw new Error('Missing required context');
-        }
-
-        return {
-          url: `/company/${company_id}/plants/${plant_id}/reportsNew/${financial_year}`,
-          method: 'GET',
-        };
-      },
-      transformResponse: (response) => {
-        try {
-          // Get stored answers with proper structure
-          const storedAnswers = JSON.parse(localStorage.getItem('answers') || '{"responses":{},"meta":{}}');
-          
-          // Convert backend response to our local format
-          const backendAnswers = response?.answers || {};
-          
-          // Deep merge responses
-          const mergedAnswers = {
-            responses: {
-              ...backendAnswers,
-              ...storedAnswers.responses,
-            },
-            meta: {
-              version: "1.0.0",
-              last_updated: new Date().toISOString(),
-              updated_by: localStorage.getItem('user_id') || 'current_user',
-              ...storedAnswers.meta,
-            }
-          };
-
-          // Update local storage with merged data
-          localStorage.setItem('answers', JSON.stringify(mergedAnswers));
-          
-          console.log('✅ Merged answers data:', mergedAnswers);
-          return mergedAnswers;
-        } catch (error) {
-          console.error('❌ Error transforming answers:', error);
-          return { responses: {}, meta: {} };
-        }
-      },
-      providesTags: ['Answers', 'PolicyAnswers', 'Responses']
+    logAction: builder.mutation({
+      query: (actionLog) => ({
+        url: "/audit/log",
+        method: "POST",
+        body: actionLog,
+      }),
+      invalidatesTags: ["AuditLog"],
     }),
-    bulkUpdatePolicyAnswers: builder.mutation({
-      query: (answers) => {
-        const company_id = localStorage.getItem('company_id');
-        const plant_id = localStorage.getItem('plant_id');
-        const financial_year = localStorage.getItem('financial_year');
-        
-        if (!company_id || !plant_id || !financial_year) {
-          throw new Error('Required context missing');
-        }
 
-        return {
-          url: `/company/${company_id}/plants/${plant_id}/policies/${financial_year}/bulk`,
-          method: 'POST',
-          body: answers
-        };
-      },
-      invalidatesTags: ['PolicyAnswers']
-    })
   }),
 });
 
-// Export all hooks
+// Export the auto-generated hooks
 export const {
   useBulkUploadQuestionsMutation,
   useLoginMutation,
@@ -596,7 +427,9 @@ export const {
   useCreateGenerateStreamMutation,
   useGetAllPlantEmployeesQuery,
   useUpdateEmployeeRolesMutation,
-  useUpdatePolicyAnswersMutation,
-  useGetAnswersQuery,
-  useBulkUpdatePolicyAnswersMutation,
+  useUpdateEmployeeMutation,
+  useDeleteEmployeeMutation,
+  useGetAuditLogQuery,
+  useLogActionMutation,
+
 } = apiSlice;

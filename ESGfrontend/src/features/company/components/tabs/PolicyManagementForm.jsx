@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent } from '../common/CardComponents';
 import TableActionButtons from '../common/TableActionButtons';
-import { useBulkUpdatePolicyAnswersMutation } from '../../../../api/apiSlice';
+// import { useBulkUpdatePolicyAnswersMutation } from '../../../../api/apiSlice';
 
 // Questions structure matching questions.json format
 const questions = {

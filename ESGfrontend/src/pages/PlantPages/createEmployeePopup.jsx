@@ -1,30 +1,32 @@
 import { useState, useEffect } from "react";
 import { X, User, Mail, Lock, Hash, Briefcase } from "lucide-react";
-import { useCreateEmployeeMutation } from "../api/apiSlice";
+import { useCreateEmployeeMutation, useUpdateEmployeeMutation } from "../../api/apiSlice";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Select from "react-select";
 import toast, { Toaster } from "react-hot-toast";
 
-const CreateEmployeePopup = ({ onClose }) => {
+const EmployeePopup = ({ onClose, employee }) => {
+  const isEditMode = !!employee;
   const [formData, setFormData] = useState({
-    employee_id: "",
-    name: "",
-    email: "",
+    employee_id: employee?.employee_id || "",
+    name: employee?.name || "",
+    email: employee?.email || "",
     password: "",
-    department: "",
-    user_role: [],
+    department: employee?.department || "",
+    user_role: employee?.user_role || [],
   });
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [createEmployee, { isLoading }] = useCreateEmployeeMutation();
+  const [createEmployee, { isLoading: isCreating }] = useCreateEmployeeMutation();
+  const [updateEmployee, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
   const navigate = useNavigate();
 
   const roleOptions = [
     { value: "admin", label: "Admin" },
-    { value: "hr", label: "HR" },
-    { value: "manager", label: "Manager" },
-    { value: "staff", label: "Staff" },
+    { value: "it", label: "IT" },
+    { value: "legal", label: "Legal" },
+    { value: "hr", label: "Hr" },
   ];
 
   useEffect(() => {
@@ -35,7 +37,7 @@ const CreateEmployeePopup = ({ onClose }) => {
         const roles = decoded.user_role || [];
         setIsAdmin(roles.includes("Plant Admin") || roles.includes("admin"));
         if (!roles.includes("Plant Admin") && !roles.includes("admin")) {
-          toast.error("Access denied. Only admins can create employees.");
+          toast.error("Access denied. Only admins can manage employees.");
         }
       } catch (err) {
         toast.error("Invalid token. Please log in again.");
@@ -66,19 +68,36 @@ const CreateEmployeePopup = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isAdmin) {
-      toast.error("Access denied. Only admins can create employees.");
+      toast.error("Access denied. Only admins can manage employees.");
       return;
     }
 
     try {
-      await createEmployee(formData).unwrap();
-      toast.success("Employee created successfully!");
+      if (isEditMode) {
+        const updateData = {
+          employee_id: formData.employee_id,
+          ...(formData.name && { name: formData.name }),
+          ...(formData.email && { email: formData.email }),
+          ...(formData.password && { password: formData.password }),
+          ...(formData.department && { department: formData.department }),
+          ...(formData.user_role.length > 0 && { user_role: formData.user_role }),
+        };
+        await updateEmployee(updateData).unwrap();
+        toast.success("Employee updated successfully!");
+      } else {
+        if (!formData.employee_id || !formData.name || !formData.email || !formData.password || !formData.department || formData.user_role.length === 0) {
+          toast.error("All fields are required to create an employee.");
+          return;
+        }
+        await createEmployee(formData).unwrap();
+        toast.success("Employee created successfully!");
+      }
       setTimeout(() => {
         if (onClose) onClose();
       }, 1500);
     } catch (err) {
       toast.error(
-        err.data?.detail || "Failed to create employee. Please try again."
+        err.data?.detail || `Failed to ${isEditMode ? "update" : "create"} employee. Please try again.`
       );
     }
   };
@@ -88,7 +107,7 @@ const CreateEmployeePopup = ({ onClose }) => {
       <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 relative">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-[1.2vw] font-semibold text-[#1A2341]">
-            Create Employee
+            {isEditMode ? "Update Employee" : "Create Employee"}
           </h1>
           <button
             onClick={onClose}
@@ -98,7 +117,6 @@ const CreateEmployeePopup = ({ onClose }) => {
           </button>
         </div>
         <Toaster position="top-right" />
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputField
@@ -108,7 +126,8 @@ const CreateEmployeePopup = ({ onClose }) => {
               onChange={handleInputChange}
               placeholder="Employee ID"
               label="Employee ID"
-              required
+              required={!isEditMode}
+              disabled={isEditMode}
             />
             <InputField
               icon={User}
@@ -117,7 +136,7 @@ const CreateEmployeePopup = ({ onClose }) => {
               onChange={handleInputChange}
               placeholder="Name"
               label="Name"
-              required
+              required={!isEditMode}
             />
             <InputField
               icon={Mail}
@@ -127,7 +146,7 @@ const CreateEmployeePopup = ({ onClose }) => {
               onChange={handleInputChange}
               placeholder="Email"
               label="Email"
-              required
+              required={!isEditMode}
             />
             <InputField
               icon={Lock}
@@ -137,7 +156,7 @@ const CreateEmployeePopup = ({ onClose }) => {
               onChange={handleInputChange}
               placeholder="Password"
               label="Password"
-              required
+              required={!isEditMode}
             />
             <InputField
               icon={Briefcase}
@@ -146,13 +165,12 @@ const CreateEmployeePopup = ({ onClose }) => {
               onChange={handleInputChange}
               placeholder="Department"
               label="Department"
-              required
+              required={!isEditMode}
             />
           </div>
-
           <div className="space-y-2">
             <label className="block text-sm font-medium text-[#1A2341]">
-              User Roles <span className="text-red-500">*</span>
+              User Roles {isEditMode ? "" : <span className="text-red-500">*</span>}
             </label>
             <Select
               isMulti
@@ -164,14 +182,13 @@ const CreateEmployeePopup = ({ onClose }) => {
               placeholder="Select roles..."
             />
           </div>
-
           <div className="flex">
             <button
               type="submit"
-              disabled={isLoading || !isAdmin}
+              disabled={isCreating || isUpdating || !isAdmin}
               className="bg-[#1A2341] text-white text-lg px-4 py-2 rounded-md cursor-pointer transition-all disabled:bg-gray-400 disabled:cursor-not-allowed ml-auto"
             >
-              {isLoading ? "Creating..." : "Create Employee"}
+              {isCreating || isUpdating ? (isEditMode ? "Updating..." : "Creating...") : (isEditMode ? "Update Employee" : "Create Employee")}
             </button>
           </div>
         </form>
@@ -189,6 +206,7 @@ const InputField = ({
   placeholder,
   type = "text",
   required,
+  disabled,
 }) => (
   <div className="space-y-1">
     <label className="text-sm font-medium text-[#1A2341]">
@@ -205,9 +223,10 @@ const InputField = ({
         placeholder={placeholder}
         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A2341] bg-white text-sm"
         required={required}
+        disabled={disabled}
       />
     </div>
   </div>
 );
 
-export default CreateEmployeePopup;
+export default EmployeePopup;
