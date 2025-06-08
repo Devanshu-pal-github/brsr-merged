@@ -1,9 +1,10 @@
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useDispatch } from "react-redux";
 import {
     useSubmitQuestionAnswerMutation,
-    useStoreQuestionDataMutation,
     useGenerateTextMutation,
+    apiSlice,
 } from "../api/apiSlice";
 import { useInactivityDetector } from "./QuestionEdit/useInactivityDetector";
 import ModalHeader from "../components/QuestionEdit/ModalHeader";
@@ -16,6 +17,7 @@ import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
 import { transformTableMetadata, createEmptyTableResponse } from "./tableUtils";
 import TableQuestionRenderer from "./TableQuestionRenderer";
+import { Button } from "@mui/material";
 
 const QuestionEditPopup = ({
     question,
@@ -34,11 +36,10 @@ const QuestionEditPopup = ({
     const [errors, setErrors] = useState({});
     const [isVisible, setIsVisible] = useState(false);
     const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
-    const [isSaveLoading, setIsSaveLoading] = useState(false); // New state for save button
+    const [isSaveLoading, setIsSaveLoading] = useState(false);
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
-    const [storeQuestionData] = useStoreQuestionDataMutation();
+    const dispatch = useDispatch();
 
-    // Table editing state for table questions
     const [currentValue, setCurrentValue] = useState(() => {
         if (question.type === "table") {
             const meta = transformTableMetadata(question);
@@ -57,8 +58,9 @@ const QuestionEditPopup = ({
             });
         }
     }, [initialAnswer, question]);
+
     const [generateText] = useGenerateTextMutation();
-    const [isLoading, setIsLoading] = useState({ left: false, right: false }); // Updated to object
+    const [isLoading, setIsLoading] = useState({ left: false, right: false });
     const [error, setError] = useState(null);
     const [isTextareaFocused, setIsTextareaFocused] = useState(false);
     const [selectedTextInTextarea, setSelectedTextInTextarea] = useState(null);
@@ -71,6 +73,7 @@ const QuestionEditPopup = ({
     useEffect(() => {
         setIsVisible(true);
     }, []);
+
     useEffect(() => {
         if (initialAnswer) {
             setFormData({
@@ -122,101 +125,258 @@ const QuestionEditPopup = ({
         setErrors((prev) => ({ ...prev, [name]: isValid ? "" : errorMessage }));
     };
 
+    // Function to determine the new row label based on the previous row
+    const getNewRowLabel = (existingRows, metaRows) => {
+        // If there are no existing rows, determine the prefix from meta.rows
+        if (existingRows.length === 0) {
+            if (metaRows.length > 0) {
+                const firstMetaRowLabel = metaRows[0].label || "Row 1";
+                const match = firstMetaRowLabel.match(/^(\D+)(\d+)$/);
+                if (match) {
+                    const prefix = match[1].trim();
+                    return `${prefix} 1`; // Start with the same prefix as the first row
+                }
+                // If the first row doesn't have a number, use it as the prefix
+                return `${firstMetaRowLabel} 1`;
+            }
+            return "Row 1"; // Fallback if meta.rows is empty
+        }
+
+        // Get the last row's label from metaRows
+        const lastRow = existingRows[existingRows.length - 1];
+        const lastRowMeta = metaRows.find(r => r.row_id === lastRow.row_id);
+        if (!lastRowMeta) {
+            // If the last row isn't in metaRows, we might have an issue with metaRows not being updated
+            // Fallback to constructing a label based on the last known pattern
+            const previousRows = metaRows.filter(r => existingRows.some(er => er.row_id === r.row_id));
+            const lastKnownLabel = previousRows.length > 0 ? previousRows[previousRows.length - 1].label : "Row 1";
+            const match = lastKnownLabel.match(/^(\D+)(\d+)$/);
+            if (match) {
+                const prefix = match[1].trim();
+                const number = parseInt(match[2], 10);
+                return `${prefix} ${number + existingRows.length - previousRows.length + 1}`;
+            }
+            return `${lastKnownLabel} ${existingRows.length + 1}`;
+        }
+
+        const lastLabel = lastRowMeta.label;
+
+        // Use a regex to split the label into prefix and number
+        const match = lastLabel.match(/^(\D+)(\d+)$/);
+        if (match) {
+            const prefix = match[1].trim(); // e.g., "Action"
+            const number = parseInt(match[2], 10); // e.g., 3
+            return `${prefix} ${number + 1}`; // e.g., "Action 4"
+        }
+
+        // If the label doesn't match the "Prefix Number" format, append a number
+        return `${lastLabel} ${existingRows.length + 1}`;
+    };
+
+    // Function to add a new row dynamically
+    const handleAddRow = () => {
+        const meta = transformTableMetadata(question);
+        let columns = meta.columns
+            .map(col => {
+                const colIdLower = col.col_id.toLowerCase();
+                let colType;
+                if (colIdLower.includes("sno") || colIdLower.includes("s_no")) {
+                    colType = "number";
+                } else if (colIdLower.includes("boolean")) {
+                    colType = "boolean";
+                } else if (colIdLower.includes("number") || colIdLower.includes("percent") || colIdLower.includes("turnover")) {
+                    colType = "number";
+                } else if (question.has_string_value && question.has_decimal_value) {
+                    colType = "mixed";
+                } else if (question.has_string_value) {
+                    colType = "string";
+                } else if (question.has_decimal_value) {
+                    colType = "number";
+                } else {
+                    colType = "string";
+                }
+                return { ...col, type: colType };
+            })
+            .filter((col, idx, arr) => {
+                const isSNo =
+                    col.col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
+                    col.label.toLowerCase().replace(/\s/g, "").includes("sno");
+                if (!isSNo) return true;
+                return (
+                    arr.findIndex(
+                        (c) =>
+                            c.col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
+                            c.label.toLowerCase().replace(/\s/g, "").includes("sno")
+                    ) === idx
+                );
+            });
+
+        if (
+            !columns.length ||
+            !(
+                columns[0].col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
+                columns[0].label.toLowerCase().replace(/\s/g, "").includes("sno")
+            )
+        ) {
+            columns = [{ col_id: "s_no", label: "S No.", type: "number" }, ...columns];
+        }
+
+        const newRowId = `row_${Date.now()}`; // Unique row ID
+        const newRowLabel = getNewRowLabel(currentValue.table.rows, meta.rows);
+
+        const newRow = {
+            row_id: newRowId,
+            cells: columns.map(col => ({
+                col_id: col.col_id,
+                value: col.col_id === "s_no" ? (currentValue.table.rows.length + 1).toString() : "",
+                readOnly: col.col_id === "s_no",
+            })),
+        };
+
+        setCurrentValue(prev => ({
+            ...prev,
+            table: {
+                ...prev.table,
+                rows: [...prev.table.rows, newRow],
+            },
+        }));
+
+        // Update meta.rows with the new row's label
+        meta.rows = [
+            ...meta.rows,
+            { row_id: newRowId, label: newRowLabel, calc: false }
+        ];
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSaveLoading(true); // Set save button loading state
-        setError(null); // Clear any previous errors
+        setIsSaveLoading(true);
+        setError(null);
         try {
+            let response;
             if (question.type === "table") {
-                const response = {
+                const validatedTable = {
+                    ...currentValue.table,
+                    rows: currentValue.table.rows.map(row => ({
+                        ...row,
+                        cells: row.cells.map(cell => {
+                            let value = cell.value;
+                            if (value === null || value === undefined) {
+                                if (cell.col_id === 's_no') {
+                                    value = (currentValue.table.rows.indexOf(row) + 1).toString();
+                                } else if (cell.col_id.includes('number_of_participants') || cell.col_id.includes('percent_turnover')) {
+                                    value = '0';
+                                } else {
+                                    value = '';
+                                }
+                            }
+                            return { ...cell, value };
+                        }),
+                    })),
+                };
+                response = {
                     question_id: question.question_id,
                     type: "table",
                     response: {
-                        table: currentValue.table,
-                        meta_version: question.table_metadata?.version,
+                        table: validatedTable,
+                        meta_version: question.table_metadata?.version || null,
+                        last_updated: new Date().toISOString(),
+                        updated_by: localStorage.getItem('user_id') || 'unknown',
                     },
                 };
-                await onSuccess?.(question.question_id, response.response);
-                onClose();
-                return;
+            } else {
+                const hasErrors = Object.values(errors).some((error) => error);
+                const requiredFields = [];
+
+                if (question.string_value_required && !formData.string_value)
+                    requiredFields.push("String value is required.");
+                if (question.decimal_value_required && !formData.decimal_value)
+                    requiredFields.push("Decimal value is required.");
+                if (question.boolean_value_required && formData.boolean_value === undefined)
+                    requiredFields.push("Boolean value is required.");
+                if (question.link_required && !formData.link)
+                    requiredFields.push("Link is required.");
+                if (question.note_required && !formData.note)
+                    requiredFields.push("Note is required.");
+
+                if (hasErrors || requiredFields.length > 0) {
+                    console.log("Validation errors:", requiredFields);
+                    setErrors((prev) => ({ ...prev, form: requiredFields.join(" ") }));
+                    setIsSaveLoading(false);
+                    return;
+                }
+
+                response = {
+                    question_id: question.question_id,
+                    response: {
+                        string_value: question.has_string_value ? formData.string_value || null : undefined,
+                        decimal_value: question.has_decimal_value ? (formData.decimal_value ? Number(formData.decimal_value) : null) : undefined,
+                        bool_value: question.has_boolean_value ? formData.boolean_value || null : undefined,
+                        link: question.has_link ? formData.link || null : undefined,
+                        note: question.has_note ? formData.note || null : undefined,
+                        last_updated: new Date().toISOString(),
+                        updated_by: localStorage.getItem('user_id') || 'unknown',
+                    },
+                };
+
+                Object.keys(response.response).forEach(
+                    (key) => response.response[key] === undefined && delete response.response[key]
+                );
             }
 
-            const hasErrors = Object.values(errors).some((error) => error);
-            const requiredFields = [];
-
-            if (question.string_value_required && !formData.string_value)
-                requiredFields.push("String value is required.");
-            if (question.decimal_value_required && !formData.decimal_value)
-                requiredFields.push("Decimal value is required.");
-            if (question.boolean_value_required && formData.boolean_value === undefined)
-                requiredFields.push("Boolean value is required.");
-            if (question.link_required && !formData.link)
-                requiredFields.push("Link is required.");
-            if (question.note_required && !formData.note)
-                requiredFields.push("Note is required.");
-
-            if (hasErrors || requiredFields.length > 0) {
-                setErrors((prev) => ({ ...prev, form: requiredFields.join(" ") }));
-                return;
-            }
-
-            const response = {
-                question_id: question.question_id,
-                response: {
-                    string_value: question.has_string_value
-                        ? formData.string_value || null
-                        : undefined,
-                    decimal_value: question.has_decimal_value
-                        ? formData.decimal_value
-                            ? Number(formData.decimal_value)
-                            : null
-                        : undefined,
-                    bool_value: question.has_boolean_value
-                        ? formData.boolean_value || null
-                        : undefined,
-                    link: question.has_link ? formData.link || null : undefined,
-                    note: question.has_note ? formData.note || null : undefined,
-                },
-            };
-
-            Object.keys(response.response).forEach(
-                (key) =>
-                    response.response[key] === undefined && delete response.response[key]
-            );
-
+            console.log("Submitting answer:", JSON.stringify(response, null, 2));
             const result = await submitAnswer({
                 questionId: question.question_id,
                 answerData: response.response,
             }).unwrap();
+            console.log("Submit result:", result);
 
-            await storeQuestionData({
-                moduleId,
-                questionId: question.question_id,
-                metadata: {
-                    question_text: question.question,
-                    has_string_value: question.has_string_value,
-                    has_decimal_value: question.has_decimal_value,
-                    has_boolean_value: question.has_boolean_value,
-                    has_link: question.has_link,
-                    has_note: question.has_note,
-                    string_value_required: question.string_value_required,
-                    decimal_value_required: question.decimal_value_required,
-                    boolean_value_required: question.boolean_value_required,
-                    link_required: question.link_required,
-                    note_required: question.note_required,
+            const company_id = localStorage.getItem("company_id");
+            const plant_id = localStorage.getItem("plant_id");
+            const financial_year = localStorage.getItem("financial_year");
+
+            if (!company_id || !plant_id || !financial_year) {
+                throw new Error('Missing required context for updating answers');
+            }
+
+            const storedAnswers = JSON.parse(localStorage.getItem('answers') || '{"responses":{},"meta":{}}');
+            const updatedResponses = {
+                ...storedAnswers.responses,
+                [question.question_id]: response.response,
+            };
+            const mergedAnswers = {
+                responses: updatedResponses,
+                meta: {
+                    version: "1.0.0",
+                    last_updated: new Date().toISOString(),
+                    updated_by: localStorage.getItem('user_id') || 'current_user',
+                    ...storedAnswers.meta,
                 },
-                answer: response.response,
-            });
+            };
+            localStorage.setItem('answers', JSON.stringify(mergedAnswers));
+            console.log('✅ Updated localStorage answers:', mergedAnswers);
+
+            dispatch(
+                apiSlice.util.updateQueryData('getAnswers', undefined, (draft) => {
+                    draft.responses[question.question_id] = response.response;
+                    draft.meta = {
+                        ...draft.meta,
+                        last_updated: new Date().toISOString(),
+                        updated_by: localStorage.getItem('user_id') || 'current_user',
+                    };
+                })
+            );
 
             onSuccess?.(question.question_id, response.response);
             onClose();
         } catch (error) {
-            setErrors((prev) => ({
-                ...prev,
-                form: "Failed to submit answer. Please try again.",
-            }));
+            console.error("Submit error:", error);
+            const errorMessage = error?.data?.detail
+                ? error.data.detail.map(d => d.msg).join("; ")
+                : error?.message || "Failed to submit answer. Please try again.";
+            setErrors((prev) => ({ ...prev, form: errorMessage }));
         } finally {
-            setIsSaveLoading(false); // Reset save button loading state
+            setIsSaveLoading(false);
         }
     };
 
@@ -262,23 +422,44 @@ const QuestionEditPopup = ({
         setRefineTone,
     };
 
-    // Table rendering logic extracted for clarity
     const renderTable = () => {
         if (question.type !== "table") return null;
         let meta = transformTableMetadata(question);
-        let columns = meta.columns.filter((col, idx, arr) => {
-            const isSNo =
-                col.col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
-                col.label.toLowerCase().replace(/\s/g, "").includes("sno");
-            if (!isSNo) return true;
-            return (
-                arr.findIndex(
-                    (c) =>
-                        c.col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
-                        c.label.toLowerCase().replace(/\s/g, "").includes("sno")
-                ) === idx
-            );
-        });
+        let columns = meta.columns
+            .map(col => {
+                const colIdLower = col.col_id.toLowerCase();
+                let colType;
+                if (colIdLower.includes("sno") || colIdLower.includes("s_no")) {
+                    colType = "number";
+                } else if (colIdLower.includes("boolean")) {
+                    colType = "boolean";
+                } else if (colIdLower.includes("number") || colIdLower.includes("percent") || colIdLower.includes("turnover")) {
+                    colType = "number";
+                } else if (question.has_string_value && question.has_decimal_value) {
+                    colType = "mixed";
+                } else if (question.has_string_value) {
+                    colType = "string";
+                } else if (question.has_decimal_value) {
+                    colType = "number";
+                } else {
+                    colType = "string";
+                }
+                return { ...col, type: colType };
+            })
+            .filter((col, idx, arr) => {
+                const isSNo =
+                    col.col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
+                    col.label.toLowerCase().replace(/\s/g, "").includes("sno");
+                if (!isSNo) return true;
+                return (
+                    arr.findIndex(
+                        (c) =>
+                            c.col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
+                            c.label.toLowerCase().replace(/\s/g, "").includes("sno")
+                    ) === idx
+                );
+            });
+
         if (
             !columns.length ||
             !(
@@ -286,7 +467,7 @@ const QuestionEditPopup = ({
                 columns[0].label.toLowerCase().replace(/\s/g, "").includes("sno")
             )
         ) {
-            columns = [{ col_id: "s_no", label: "S No." }, ...columns];
+            columns = [{ col_id: "s_no", label: "S No.", type: "number" }, ...columns];
         }
         let turnoverCol = columns.find((col) =>
             col.col_id.toLowerCase().includes("turnover")
@@ -295,10 +476,31 @@ const QuestionEditPopup = ({
             columns.push({
                 col_id: "percent_turnover_of_the_entity",
                 label: "% turnover of the entity",
+                type: "number",
             });
         }
+
         const currentTable =
             currentValue?.table || createEmptyTableResponse({ ...meta, columns });
+
+        // Dynamically update meta.rows to include all rows (predefined + added)
+        const updatedMetaRows = currentTable.rows.map((row, idx) => {
+            const existingRow = meta.rows.find(r => r.row_id === row.row_id);
+            if (existingRow) {
+                return existingRow;
+            }
+            // For dynamically added rows, determine the label based on previous rows
+            const newLabel = getNewRowLabel(currentTable.rows.slice(0, idx), meta.rows);
+            return {
+                row_id: row.row_id,
+                label: newLabel,
+                calc: false,
+            };
+        });
+
+        // Update meta.rows to ensure it includes all rows
+        meta.rows = updatedMetaRows;
+
         const tableWithSNo = {
             columns,
             rows: currentTable.rows.map((row, idx) => ({
@@ -322,10 +524,11 @@ const QuestionEditPopup = ({
                 }),
             })),
         };
+
         return (
             <div className="mb-4">
                 <TableQuestionRenderer
-                    meta={{ ...meta, columns }}
+                    meta={{ ...meta, columns, rows: updatedMetaRows }}
                     response={tableWithSNo}
                     editable={true}
                     onCellChange={(rowId, colId, value) => {
@@ -333,6 +536,14 @@ const QuestionEditPopup = ({
                         handleTableCellChange(rowId, colId, value);
                     }}
                 />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAddRow}
+                    sx={{ mt: 2 }}
+                >
+                    Add New Row
+                </Button>
             </div>
         );
     };
@@ -475,7 +686,7 @@ const QuestionEditPopup = ({
                             d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
                         />
                     </svg>
-                    <style jsx>{`
+                    <style jsx="true">{`
                         @keyframes spin-smooth {
                             0% { transform: rotate(0deg); }
                             15% { transform: rotate(260deg); }
@@ -491,7 +702,5 @@ const QuestionEditPopup = ({
         </div>
     );
 };
-
-
 
 export default QuestionEditPopup;

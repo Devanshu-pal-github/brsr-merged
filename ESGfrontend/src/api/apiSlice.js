@@ -155,8 +155,6 @@ export const apiSlice = createApi({
         }
       },
     }),
-    
-
     getSubmodulesByModuleId: builder.query({
       query: (moduleId) => {
         if (!moduleId) {
@@ -171,7 +169,6 @@ export const apiSlice = createApi({
           }
         };
       },
-
       transformResponse: (response) => {
         if (Array.isArray(response)) {
           console.log('📥 Submodules Response:', response);
@@ -198,12 +195,58 @@ export const apiSlice = createApi({
           'Content-Type': 'application/json',
         }
       }),
+      transformResponse: (response) => {
+        console.log('📥 Raw question responses:', JSON.stringify(response, null, 2));
+        if (Array.isArray(response)) {
+          return response.map(item => {
+            if (item.response?.table && Array.isArray(item.response.table)) {
+              // Extract unique columns and rows
+              const columns = [...new Set(item.response.table.map(cell => cell.col))].map(col_id => ({
+                col_id,
+                label: col_id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                type: typeof item.response.table.find(c => c.col === col_id)?.value === 'number' ? 'number' : 'string',
+                calc: item.response.table.find(c => c.col === col_id)?.calc || false
+              }));
+              const rows = [...new Set(item.response.table.map(cell => cell.row))].map(row_id => ({
+                row_id,
+                calc: item.response.table.find(c => c.row === row_id)?.calc || false,
+                cells: columns.map(col => {
+                  const cell = item.response.table.find(c => c.row === row_id && c.col === col.col_id);
+                  return {
+                    row_id,
+                    col_id: col.col_id,
+                    value: cell?.value ?? '',
+                    calc: cell?.calc || false,
+                    note: cell?.note || null
+                  };
+                })
+              }));
+              return {
+                ...item,
+                response: {
+                  ...item.response,
+                  table: {
+                    columns,
+                    rows,
+                    meta_version: item.response.meta_version,
+                    last_updated: item.response.last_updated,
+                    updated_by: item.response.updated_by
+                  }
+                }
+              };
+            }
+            return item;
+          });
+        }
+        console.warn('⚠️ Invalid response format:', response);
+        return [];
+      },
     }),
     submitQuestionAnswer: builder.mutation({
       query: ({ questionId, answerData }) => {
         if (!questionId) throw new Error('Question ID is required');
         if (!answerData || typeof answerData !== 'object') throw new Error('Answer data is required and must be an object');
-        
+
         const company_id = localStorage.getItem("company_id");
         const plant_id = localStorage.getItem("plant_id");
         const financial_year = localStorage.getItem("financial_year");
@@ -212,11 +255,52 @@ export const apiSlice = createApi({
           throw new Error('Missing required context: company_id, plant_id, or financial_year');
         }
 
+        // Flatten and transform table data
+        let transformedAnswerData = { ...answerData };
+        if (answerData.table && answerData.table.rows && Array.isArray(answerData.table.rows)) {
+          transformedAnswerData = {
+            ...answerData,
+            table: answerData.table.rows.flatMap(row =>
+              row.cells.map(cell => {
+                // Infer value type based on col_id
+                let value = cell.value;
+                if (value === null || value === undefined) {
+                  // Default values based on column
+                  if (cell.col_id === 's_no') {
+                    value = (answerData.table.rows.indexOf(row) + 1).toString();
+                  } else if (cell.col_id.includes('number_of_participants') || cell.col_id.includes('percent_turnover')) {
+                    value = '0';
+                  } else {
+                    value = '';
+                  }
+                }
+                // Convert to appropriate type
+                if (cell.col_id.includes('number_of_participants') || cell.col_id.includes('percent_turnover')) {
+                  value = Number(value) || 0;
+                } else if (cell.col_id.includes('date_conducted')) {
+                  value = value || '';
+                } else {
+                  value = String(value);
+                }
+
+                return {
+                  row: row.row_id,
+                  col: cell.col_id,
+                  value,
+                  calc: cell.calc || false,
+                  note: cell.note || null
+                };
+              })
+            )
+          };
+        }
+
         const questionUpdate = {
           question_id: questionId,
-          response: answerData
+          response: transformedAnswerData
         };
 
+        console.log('Submitting question update:', JSON.stringify(questionUpdate, null, 2));
         return {
           url: `/company/${company_id}/plants/${plant_id}/reportsNew/${financial_year}`,
           method: 'PATCH',
@@ -300,19 +384,16 @@ export const apiSlice = createApi({
         }
       }
     }),
-
-getAllPlantEmployees: builder.query({
-  query: () => {
-    console.log('🔄 Fetching employees for authenticated user’s plant');
-    return {
-      url: '/plants/employees',
-      method: 'GET',
-    };
-  },
-}),
-
-
-createEmployee: builder.mutation({
+    getAllPlantEmployees: builder.query({
+      query: () => {
+        console.log('🔄 Fetching employees for authenticated user’s plant');
+        return {
+          url: '/plants/employees',
+          method: 'GET',
+        };
+      },
+    }),
+    createEmployee: builder.mutation({
       query: (employee) => {
         console.log('🔄 Creating employee:', employee);
         return {
@@ -323,8 +404,7 @@ createEmployee: builder.mutation({
       },
       invalidatesTags: ['Employees'], // Refetch employees after creation
     }),
-
-      updateEmployeeRoles: builder.mutation({
+    updateEmployeeRoles: builder.mutation({
       query: ({ employee_id, roles }) => {
         console.log('🔄 Updating roles for employee:', { employee_id, roles });
         return {
@@ -383,7 +463,8 @@ createEmployee: builder.mutation({
       },
       transformResponse: (response) => {
         return { success: true, data: response };
-      },      async onQueryStarted({ questionId, response }, { dispatch, getState }) {
+      },
+      async onQueryStarted({ questionId, response }, { dispatch, getState }) {
         try {
           // Import answers.json data
           const answersData = JSON.parse(localStorage.getItem('answers') || '{}');
@@ -443,7 +524,8 @@ createEmployee: builder.mutation({
           url: `/company/${company_id}/plants/${plant_id}/reportsNew/${financial_year}`,
           method: 'GET',
         };
-      },      transformResponse: (response) => {
+      },
+      transformResponse: (response) => {
         try {
           // Get stored answers with proper structure
           const storedAnswers = JSON.parse(localStorage.getItem('answers') || '{"responses":{},"meta":{}}');
@@ -494,7 +576,7 @@ createEmployee: builder.mutation({
         };
       },
       invalidatesTags: ['PolicyAnswers']
-    }),
+    })
   }),
 });
 

@@ -13,7 +13,7 @@ import QuestionCategory from './QuestionCategory';
 const DynamicModulePage = () => {
     const location = useLocation();
     const modules = useSelector(selectAllModules);
-    
+     const [activeTab, setActiveTab] = useState(tabs[0] || '');
     // Find current module based on route
     const currentModule = modules.find(module => 
         module.route === location.pathname
@@ -28,7 +28,7 @@ const DynamicModulePage = () => {
     const tabs = currentModule.submodules?.map(submodule => submodule.submodule_name) || [];
     
     // Set active tab state
-    const [activeTab, setActiveTab] = useState(tabs[0] || '');
+   
 
     // Find current submodule
     const currentSubmodule = currentModule.submodules?.find(
