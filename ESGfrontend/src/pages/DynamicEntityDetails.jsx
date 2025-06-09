@@ -57,6 +57,14 @@ const DynamicEntityDetails = () => {
         if (tabs.length > 0 && !activeTab) setActiveTab(tabs[0]);
     }, [tabs, activeTab]);
 
+    // Reset activeTab when moduleId changes (i.e., when a new module is selected from the sidebar)
+    useEffect(() => {
+        if (tabs.length > 0) {
+            setActiveTab(tabs[0]);
+        }
+        // eslint-disable-next-line
+    }, [moduleId]);
+
     const currentSubmodule = submodules.find(sub => sub.submodule_name === activeTab);
 
     const [getQuestionResponses, { isLoading: isAnswersLoading, isError: isAnswersError, error: answersError }] = useGetQuestionResponsesMutation(); useEffect(() => {
