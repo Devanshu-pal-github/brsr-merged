@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Card, CardHeader, CardContent } from '../common/CardComponents';
 import TableActionButtons from '../common/TableActionButtons';
 // import { useBulkUpdatePolicyAnswersMutation } from '../../../../api/apiSlice';
@@ -32,17 +33,18 @@ const questions = {
 };
 
 const PolicyManagementForm = () => {
-  const [bulkUpdatePolicyAnswers] = useBulkUpdatePolicyAnswersMutation();
-  
-  // State for storing responses that match the questions.json format
+  // State for storing responses
   const [responses, setResponses] = useState({
-    Q1_B: { table: { rows: [], meta_version: "1.0" } },
-    Q2_B: { table: { rows: [], meta_version: "1.0" } },
-    Q3_B: { table: { rows: [], meta_version: "1.0" } },
-    Q4_B: { table: { rows: [], meta_version: "1.0" } },
-    Q5_B: { table: { rows: [], meta_version: "1.0" } },  // For policy links
-    Q6_B: { table: { rows: [], meta_version: "1.0" } }   // For additional text responses
+    Q1_B: { table: [], meta_version: "1.0" },
+    Q2_B: { table: [], meta_version: "1.0" },
+    Q3_B: { table: [], meta_version: "1.0" },
+    Q4_B: { table: [], meta_version: "1.0" },
+    Q5_B: { table: [], meta_version: "1.0" },  // For policy links
+    Q6_B: { table: [], meta_version: "1.0" }   // For additional text responses
   });
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const principles = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'];
   
@@ -61,104 +63,118 @@ const PolicyManagementForm = () => {
     "Name of the national and international codes/certifications/labels/standards adopted by your entity and mapped to each principle.",
     "Specific commitments, goals and targets set by the entity with defined timelines, if any.",
     "Performance of the entity against the specific commitments, goals and targets along-with reasons in case the same are not met."
-  ];  
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  ];
 
   useEffect(() => {
-    const loadAnswers = async () => {
+    const fetchPolicyManagement = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await fetch('/src/data/landingFlow/answers.json');
-        if (!response.ok) {
-          throw new Error('Failed to load answers');
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          console.error('[AUTH] No access token found');
+          setError('Please log in to access this feature');
+          window.location.href = '/login';
+          return;
         }
-        
-        const data = await response.json();
-        
-        // Initialize responses from answers.json data
-        const initialResponses = {};
-        Object.keys(questions).forEach(questionId => {
-          // Get existing response or create empty structure
-          initialResponses[questionId] = data.policy_management?.[questionId] || {
-            table: {
-              rows: [],
-              meta_version: "1.0",
-              columns: []
-            }
-          };
-        });
 
-        setResponses(prev => ({
-          ...prev,
-          ...initialResponses
-        }));
-      } catch (error) {
-        console.error('Error loading answers:', error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
+        const companyId = localStorage.getItem('company_id');
+        const plantId = localStorage.getItem('plant_id');
+        const financial_year = localStorage.getItem('financial_year') || '2023_2024';
+
+        if (!companyId || !plantId) {
+          console.error('[INIT] Missing required IDs:', { companyId, plantId });
+          setError('Company and Plant information not found. Please ensure you are properly logged in.');
+          return;
+        }
+
+        console.log('[FETCH] Requesting policy management data for', { companyId, plantId, financial_year });
+        const response = await axios.get(
+          `/company/${companyId}/plants/${plantId}/reportsNew/${financial_year}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        // Parse the response data
+        const responseData = response.data?.responses || {};
+        
+        // Update responses for each question
+        const newResponses = {};
+        ['Q1_B', 'Q2_B', 'Q3_B', 'Q4_B', 'Q5_B', 'Q6_B'].forEach(questionId => {
+          if (responseData[questionId]?.table) {
+            newResponses[questionId] = {
+              table: responseData[questionId].table,
+              meta_version: "1.0"
+            };
+          } else {
+            newResponses[questionId] = {
+              table: [],
+              meta_version: "1.0"
+            };
+          }
+        });
+        
+        setResponses(newResponses);
+        setError(null);
+      } catch (err) {
+        console.error('[FETCH] Error fetching policy management data:', err);
+        if (err.response?.status === 401) {
+          localStorage.removeItem('access_token');
+          setError('Your session has expired. Please log in again.');
+          window.location.href = '/login';
+        } else {
+          setError(err.message || 'Failed to fetch policy management data');
+        }
       }
+      setLoading(false);
     };
 
-    loadAnswers();
-  }, []);const handleResponseChange = (questionId, principle, value, type = 'string') => {
+    fetchPolicyManagement();
+  }, []);
+
+  const handleResponseChange = (questionId, principle, value) => {
     setResponses(prev => {
-      let updatedResponse = { ...prev[questionId] };
-      
-      // Ensure proper table structure
-      updatedResponse = {
-        table: {
-          rows: [...(updatedResponse.table?.rows || [])],
-          meta_version: "1.0",
-          columns: [
-            {
-              id: principle,
-              label: principle,
-              type: type
-            }
-          ]
-        }
-      };
+      const updatedTable = [...(prev[questionId].table || [])];
+      const existingIndex = updatedTable.findIndex(
+        item => item.row === principle
+      );
 
-      // Find or create row for this principle
-      const rowIndex = updatedResponse.table.rows.findIndex(r => r.row_id === principle);
-      const cell = {
-        row_id: principle,
-        col_id: principle,
-        value: value,
-        type: type,
-        calc: false
-      };
-
-      if (rowIndex === -1) {
-        // Add new row
-        updatedResponse.table.rows.push({
-          row_id: principle,
-          cells: [cell],
-          calc: false
-        });
-      } else {
-        // Update existing cell
-        const cellIndex = updatedResponse.table.rows[rowIndex].cells.findIndex(c => c.col_id === principle);
-        if (cellIndex === -1) {
-          updatedResponse.table.rows[rowIndex].cells.push(cell);
+      if (existingIndex !== -1) {
+        if (value) {
+          updatedTable[existingIndex] = {
+            row: principle,
+            col: principle,
+            value: value
+          };
         } else {
-          updatedResponse.table.rows[rowIndex].cells[cellIndex] = cell;
+          updatedTable.splice(existingIndex, 1);
         }
+      } else if (value) {
+        updatedTable.push({
+          row: principle,
+          col: principle,
+          value: value
+        });
       }
 
       return {
         ...prev,
-        [questionId]: updatedResponse
+        [questionId]: {
+          table: updatedTable,
+          meta_version: "1.0"
+        }
       };
     });
   };
 
   const handleYesNoClick = (questionId, principle) => {
-    const currentValue = responses[questionId]?.table?.rows?.find(r => r.row_id === principle)?.cells[0]?.value;
+    const currentValue = responses[questionId]?.table?.find(
+      item => item.row === principle
+    )?.value;
     const newValue = currentValue === 'Yes' ? 'No' : currentValue === 'No' ? undefined : 'Yes';
     handleResponseChange(questionId, principle, newValue);
   };
@@ -170,63 +186,182 @@ const PolicyManagementForm = () => {
   const handleTextChange = (questionId, principle, value) => {
     handleResponseChange(questionId, principle, value);
   };
+
   const handleReset = (questionId) => {
     setResponses(prev => ({
       ...prev,
-      [questionId]: { table: { rows: [] } }
+      [questionId]: { table: [], meta_version: "1.0" }
     }));
   };
-  const handleSave = async (questionId) => {
-    try {
-      // Map the UI questionId to the actual question ID
-      const mappedQuestionId = {
-        'web_links': 'Q5_B',
-        'text_answers': 'Q6_B'
-      }[questionId] || questionId;
 
-      const response = responses[mappedQuestionId];
-      
-      // Validate response structure before saving
-      if (!response?.table?.rows) {
-        console.error('Invalid response structure for question:', mappedQuestionId);
+  const handleSave = async (questionId) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        console.error('[AUTH] No access token found');
+        setError('Please log in to save changes');
+        window.location.href = '/login';
         return;
       }
 
-      // Filter out empty values
-      const cleanedRows = response.table.rows.filter(row => {
-        return row.cells.some(cell => cell.value !== undefined && cell.value !== '');
-      });
+      const companyId = localStorage.getItem('company_id');
+      const plantId = localStorage.getItem('plant_id');
+      const financial_year = localStorage.getItem('financial_year') || '2023_2024';
 
-      const cleanedResponse = {
-        ...response,
-        table: {
-          ...response.table,
-          rows: cleanedRows,
+      if (!companyId || !plantId) {
+        throw new Error('Missing company or plant information');
+      }
+
+      // Clean up the table data to remove any duplicate entries
+      const cleanedTable = responses[questionId].table.reduce((acc, curr) => {
+        const existingIndex = acc.findIndex(item => item.row === curr.row);
+        if (existingIndex !== -1) {
+          acc[existingIndex] = curr;
+        } else {
+          acc.push(curr);
+        }
+        return acc;
+      }, []);
+
+      const updates = [{
+        question_id: questionId,
+        section_id: 'section_b',
+        response: {
+          table: cleanedTable,
           meta_version: "1.0"
         }
-      };
+      }];
 
-      const result = await bulkUpdatePolicyAnswers([{
-        questionId: mappedQuestionId,
-        answer: cleanedResponse
-      }]);
+      console.log('[SAVE] Sending updates for', questionId, ':', updates);
 
-      if ('data' in result) {
-        setResponses(prev => ({
-          ...prev,
-          [mappedQuestionId]: cleanedResponse
-        }));
-        console.log('Successfully saved response for question:', mappedQuestionId);
+      await axios.patch(
+        `/company/${companyId}/plants/${plantId}/reportsNew/${financial_year}`,
+        updates,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      // Update local state with cleaned data
+      setResponses(prev => ({
+        ...prev,
+        [questionId]: {
+          table: cleanedTable,
+          meta_version: "1.0"
+        }
+      }));
+
+      setError(null);
+    } catch (err) {
+      console.error('[SAVE] Error saving data:', err);
+      if (err.response?.status === 401) {
+        localStorage.removeItem('access_token');
+        setError('Your session has expired. Please log in again.');
+        window.location.href = '/login';
       } else {
-        throw new Error(`Failed to save response for question: ${mappedQuestionId}`);
+        setError(err.message || 'Failed to save changes');
       }
-    } catch (error) {
-      console.error('Error saving response:', error);
     }
+    setLoading(false);
+  };
+
+  const handleBulkSave = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        console.error('[AUTH] No access token found');
+        setError('Please log in to save changes');
+        window.location.href = '/login';
+        return;
+      }
+
+      const companyId = localStorage.getItem('company_id');
+      const plantId = localStorage.getItem('plant_id');
+      const financial_year = localStorage.getItem('financial_year') || '2023_2024';
+
+      if (!companyId || !plantId) {
+        throw new Error('Missing company or plant information');
+      }
+
+      // Prepare all updates in one batch
+      const updates = Object.entries(responses).map(([questionId, response]) => {
+        // Clean up the table data
+        const cleanedTable = response.table.reduce((acc, curr) => {
+          const existingIndex = acc.findIndex(item => item.row === curr.row);
+          if (existingIndex !== -1) {
+            acc[existingIndex] = curr;
+          } else {
+            acc.push(curr);
+          }
+          return acc;
+        }, []);
+
+        return {
+          question_id: questionId,
+          section_id: 'section_b',
+          response: {
+            table: cleanedTable,
+            meta_version: "1.0"
+          }
+        };
+      });
+
+      console.log('[SAVE] Sending bulk updates:', updates);
+
+      await axios.patch(
+        `/company/${companyId}/plants/${plantId}/reportsNew/${financial_year}`,
+        updates,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      // Update local state with cleaned data
+      const cleanedResponses = Object.entries(responses).reduce((acc, [questionId, response]) => {
+        const cleanedTable = response.table.reduce((tableAcc, curr) => {
+          const existingIndex = tableAcc.findIndex(item => item.row === curr.row);
+          if (existingIndex !== -1) {
+            tableAcc[existingIndex] = curr;
+          } else {
+            tableAcc.push(curr);
+          }
+          return tableAcc;
+        }, []);
+
+        acc[questionId] = {
+          table: cleanedTable,
+          meta_version: "1.0"
+        };
+        return acc;
+      }, {});
+
+      setResponses(cleanedResponses);
+      setError(null);
+    } catch (err) {
+      console.error('[SAVE] Error saving data:', err);
+      if (err.response?.status === 401) {
+        localStorage.removeItem('access_token');
+        setError('Your session has expired. Please log in again.');
+        window.location.href = '/login';
+      } else {
+        setError(err.message || 'Failed to save changes');
+      }
+    }
+    setLoading(false);
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Custom scrollbar styles */}
       <style>
         {`
@@ -273,9 +408,9 @@ const PolicyManagementForm = () => {
                   <tr key={questionId} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                     <td className="px-4 py-4 text-sm text-gray-900 align-top">{text}</td>
                     {principles.map((principle) => {
-                      const value = responses[questionId]?.table?.rows?.find(
-                        (r) => r.row_id === principle
-                      )?.cells[0]?.value;
+                      const value = responses[questionId]?.table?.find(
+                        item => item.row === principle && item.col === principle
+                      )?.value;
                       return (
                         <td
                           key={principle}
@@ -293,9 +428,10 @@ const PolicyManagementForm = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>            <TableActionButtons 
+            </table>
+            <TableActionButtons 
               onReset={() => Object.keys(questions).forEach(handleReset)}
-              onSave={() => Object.keys(questions).forEach(handleSave)}
+              onSave={handleBulkSave}
             />
           </div>
         </CardContent>
@@ -327,9 +463,9 @@ const PolicyManagementForm = () => {
                   <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                     <td className="px-4 py-4 text-sm text-gray-900 align-top">{question}</td>
                     {principles.map((principle) => {
-                      const value = responses.Q5_B?.table?.rows?.find(
-                        (r) => r.row_id === principle
-                      )?.cells[0]?.value;
+                      const value = responses.Q5_B?.table?.find(
+                        item => item.row === principle && item.col === principle
+                      )?.value;
                       return (
                         <td key={principle} className="px-4 py-4">
                           <input
@@ -345,7 +481,8 @@ const PolicyManagementForm = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>            <TableActionButtons 
+            </table>
+            <TableActionButtons 
               onReset={() => handleReset('Q5_B')}
               onSave={() => handleSave('Q5_B')}
             />
@@ -379,9 +516,9 @@ const PolicyManagementForm = () => {
                   <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                     <td className="px-4 py-4 text-sm text-gray-900 align-top">{question}</td>
                     {principles.map((principle) => {
-                      const value = responses.Q6_B?.table?.rows?.find(
-                        (r) => r.row_id === principle
-                      )?.cells[0]?.value;
+                      const value = responses.Q6_B?.table?.find(
+                        item => item.row === principle && item.col === principle
+                      )?.value;
                       return (
                         <td key={principle} className="px-4 py-4">
                           <textarea
@@ -397,13 +534,28 @@ const PolicyManagementForm = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>            <TableActionButtons 
+            </table>
+            <TableActionButtons 
               onReset={() => handleReset('Q6_B')}
               onSave={() => handleSave('Q6_B')}
             />
           </div>
         </CardContent>
       </Card>
+      
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+      
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
