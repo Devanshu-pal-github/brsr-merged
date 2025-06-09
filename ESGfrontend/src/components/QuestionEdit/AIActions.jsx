@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { AlertCircle, Lightbulb, Sparkles, Info, FileText, ShieldCheck, Database, HelpCircle, Star, BookOpen, Edit3, Zap, Book, Edit2, HelpCircle as ExplainIcon, Key, Mic, RefreshCcw, BookMarked } from "lucide-react";
 import AIActionButtons from "./AIActionButtons";
 import ReactMarkdown from 'react-markdown';
@@ -254,6 +254,8 @@ export const LeftAIActions = ({
 
     const hasDraft = formData.string_value?.trim().length > 0;
 
+    const [hoveredAction, setHoveredAction] = useState(null);
+
     // Add proactive follow-up actions for left-side responses
     const renderProactiveFollowUps = (contextText) => {
         const actions = [
@@ -279,6 +281,28 @@ export const LeftAIActions = ({
 
     return (
         <>
+            {/* Animated label above buttons */}
+            <div style={{ minHeight: 40, marginBottom: 12, position: "relative" }}>
+                {leftActions.map(({ action, title }) =>
+                    hoveredAction === action ? (
+                        <div
+                            key={action}
+                            className="ai-action-label-glass"
+                            style={{
+                                left: '50%',
+                                transform: 'translate(-50%, 0)',
+                                position: 'absolute',
+                                top: 0,
+                                zIndex: 20,
+                                pointerEvents: 'none',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {title}
+                        </div>
+                    ) : null
+                )}
+            </div>
             {!isLoading.left && !leftAiMessage ? (
                 <div className="flex flex-wrap justify-center gap-3 px-4 py-5">
                     {leftActions.map(({ action, icon: Icon, title, requiresDraft }) => {
@@ -286,6 +310,10 @@ export const LeftAIActions = ({
                         return (
                             <div key={action} className="relative">
                                 <button
+                                    onMouseEnter={() => setHoveredAction(action)}
+                                    onMouseLeave={() => setHoveredAction(null)}
+                                    onFocus={() => setHoveredAction(action)}
+                                    onBlur={() => setHoveredAction(null)}
                                     onClick={() => handleQuickAIAction(action)}
                                     title={title}
                                     className={`
@@ -412,6 +440,39 @@ export const LeftAIActions = ({
                     </div>
                 </div>
             )}
+            {/* Advanced animation styles */}
+            <style>{`
+                .ai-action-label-glass {
+                    background: rgba(255, 255, 255, 0.25);
+                    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
+                    border-radius: 16px;
+                    border: 1px solid rgba(255, 255, 255, 0.18);
+                    padding: 0.5rem 1.5rem;
+                    font-size: 1.08rem;
+                    font-weight: 600;
+                    color: #1A2B5C;
+                    letter-spacing: 0.01em;
+                    opacity: 0;
+                    transform: translate(-50%, 10px) scale(0.95);
+                    animation: aiLabelIn 0.35s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
+                }
+                @keyframes aiLabelIn {
+                    0% {
+                        opacity: 0;
+                        transform: translate(-50%, 20px) scale(0.92);
+                    }
+                    60% {
+                        opacity: 1;
+                        transform: translate(-50%, -4px) scale(1.04);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translate(-50%, 0) scale(1);
+                    }
+                }
+            `}</style>
         </>
     );
 };

@@ -312,7 +312,8 @@ const DynamicEntityDetails = () => {
                                                                     }
                                                                     // Flexible match for turnover column
                                                                     const isTurnover = col.col_id.toLowerCase().includes('turnover') || col.label.toLowerCase().includes('turnover');
-                                                                    let cell = answer?.table?.find(cell => {
+                                                                    let tableArray = Array.isArray(answer?.table) ? answer.table : [];
+                                                                    let cell = tableArray.find(cell => {
                                                                         const rowMatch = cell.row === row.row_id || cell.row === `activity_${idx + 1}`;
                                                                         if (isTurnover) {
                                                                             return rowMatch && (cell.col.toLowerCase().includes('turnover') || cell.col === col.col_id);
@@ -423,7 +424,8 @@ const DynamicEntityDetails = () => {
                                                                 }
                                                                 // Flexible match for turnover column
                                                                 const isTurnover = cell.col_id.toLowerCase().includes('turnover') || cell.label?.toLowerCase().includes('turnover');
-                                                                const found = currentTable.find(c => {
+                                                                let tableArray = Array.isArray(currentTable) ? currentTable : [];
+                                                                let found = tableArray.find(c => {
                                                                     const rowMatch = c.row === row.row_id || c.row === row.label || c.row === `activity_${meta.rows.findIndex(r => r.row_id === row.row_id) + 1}`;
                                                                     if (isTurnover) {
                                                                         return rowMatch && (c.col.toLowerCase().includes('turnover') || c.col === cell.col_id);
