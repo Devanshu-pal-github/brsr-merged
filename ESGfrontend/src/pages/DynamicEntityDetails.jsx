@@ -5,7 +5,7 @@ import {
     useGetQuestionResponsesMutation,
     useSubmitQuestionAnswerMutation
 } from '../api/apiSlice';
-import { BarChart3, X,Edit3 } from 'lucide-react';
+import { BarChart3, X, Edit3 } from 'lucide-react';
 import Layout from '../components/Layout';
 import Breadcrumb from '../components/Breadcrumb';
 import SubHeader from '../components/SubHeader';
@@ -118,6 +118,7 @@ const DynamicEntityDetails = () => {
     const [editModalQuestionId, setEditModalQuestionId] = useState(null);
     const [editModalTableQuestion, setEditModalTableQuestion] = useState(null); const [answers, setAnswers] = useState({});
     const [aiChatOpen, setAiChatOpen] = useState(false);
+    const [chatbotInitialMode, setChatbotInitialMode] = useState("general");
     const [showMobileProgress, setShowMobileProgress] = useState(false);
 
     useEffect(() => {
@@ -160,15 +161,18 @@ const DynamicEntityDetails = () => {
         };
 
         // Store in localStorage
-        const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
-        storedQuestions[question.question_id] = questionData;
-        localStorage.setItem('questionData', JSON.stringify(storedQuestions));
-        console.log('Stored question data:', questionData);
+        try {
+            const storedQuestions = JSON.parse(localStorage.getItem('questionData') || '{}');
+            storedQuestions[question.question_id] = questionData;
+            localStorage.setItem('questionData', JSON.stringify(storedQuestions));
+            console.log('Stored question data:', questionData);
+        } catch (error) {
+            console.error('Error storing question data:', error);
+        }
 
-        // Open the AI chat
+        setChatbotInitialMode("question");
         setAiChatOpen(true);
     };
-
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
 
     const handleEditClick = (question) => {
@@ -453,8 +457,8 @@ const DynamicEntityDetails = () => {
     return (
         <AppProvider>
             <Layout>
-                <div className="relative flex w-full h-screen">
-                    <section className="flex-1 flex flex-col min-w-0 max-w-[70vw] mx-auto bg-transparent px-[2vw] pt-0 pb-0">
+                <div className="relative flex w-full h-screen scrollbar-none">
+                    <section className="flex-1 flex flex-col min-w-0 max-w-[70vw] mx-auto bg-transparent px-[2vw] pt-0 pb-0 overflow-y-auto mr-[20vw]">
                         <div className="sticky top-0 z-30 pt-[2vh] pb-[1vh] border-b border-gray-200">
                             <div className="w-full max-w-[70vw] mx-auto px-0 sm:px-[1vw] md:px-0">
                                 <Breadcrumb section="Entity Details" activeTab={activeTab} />
@@ -481,7 +485,7 @@ const DynamicEntityDetails = () => {
                             )}
                         </div>
                     </section>
-                    <aside className="hidden lg:flex flex-col mt-[7vh] mr-[30px] gap-[1.2vh] px-[0.7vw] pt-[1.2vh] pb-[1.2vh] bg-white border-l border-gray-200 shadow-lg min-w-[16vw] max-w-[18vw] w-full sticky top-0 h-[82vh] z-20 items-center justify-start rounded-[4px] transition-all duration-500">
+                    <aside className="hidden lg:flex flex-col mt-[11vh] mr-[30px] gap-[1.2vh] px-[0.7vw] pt-[1.2vh] pb-[1.2vh] bg-white border-l border-gray-200 shadow-lg min-w-[16vw] max-w-[18vw] w-full fixed right-4 top-0 h-[82vh] z-20 items-center justify-start rounded-[4px] transition-all duration-500 overflow-y-auto">
                         {/* Overall Progress Circle */}                        <div className="flex flex-col items-center mb-[0.7vh]">
                             <div className="font-semibold text-[13px] mb-[1vh] text-[#000D30]">Module Progress</div>
                             {submodules.length > 0 && (
@@ -649,19 +653,33 @@ const DynamicEntityDetails = () => {
                         )}
                     </aside>
                     <button
-                        className="fixed z-[120] bottom-[3vh] right-[3vw] w-[6vw] h-[6vw] min-w-[48px] min-h-[48px] max-w-[80px] max-h-[80px] rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-xl flex items-center justify-center hover:scale-110 transition-transform border-4 border-white focus:outline-none"
+                        className="fixed z-[120] bottom-[3vh] right-[3vw] w-[6vw] h-[6vw] min-w-[48px] min-h-[48px] max-w-[80px] max-h-[80px] rounded-full bg-gradient-to-br from-[#0A2E87] to-[#4F46E5] shadow-xl flex items-center justify-center hover:scale-110 transition-transform border-4 border-white focus:outline-none "
                         style={{ boxShadow: '0 8px 32px 0 rgba(10,46,135,0.25)' }}
                         onClick={() => setAiChatOpen(true)}
                         aria-label="Open AI Assistant Chat"
                     >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M8 15c1.333-2 6.667-2 8 0" /><path d="M9 9h.01" /><path d="M15 9h.01" /></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+  <rect x="4" y="6" width="16" height="12" rx="2"/>
+
+  <line x1="12" y1="6" x2="12" y2="3"/>
+  <circle cx="12" cy="3" r="1"/>
+
+  <circle cx="9" cy="10" r="1"/>
+  <circle cx="15" cy="10" r="1"/>
+  
+  <path d="M8 14h8"/>
+</svg>
                     </button>
                     {aiChatOpen && (
                         <div className="fixed inset-0 z-[1000] flex items-end justify-end bg-opacity-50 transition-opacity duration-300">
                             <div className="w-full h-full absolute top-0 left-0" onClick={() => setAiChatOpen(false)} />
                             <div className="relative z-10 w-full max-w-md m-4 md:m-8 animate-slide-up">
                                 <div className="bg-white rounded-lg shadow-2xl p-0 overflow-hidden border border-gray-200">
-                                    <ChatbotWindow onClose={() => setAiChatOpen(false)} />
+                                    <ChatbotWindow
+                                        onClose={() => setAiChatOpen(false)}
+                                        initialMode={chatbotInitialMode}
+                                    />
                                 </div>                            </div>
                         </div>
                     )}

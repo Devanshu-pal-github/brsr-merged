@@ -173,7 +173,7 @@ const EmployeeListPopup = ({ onClose }) => {
         </div>
 
         
-        <div className="mb-6bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl shadow-inner border border-slate-200/60  p-4 mb-4 w-full">
+        <div className="mb-6  rounded-xl shadow-inner border border-slate-200/60  p-4  w-full">
 
           
           <div className="flex flex-wrap items-center justify-between gap-4 w-full">

@@ -855,7 +855,7 @@ const ChatbotQuickActions = ({ quickActions, handleAction, isLoading, isApiKeyAv
 };
 
 // SECTION 4: MAIN COMPONENT
-const ChatbotWindow = ({ onClose, activeQuestion, currentAnswer }) => {
+const ChatbotWindow = ({ onClose, activeQuestion, currentAnswer , initialMode }) => {
   const { state, dispatch } = useContext(AppContext);
   const [messages, dispatchMessages] = useReducer(messageReducer, []);
   const [input, setInput] = useState('');
@@ -865,6 +865,10 @@ const ChatbotWindow = ({ onClose, activeQuestion, currentAnswer }) => {
   const [mode, setMode] = useState(activeQuestion?.question_text ? 'question' : 'general');
   const inputRef = useRef(null);
   const [carouselData, setCarouselData] = useState({});
+
+  useEffect(() => {
+        setMode(initialMode || (activeQuestion?.question_text ? 'question' : 'general'));
+    }, [initialMode, activeQuestion]);
   const processMessage = async ({
     action,
     input,

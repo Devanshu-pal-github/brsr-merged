@@ -16,6 +16,7 @@ import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
 import { transformTableMetadata, createEmptyTableResponse } from "./tableUtils";
 import TableQuestionRenderer from "./TableQuestionRenderer";
+import toast from "react-hot-toast";
 
 const QuestionEditPopup = ({
     question,
@@ -34,7 +35,7 @@ const QuestionEditPopup = ({
     const [errors, setErrors] = useState({});
     const [isVisible, setIsVisible] = useState(false);
     const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
-    const [isSaveLoading, setIsSaveLoading] = useState(false); // New state for save button
+    const [isSaveLoading, setIsSaveLoading] = useState(false);
     const [submitAnswer] = useSubmitQuestionAnswerMutation();
     const [storeQuestionData] = useStoreQuestionDataMutation();
 
@@ -57,8 +58,9 @@ const QuestionEditPopup = ({
             });
         }
     }, [initialAnswer, question]);
+
     const [generateText] = useGenerateTextMutation();
-    const [isLoading, setIsLoading] = useState({ left: false, right: false }); // Updated to object
+    const [isLoading, setIsLoading] = useState({ left: false, right: false });
     const [error, setError] = useState(null);
     const [isTextareaFocused, setIsTextareaFocused] = useState(false);
     const [selectedTextInTextarea, setSelectedTextInTextarea] = useState(null);
@@ -71,6 +73,7 @@ const QuestionEditPopup = ({
     useEffect(() => {
         setIsVisible(true);
     }, []);
+
     useEffect(() => {
         if (initialAnswer) {
             setFormData({
@@ -124,8 +127,8 @@ const QuestionEditPopup = ({
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSaveLoading(true); // Set save button loading state
-        setError(null); // Clear any previous errors
+        setIsSaveLoading(true);
+        setError(null);
         try {
             if (question.type === "table") {
                 const response = {
@@ -137,7 +140,10 @@ const QuestionEditPopup = ({
                     },
                 };
                 await onSuccess?.(question.question_id, response.response);
-                onClose();
+                toast.success("Question updated successfully!");
+                setTimeout(() => {
+                    onClose();
+                }, 1500);
                 return;
             }
 
@@ -157,6 +163,7 @@ const QuestionEditPopup = ({
 
             if (hasErrors || requiredFields.length > 0) {
                 setErrors((prev) => ({ ...prev, form: requiredFields.join(" ") }));
+                setIsSaveLoading(false);
                 return;
             }
 
@@ -208,15 +215,18 @@ const QuestionEditPopup = ({
                 answer: response.response,
             });
 
-            onSuccess?.(question.question_id, response.response);
-            onClose();
+            toast.success("Question updated successfully!");
+            await onSuccess?.(question.question_id, response.response);
+            setTimeout(() => {
+                onClose();
+            }, 1500);
         } catch (error) {
             setErrors((prev) => ({
                 ...prev,
                 form: "Failed to submit answer. Please try again.",
             }));
         } finally {
-            setIsSaveLoading(false); // Reset save button loading state
+            setIsSaveLoading(false);
         }
     };
 
@@ -491,7 +501,5 @@ const QuestionEditPopup = ({
         </div>
     );
 };
-
-
 
 export default QuestionEditPopup;

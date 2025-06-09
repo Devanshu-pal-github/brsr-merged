@@ -69,7 +69,7 @@ const AuditLogPage = () => {
                 <div className="flex items-center h-full gap-2 flex-wrap">
                     {params.row.userRole ? (
                         <span
-                            className="inline-flex justify-center items-center bg-gradient-to-r from-[#2c3e50] to-[#1A2341] text-white text-xs px-3 py-1 rounded-full shadow-md"
+                            className="inline-flex justify-center items-center bg-gradient-to-r from-[#2c3e50] to-[#1A2341] text-white text-xs px-3 py-1 rounded-full shadow-md "
                         >
                             {params.row.userRole.charAt(0).toUpperCase() + params.row.userRole.slice(1)}
                         </span>
@@ -90,8 +90,8 @@ const AuditLogPage = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen flex flex-col gap-[1.5vw] px-[2vw] py-[1vw]" style={{ overflow: "hidden" }}>
-                <h1 className="text-[1.1vw] font-semibold text-[#1A2341] mb-[1vw] pl-[0.2vw]">
+            <div className="min-h-screen flex flex-col  px-[2vw] py-[1vw]" style={{ overflow: "hidden" }}>
+                <h1 className="text-[1.1vw] font-semibold text-[#1A2341]  pl-[0.2vw]">
                     Audit Logs
                 </h1>
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-[1vw]">
@@ -99,7 +99,7 @@ const AuditLogPage = () => {
                     <div className="lg:col-span-4 flex flex-col gap-[1vw]">
                         <div className="bg-white rounded-[0.4vw] p-[0.7vw] shadow-sm hover:shadow-md transition-shadow duration-200">
                             <Toaster position="top-right" />
-                            <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-[0.3vw] shadow-inner border border-slate-200/60 p-[0.7vw] mb-[0.7vw]">
+                            <div className="rounded-xl shadow-inner border border-slate-200/60 p-[0.7vw] mb-[0.7vw]">
                                 <div className="flex flex-wrap items-center justify-between gap-[0.7vw] w-full">
                                     {/* Search */}
                                     <div className="relative flex-1 min-w-[250px] max-w-[400px]">
@@ -158,7 +158,7 @@ const AuditLogPage = () => {
                                 </div>
                             )}
                             {!isLoading && !isError && (
-                                <div style={{ height: 500, width: "100%" }} className="mb-[0.7vw]">
+                                <div style={{ height: "65vh", width: "100%" }} className="mb-[0.7vw]">
                                     <DataGrid
                                         rows={filteredRows}
                                         columns={columns}

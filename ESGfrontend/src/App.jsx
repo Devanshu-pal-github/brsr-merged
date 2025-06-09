@@ -10,10 +10,12 @@ import ChatbotButton from './AICHATBOT/ChatbotButton';
 import { AppProvider } from './AICHATBOT/AppProvider';
 import CompanyPage from './features/company/pages/CompanyPage';
 import AuditLogPage from './pages/PlantPages/auditLogPage';
+import { Toaster } from 'react-hot-toast'; // <-- Add this import
 
 function App() {
   return (
     <AppProvider>
+      <Toaster position="top-right" /> {/* <-- Add this line */}
       <Router>
         <Routes>
           <Route path="/" element={<LoginPage />} />
