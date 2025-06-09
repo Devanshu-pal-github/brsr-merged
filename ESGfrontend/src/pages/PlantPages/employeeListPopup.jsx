@@ -126,17 +126,17 @@ const EmployeeListPopup = ({ onClose }) => {
           <div className="flex items-center justify-center w-full h-full gap-2">
             <button
               onClick={() => handleDeleteClick(employee)}
-              className="bg-gray-200 text-gray-900 w-9 h-9 flex items-center justify-center rounded-full hover:bg-red-700 transition cursor-pointer"
+              className="bg-gray-200 text-gray-900 w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-300 transition cursor-pointer"
               title="Delete Employee"
             >
               <Trash2 size={16} />
             </button>
             <button
               onClick={() => handleUpdateClick(employee)}
-              className="bg-[#1A2341] text-white w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#1A2341]/70 transition cursor-pointer"
+              className="bg-[#1A2341] text-white w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#1A2341]/80 transition cursor-pointer"
               title="Edit Employee"
             >
-              <PencilIcon size={16} />
+              <PencilIcon size={16} />    
             </button>
           </div>
         );

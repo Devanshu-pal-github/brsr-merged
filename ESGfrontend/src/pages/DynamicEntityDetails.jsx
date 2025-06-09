@@ -467,8 +467,8 @@ const DynamicEntityDetails = () => {
     return (
         <AppProvider>
             <Layout>
-                <div className="relative flex w-full h-screen scrollbar-none">
-                    <section className="flex-1 flex flex-col min-w-0 max-w-[70vw] mx-auto bg-transparent px-[2vw] pt-0 pb-0 overflow-y-auto mr-[20vw]">
+                <div className="relative flex w-full h-screen scrollbar-none ">
+                    <section className=" flex-1 flex flex-col min-w-0 max-w-[70vw] mx-auto bg-transparent px-[2vw] pt-0 pb-0 overflow-y-auto mr-[20vw]">
                         <div className="sticky top-0 z-30 pt-[2vh] pb-[1vh] border-b border-gray-200">
                             <div className="w-full max-w-[70vw] mx-auto px-0 sm:px-[1vw] md:px-0">
                                 <Breadcrumb section="Entity Details" activeTab={activeTab} />
