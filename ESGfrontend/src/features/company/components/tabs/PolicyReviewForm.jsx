@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Card, CardHeader, CardContent } from '../common/CardComponents';
 import TableActionButtons from '../common/TableActionButtons';
 
@@ -11,6 +12,9 @@ const PolicyReviewForm = () => {
   const [assessmentDetails, setAssessmentDetails] = useState({});
   // State for non-coverage reasons
   const [nonCoverageReasons, setNonCoverageReasons] = useState({});
+  // Loading and error states
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const reviewOptions = [
     'Director',
@@ -25,6 +29,108 @@ const PolicyReviewForm = () => {
     'Others'
   ];
 
+  useEffect(() => {
+    const fetchPolicyReview = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          console.error('[AUTH] No access token found');
+          setError('Please log in to access this feature');
+          window.location.href = '/login';
+          return;
+        }
+
+        const companyId = localStorage.getItem('company_id');
+        const plantId = localStorage.getItem('plant_id');
+        const financial_year = localStorage.getItem('financial_year') || '2023_2024';
+
+        if (!companyId || !plantId) {
+          console.error('[INIT] Missing required IDs:', { companyId, plantId });
+          setError('Company and Plant information not found. Please ensure you are properly logged in.');
+          return;
+        }
+
+        console.log('[FETCH] Requesting policy review data for', { companyId, plantId, financial_year });
+        const response = await axios.get(
+          `/company/${companyId}/plants/${plantId}/reportsNew/${financial_year}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        // Parse the response data
+        const responseData = response.data?.responses || {};
+        
+        // Update review details
+        if (responseData.Q10_B?.table) {
+          const reviewData = {};
+          responseData.Q10_B.table.forEach(item => {
+            if (item.row && item.col && item.value) {
+              try {
+                const value = JSON.parse(item.value);
+                if (value.review) {
+                  reviewData[`${item.row}-${item.col}-by`] = value.review;
+                }
+                if (value.frequency) {
+                  reviewData[`${item.row}-${item.col}-frequency`] = value.frequency;
+                }
+              } catch (e) {
+                // If not JSON, treat as legacy data
+                reviewData[`${item.row}-${item.col}-by`] = item.value;
+              }
+            }
+          });
+          setReviewDetails(reviewData);
+        }
+
+        // Update assessment details
+        if (responseData.Q11_B?.table) {
+          const assessmentData = {};
+          // Group the data by principle
+          responseData.Q11_B.table.forEach(item => {
+            if (item.row && item.col && item.value) {
+              if (item.row === 'assessment') {
+                assessmentData[item.col] = item.value;
+              } else if (item.row === 'agency') {
+                assessmentData[`${item.col}-agency`] = item.value;
+              }
+            }
+          });
+          setAssessmentDetails(assessmentData);
+        }
+
+        // Update non-coverage reasons
+        if (responseData.Q12_B?.table) {
+          const reasonsData = {};
+          responseData.Q12_B.table.forEach(item => {
+            if (item.row && item.col && item.value) {
+              reasonsData[`${item.col}-${item.row}`] = item.value;
+            }
+          });
+          setNonCoverageReasons(reasonsData);
+        }
+
+      } catch (err) {
+        console.error('[FETCH] Error fetching policy review data:', err);
+        if (err.response?.status === 401) {
+          localStorage.removeItem('access_token');
+          setError('Your session has expired. Please log in again.');
+          window.location.href = '/login';
+        } else {
+          setError(err.message || 'Failed to fetch policy review data');
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchPolicyReview();
+  }, []);
+
   const handleReviewDetailsChange = (rowType, principle, field, value) => {
     setReviewDetails(prev => ({
       ...prev,
@@ -33,17 +139,30 @@ const PolicyReviewForm = () => {
   };
 
   const handleAssessmentChange = (principle, value) => {
-    setAssessmentDetails(prev => ({
-      ...prev,
-      [principle]: value
-    }));
+    setAssessmentDetails(prev => {
+      const newDetails = { ...prev };
+      
+      // If this is an agency name update
+      if (principle.includes('-agency')) {
+        newDetails[principle] = value;
+      } else {
+        // This is a Yes/No assessment update
+        newDetails[principle] = value;
+        // Clear agency name if assessment is not "Yes"
+        if (value !== 'Yes') {
+          delete newDetails[`${principle}-agency`];
+        }
+      }
+      
+      return newDetails;
+    });
   };
 
   const handleNonCoverageClick = (principle, reason) => {
     const key = `${principle}-${reason}`;
     setNonCoverageReasons(prev => ({
       ...prev,
-      [key]: prev[key] === 'Yes' ? 'No' : prev[key] === 'No' ? 'N/A' : 'Yes'
+      [key]: prev[key] === 'Yes' ? 'No' : prev[key] === 'N/A' ? 'Yes' : 'N/A'
     }));
   };
 
@@ -51,31 +170,272 @@ const PolicyReviewForm = () => {
     setReviewDetails({});
   };
 
-  const handleReviewSave = () => {
-    // TODO: Implement save functionality
-    console.log('Saving review details:', reviewDetails);
+  const handleReviewSave = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        console.error('[AUTH] No access token found');
+        setError('Please log in to save changes');
+        window.location.href = '/login';
+        return;
+      }
+
+      const companyId = localStorage.getItem('company_id');
+      const plantId = localStorage.getItem('plant_id');
+      const financial_year = localStorage.getItem('financial_year') || '2023_2024';
+
+      if (!companyId || !plantId) {
+        throw new Error('Missing company or plant information');
+      }
+
+      // Format the review details for API
+      const reviewTable = [];
+      
+      // Process each principle for both Performance and Compliance
+      ['Performance', 'Compliance'].forEach(rowType => {
+        principles.forEach(principle => {
+          const reviewValue = reviewDetails[`${rowType}-${principle}-by`];
+          const frequencyValue = reviewDetails[`${rowType}-${principle}-frequency`];
+          
+          // Only add if we have at least one value
+          if (reviewValue || frequencyValue) {
+            const value = {
+              review: reviewValue || '',
+              frequency: frequencyValue || ''
+            };
+            
+            reviewTable.push({
+              row: rowType,
+              col: principle,
+              value: JSON.stringify(value)
+            });
+          }
+        });
+      });
+
+      const updates = [
+        {
+          question_id: 'Q10_B',
+          section_id: 'section_b',
+          response: {
+            table: reviewTable,
+            meta_version: "1.0"
+          }
+        }
+      ];
+
+      console.log('[SAVE] Sending review updates:', updates);
+
+      await axios.patch(
+        `/company/${companyId}/plants/${plantId}/reportsNew/${financial_year}`,
+        updates,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      setError(null);
+    } catch (err) {
+      console.error('[SAVE] Error saving review details:', err);
+      if (err.response?.status === 401) {
+        localStorage.removeItem('access_token');
+        setError('Your session has expired. Please log in again.');
+        window.location.href = '/login';
+      } else {
+        setError(err.message || 'Failed to save changes');
+      }
+    }
+    setLoading(false);
   };
 
   const handleAssessmentReset = () => {
     setAssessmentDetails({});
   };
 
-  const handleAssessmentSave = () => {
-    // TODO: Implement save functionality
-    console.log('Saving assessment details:', assessmentDetails);
+  const handleAssessmentSave = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        console.error('[AUTH] No access token found');
+        setError('Please log in to save changes');
+        window.location.href = '/login';
+        return;
+      }
+
+      const companyId = localStorage.getItem('company_id');
+      const plantId = localStorage.getItem('plant_id');
+      const financial_year = localStorage.getItem('financial_year') || '2023_2024';
+
+      if (!companyId || !plantId) {
+        throw new Error('Missing company or plant information');
+      }
+
+      // Format the assessment details for API
+      const assessmentTable = [];
+      
+      // Process all principles
+      principles.forEach(principle => {
+        const assessment = assessmentDetails[principle];
+        const agencyName = assessmentDetails[`${principle}-agency`];
+        
+        // Add assessment response (Yes/No) if it exists
+        if (assessment) {
+          assessmentTable.push({
+            row: 'assessment',
+            col: principle,
+            value: assessment
+          });
+          
+          // Add agency name only if assessment is Yes and agency name exists
+          if (assessment === 'Yes' && agencyName) {
+            assessmentTable.push({
+              row: 'agency',
+              col: principle,
+              value: agencyName
+            });
+          }
+        }
+      });
+
+      const updates = [
+        {
+          question_id: 'Q11_B',
+          section_id: 'section_b',
+          response: {
+            table: assessmentTable,
+            meta_version: "1.0"
+          }
+        }
+      ];
+
+      console.log('[SAVE] Sending assessment updates:', updates);
+
+      await axios.patch(
+        `/company/${companyId}/plants/${plantId}/reportsNew/${financial_year}`,
+        updates,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      setError(null);
+    } catch (err) {
+      console.error('[SAVE] Error saving assessment details:', err);
+      if (err.response?.status === 401) {
+        localStorage.removeItem('access_token');
+        setError('Your session has expired. Please log in again.');
+        window.location.href = '/login';
+      } else {
+        setError(err.message || 'Failed to save changes');
+      }
+    }
+    setLoading(false);
   };
 
   const handleNonCoverageReset = () => {
     setNonCoverageReasons({});
   };
 
-  const handleNonCoverageSave = () => {
-    // TODO: Implement save functionality
-    console.log('Saving non-coverage reasons:', nonCoverageReasons);
+  const handleNonCoverageSave = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        console.error('[AUTH] No access token found');
+        setError('Please log in to save changes');
+        window.location.href = '/login';
+        return;
+      }
+
+      const companyId = localStorage.getItem('company_id');
+      const plantId = localStorage.getItem('plant_id');
+      const financial_year = localStorage.getItem('financial_year') || '2023_2024';
+
+      if (!companyId || !plantId) {
+        throw new Error('Missing company or plant information');
+      }
+
+      // Format the non-coverage reasons for API
+      const reasonsTable = [];
+      Object.entries(nonCoverageReasons).forEach(([key, value]) => {
+        if (!value || value === 'N/A') return; // Skip empty or N/A values
+        
+        const [principle, reason] = key.split('-');
+        if (principle && reason && value) {
+          reasonsTable.push({
+            row: reason,
+            col: principle,
+            value: value
+          });
+        }
+      });
+
+      const updates = [
+        {
+          question_id: 'Q12_B',
+          section_id: 'section_b',
+          response: {
+            table: reasonsTable,
+            meta_version: "1.0"
+          }
+        }
+      ];
+
+      console.log('[SAVE] Sending non-coverage updates:', updates);
+
+      await axios.patch(
+        `/company/${companyId}/plants/${plantId}/reportsNew/${financial_year}`,
+        updates,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      setError(null);
+    } catch (err) {
+      console.error('[SAVE] Error saving non-coverage details:', err);
+      if (err.response?.status === 401) {
+        localStorage.removeItem('access_token');
+        setError('Your session has expired. Please log in again.');
+        window.location.href = '/login';
+      } else {
+        setError(err.message || 'Failed to save changes');
+      }
+    }
+    setLoading(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+
       {/* Custom scrollbar styles */}
       <style>
         {`
@@ -96,7 +456,8 @@ const PolicyReviewForm = () => {
         `}
       </style>
 
-      {/* Question 10 */}      <Card>
+      {/* Question 10 */}
+      <Card>
         <CardHeader>
           <h3 className="text-lg font-semibold">10. Details of Review of NGRBCs by the Company</h3>
         </CardHeader>
@@ -170,7 +531,9 @@ const PolicyReviewForm = () => {
             />
           </div>
         </CardContent>
-      </Card>{/* Question 11 */}
+      </Card>
+
+      {/* Question 11 */}
       <Card>
         <CardHeader>
           <h3 className="text-lg font-semibold">11. Has the entity carried out independent assessment/evaluation of the working of its policies by an external agency?</h3>
@@ -187,7 +550,8 @@ const PolicyReviewForm = () => {
                       <th key={p} className="w-32 px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{p}</th>
                     ))}
                   </tr>
-                </thead>                <tbody className="bg-white divide-y divide-gray-200">
+                </thead>
+                <tbody>
                   <tr>
                     <td className="px-4 py-4 text-sm text-gray-900">Has the entity carried out independent assessment by external agency? (Yes/No)</td>
                     {principles.map(p => (
@@ -247,7 +611,8 @@ const PolicyReviewForm = () => {
                       <th key={p} className="w-24 px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{p}</th>
                     ))}
                   </tr>
-                </thead>                <tbody className="bg-white divide-y divide-gray-200">
+                </thead>
+                <tbody>
                   {[
                     'The entity does not consider the Principles material to its business',
                     'The entity is not at a stage where it is in a position to formulate and implement the policies on specified principles',
