@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from "react";
-import { PencilIcon, X, Search } from "lucide-react";
+import { PencilIcon, X, Search, Trash2 } from "lucide-react";
 import { DataGrid } from "@mui/x-data-grid";
 import { useGetAllPlantEmployeesQuery } from "../../api/apiSlice";
 import Select from "react-select";
@@ -9,57 +9,37 @@ import toast, { Toaster } from "react-hot-toast";
 
 const EmployeeListPopup = ({ onClose }) => {
   const { data: employees, isLoading, isError, error } = useGetAllPlantEmployeesQuery();
-  const [dropdownInfo, setDropdownInfo] = useState(null);
   const [showEmployeePopup, setShowEmployeePopup] = useState(false);
   const [showDeleteRolesPopup, setShowDeleteRolesPopup] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({ department: "", roles: [] });
   const popupRef = useRef(null);
-  const dropdownRef = useRef(null);
-  const buttonRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Close popup if clicking outside popup and no other popups are open
       if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target)
+        popupRef.current &&
+        !popupRef.current.contains(event.target) &&
+        !showEmployeePopup &&
+        !showDeleteRolesPopup
       ) {
-        setDropdownInfo(null);
+        onClose();
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [showEmployeePopup, showDeleteRolesPopup, onClose]);
 
-  const handleActionClick = (event, index) => {
-    const employee = employees[index];
-    if (!employee) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const containerRect = popupRef.current.getBoundingClientRect();
-    setDropdownInfo({
-      top: rect.bottom - containerRect.top + 8,
-      left: rect.left - containerRect.left - 80,
-      index,
-      employeeId: employee.employee_id,
-    });
-    buttonRef.current = event.currentTarget;
-  };
-
-  const handleUpdateClick = () => {
-    const employee = employees[dropdownInfo.index];
+  const handleUpdateClick = (employee) => {
     setSelectedEmployee(employee);
     setShowEmployeePopup(true);
-    setDropdownInfo(null);
   };
 
-  const handleDeleteClick = () => {
-    const employee = employees[dropdownInfo.index];
+  const handleDeleteClick = (employee) => {
     setSelectedEmployee(employee);
     setShowDeleteRolesPopup(true);
-    setDropdownInfo(null);
   };
 
   const handleCreateEmployee = () => {
@@ -126,7 +106,7 @@ const EmployeeListPopup = ({ onClose }) => {
           {params.row.roles.map((role, i) => (
             <span
               key={i}
-              className="inline-flex justify-center items-center bg-gradient-to-r from-[#2c3e50] to-[#1A2341] text-white text-xs  px-3 py-1 rounded-full shadow-md"
+              className="inline-flex justify-center items-center bg-gradient-to-r from-[#2c3e50] to-[#1A2341] text-white text-xs px-3 py-1 rounded-full shadow-md"
             >
               {role}
             </span>
@@ -135,17 +115,26 @@ const EmployeeListPopup = ({ onClose }) => {
       ),
     },
     {
-      field: "edit",
-      headerName: "Edit",
-      flex: 0.6,
+      field: "actions",
+      headerName: "Actions",
+      flex: 0.8,
       sortable: false,
       renderCell: (params) => {
         const index = (employees || []).findIndex((d) => d.employee_id === params.row.employeeId);
+        const employee = employees[index];
         return (
-          <div className="flex items-center justify-center w-full h-full">
+          <div className="flex items-center justify-center w-full h-full gap-2">
             <button
-              onClick={(e) => handleActionClick(e, index)}
+              onClick={() => handleDeleteClick(employee)}
+              className="bg-red-600 text-white w-9 h-9 flex items-center justify-center rounded-full hover:bg-red-700 transition cursor-pointer"
+              title="Delete Employee"
+            >
+              <Trash2 size={16} />
+            </button>
+            <button
+              onClick={() => handleUpdateClick(employee)}
               className="bg-[#1A2341] text-white w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#1A2341]/70 transition cursor-pointer"
+              title="Edit Employee"
             >
               <PencilIcon size={16} />
             </button>
@@ -172,16 +161,11 @@ const EmployeeListPopup = ({ onClose }) => {
           </button>
         </div>
 
-        
-        <div className="mb-6  rounded-xl shadow-inner border border-slate-200/60  p-4  w-full">
-
-          
+        <div className="mb-6 rounded-xl shadow-inner border border-slate-200/60 p-4 w-full">
           <div className="flex flex-wrap items-center justify-between gap-4 w-full">
-
-            
             {/* Search */}
-            <div className="relative flex-1 min-w-[250px] max-w-[400px] ">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 " />
+            <div className="relative flex-1 min-w-[250px] max-w-[400px]">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
               <input
                 type="text"
                 value={searchQuery}
@@ -193,7 +177,6 @@ const EmployeeListPopup = ({ onClose }) => {
 
             {/* Department Filter */}
             <div className="flex flex-col w-[200px]">
-              {/* <label className="text-sm font-medium text-[#1A2341] mb-1">Department</label> */}
               <select
                 value={filters.department}
                 onChange={(e) => handleFilterChange("department", e.target.value)}
@@ -208,15 +191,14 @@ const EmployeeListPopup = ({ onClose }) => {
             </div>
 
             {/* Role Filter */}
-            <div className="flex flex-col w-[250px] ">
-              {/* <label className="text-sm font-medium text-[#1A2341] mb-1">Roles</label> */}
+            <div className="flex flex-col w-[250px]">
               <Select
                 isMulti
                 options={roleOptions}
                 value={roleOptions.filter((option) => filters.roles.some((r) => r.value === option.value))}
                 onChange={(selected) => handleFilterChange("roles", selected || [])}
                 placeholder="Select roles..."
-                className="text-sm "
+                className="text-sm"
                 styles={{
                   control: (provided) => ({ ...provided, minHeight: "2.5rem", height: "2.5rem" }),
                   valueContainer: (provided) => ({ ...provided, padding: "0 0.5rem" }),
@@ -227,11 +209,10 @@ const EmployeeListPopup = ({ onClose }) => {
               />
             </div>
 
-
             {/* Create Employee Button */}
             <button
               onClick={handleCreateEmployee}
-              className="bg-[#1A2341] text-white px-6   rounded-md hover:bg-[#0F1D42]/90 transition cursor-pointer whitespace-nowrap "
+              className="bg-[#1A2341] text-white px-6 rounded-md hover:bg-[#0F1D42]/90 transition cursor-pointer whitespace-nowrap"
             >
               Create Employee
             </button>
@@ -264,26 +245,6 @@ const EmployeeListPopup = ({ onClose }) => {
                 ".MuiDataGrid-cell": { alignItems: "center" },
               }}
             />
-          </div>
-        )}
-        {dropdownInfo && (
-          <div
-            ref={dropdownRef}
-            className="absolute bg-white border border-gray-200 rounded-md shadow-xl z-[9999] w-32"
-            style={{ top: dropdownInfo.top, left: dropdownInfo.left }}
-          >
-            <div
-              onClick={handleUpdateClick}
-              className="px-3 py-2 text-sm text-[#1A2341] hover:bg-gray-100 cursor-pointer"
-            >
-              Update
-            </div>
-            <div
-              onClick={handleDeleteClick}
-              className="px-3 py-2 text-sm text-[#1A2341] hover:bg-gray-100 cursor-pointer"
-            >
-              Delete
-            </div>
           </div>
         )}
         {showEmployeePopup && (

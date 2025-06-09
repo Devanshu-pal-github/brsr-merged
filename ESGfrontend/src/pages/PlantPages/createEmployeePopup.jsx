@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, User, Mail, Lock, Hash, Briefcase } from "lucide-react";
 import { useCreateEmployeeMutation, useUpdateEmployeeMutation } from "../../api/apiSlice";
 import { useNavigate } from "react-router-dom";
@@ -21,12 +21,15 @@ const EmployeePopup = ({ onClose, employee }) => {
   const [createEmployee, { isLoading: isCreating }] = useCreateEmployeeMutation();
   const [updateEmployee, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
   const navigate = useNavigate();
+  const popupRef = useRef(null);
 
   const roleOptions = [
     { value: "admin", label: "Admin" },
-    { value: "it", label: "IT" },
+    { value: "finance", label: "Finance" },
     { value: "legal", label: "Legal" },
     { value: "hr", label: "Hr" },
+    { value: "environment", label: "Environment" },
+    
   ];
 
   useEffect(() => {
@@ -49,6 +52,16 @@ const EmployeePopup = ({ onClose, employee }) => {
       navigate("/login");
     }
   }, [navigate]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [onClose]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -104,7 +117,7 @@ const EmployeePopup = ({ onClose, employee }) => {
 
   return (
     <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center px-4">
-      <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 relative">
+      <div ref={popupRef} className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 relative">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-[1.2vw] font-semibold text-[#1A2341]">
             {isEditMode ? "Update Employee" : "Create Employee"}

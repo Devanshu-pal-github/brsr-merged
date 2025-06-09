@@ -1,10 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { useDeleteEmployeeMutation } from "../../api/apiSlice";
 import toast, { Toaster } from "react-hot-toast";
 
 const DeleteEmployeePopup = ({ onClose, employee }) => {
     const [deleteEmployee, { isLoading }] = useDeleteEmployeeMutation();
+    const popupRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (popupRef.current && !popupRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [onClose]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,7 +34,7 @@ const DeleteEmployeePopup = ({ onClose, employee }) => {
 
     return (
         <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center px-4">
-            <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+            <div ref={popupRef} className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
                 <Toaster position="top-right" />
                 <div className="flex items-center mb-4">
                     {/* <h1 className="text-lg font-semibold text-[#1A2341]">
@@ -64,4 +75,4 @@ const DeleteEmployeePopup = ({ onClose, employee }) => {
     );
 };
 
-export default DeleteEmployeePopup; // Note: Update export if needed
+export default DeleteEmployeePopup;
