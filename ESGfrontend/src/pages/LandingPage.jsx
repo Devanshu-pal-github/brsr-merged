@@ -101,7 +101,7 @@ const NewLayout = () => {
 
         {/* Main Content with Sidebar */}
         <div className="flex-1 overflow-auto">
-          <div className="max-w-6xl mx-auto px-8 py-6 flex gap-8">
+          <div className="w-screen mx-auto px-8 py-6 flex gap-8">
             {/* Floating Sidebar */}
             <div className={`w-[190px] shrink-0 transition-all duration-200 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden sticky top-6">
@@ -118,7 +118,7 @@ const NewLayout = () => {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 max-w-4xl">
+            <div className="flex-1 max-w-[80vw]">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h1 className="text-xl font-semibold text-[#1A2341] mb-4">{activeTab}</h1>
                 {renderContent(activeTab)}

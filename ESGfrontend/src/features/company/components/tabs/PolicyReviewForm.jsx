@@ -603,12 +603,12 @@ const PolicyReviewForm = () => {
         <CardContent>
           <div className="overflow-x-auto custom-scrollbar">
             <div className="min-w-max">
-              <table className="min-w-full divide-y divide-gray-200 table-fixed" style={{ minWidth: '800px' }}>
+              <table className="min-w-full divide-y divide-gray-200 table-fixed" style={{ minWidth: '1400px' }}>
                 <thead>
                   <tr>
-                    <th className="w-72 px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Questions</th>
+                    <th className="w-[500px] px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Questions</th>
                     {principles.map(p => (
-                      <th key={p} className="w-24 px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{p}</th>
+                      <th key={p} className="w-[100px] px-6 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{p}</th>
                     ))}
                   </tr>
                 </thead>
@@ -621,14 +621,14 @@ const PolicyReviewForm = () => {
                     'Any other reason (please specify)'
                   ].map((reason, idx) => (
                     <tr key={reason} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-4 py-4 text-sm text-gray-900">{reason}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{reason}</td>
                       {principles.map(p => (
                         <td 
                           key={p} 
                           onClick={() => handleNonCoverageClick(p, reason)}
-                          className="px-4 py-4 text-center cursor-pointer hover:bg-gray-100"
+                          className="px-6 py-4 text-center cursor-pointer hover:bg-gray-100"
                         >
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${
                             nonCoverageReasons[`${p}-${reason}`] === 'Yes' 
                               ? 'bg-green-100 text-green-800' 
                               : nonCoverageReasons[`${p}-${reason}`] === 'No'

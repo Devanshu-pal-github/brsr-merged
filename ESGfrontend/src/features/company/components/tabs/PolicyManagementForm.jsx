@@ -390,14 +390,14 @@ const PolicyManagementForm = () => {
         />
         <CardContent>
           <div className="overflow-x-auto custom-scrollbar" style={{ maxWidth: '100%' }}>
-            <table className="min-w-full divide-y divide-gray-200 table-fixed" style={{ minWidth: '800px' }}>
+            <table className="min-w-full divide-y divide-gray-200 table-fixed" style={{ minWidth: '1200px' }}>
               <thead>
                 <tr>
-                  <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
+                  <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[400px]">
                     Questions
                   </th>
                   {principles.map(principle => (
-                    <th key={principle} className="px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th key={principle} className="px-6 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-[90px]">
                       {principle}
                     </th>
                   ))}
@@ -415,9 +415,9 @@ const PolicyManagementForm = () => {
                         <td
                           key={principle}
                           onClick={() => handleYesNoClick(questionId, principle)}
-                          className="px-4 py-4 text-center cursor-pointer hover:bg-gray-100"
+                          className="px-6 py-4 text-center cursor-pointer hover:bg-gray-100"
                         >
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                             value === "Yes" ? "bg-green-100 text-green-800"
                             : value === "No" ? "bg-red-100 text-red-800"
                             : "bg-gray-100 text-gray-800"
