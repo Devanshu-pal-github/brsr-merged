@@ -14,7 +14,7 @@ const TABS = [
     { id: 'governance', label: 'Governance' }
 ];
 
-const LandingFlowContainer = ({ companyId }) => {
+const LandingFlowContainer = ({ companyId, plantId }) => {
     const [activeTab, setActiveTab] = useState('general_details');
     const hasUnsavedChanges = useSelector(selectHasUnsavedChanges);
 
@@ -31,13 +31,13 @@ const LandingFlowContainer = ({ companyId }) => {
     const renderActiveForm = () => {
         switch (activeTab) {
             case 'general_details':
-                return <GeneralDetailsForm companyId={companyId} />;
+                return <GeneralDetailsForm companyId={companyId} plantId={plantId} />;
             case 'policy_management':
-                return <PolicyManagementForm companyId={companyId} />;
+                return <PolicyManagementForm companyId={companyId} plantId={plantId} />;
             case 'policy_review':
-                return <PolicyReviewForm companyId={companyId} />;
+                return <PolicyReviewForm companyId={companyId} plantId={plantId} />;
             case 'governance':
-                return <GovernanceForm companyId={companyId} />;
+                return <GovernanceForm companyId={companyId} plantId={plantId} />;
             default:
                 return null;
         }

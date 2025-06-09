@@ -4,8 +4,8 @@ import axios from 'axios';
 // Async thunks
 export const fetchResponses = createAsyncThunk(
     'landingFlow/responses/fetch',
-    async ({ companyId, plantId, sectionId }) => {
-        const response = await axios.get(`/company/${companyId}/plant/${plantId}/responses/${sectionId}`);
+    async ({ companyId, plantId, sectionId, financialYear }) => {
+        const response = await axios.get(`/company/${companyId}/plants/${plantId}/reportsNew/${financialYear}`);
         // Extract responses from the response data
         return response.data?.responses || {};
     }
@@ -15,7 +15,7 @@ export const bulkUpdateResponses = createAsyncThunk(
     'landingFlow/responses/bulkUpdate',
     async ({ companyId, plantId, sectionId, responses, financialYear }) => {
         const response = await axios.post(
-            `/company/${companyId}/plant/${plantId}/responses/${sectionId}/bulk`,
+            `/company/${companyId}/plants/${plantId}/reportsNew/${financialYear}`,
             responses.map(response => ({
                 ...response,
                 section_id: sectionId,

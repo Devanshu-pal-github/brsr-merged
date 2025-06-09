@@ -242,21 +242,21 @@ const GeneralDetailsForm = () => {
               {/* Company Identity Section */}
               <FormSection title="Company Identity">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField label="Company Name" required>
+                  <FormField label="CIN" required>
                     <FormInput
                       name="Q1_A"
                       value={formData.Q1_A?.string_value || ''}
                       onChange={handleChange}
-                      placeholder="Enter company name"
+                      placeholder="Enter CIN"
                       required
                     />
                   </FormField>
-                  <FormField label="CIN" required>
+                  <FormField label="Company Name" required>
                     <FormInput
                       name="Q2_A"
                       value={formData.Q2_A?.string_value || ''}
                       onChange={handleChange}
-                      placeholder="Enter CIN"
+                      placeholder="Enter company name"
                       required
                     />
                   </FormField>
