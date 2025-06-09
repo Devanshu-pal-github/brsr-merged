@@ -126,7 +126,7 @@ const EmployeeListPopup = ({ onClose }) => {
           <div className="flex items-center justify-center w-full h-full gap-2">
             <button
               onClick={() => handleDeleteClick(employee)}
-              className="bg-red-600 text-white w-9 h-9 flex items-center justify-center rounded-full hover:bg-red-700 transition cursor-pointer"
+              className="bg-gray-200 text-gray-900 w-9 h-9 flex items-center justify-center rounded-full hover:bg-red-700 transition cursor-pointer"
               title="Delete Employee"
             >
               <Trash2 size={16} />
