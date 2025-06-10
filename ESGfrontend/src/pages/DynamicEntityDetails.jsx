@@ -261,7 +261,7 @@ const DynamicEntityDetails = () => {
 
                                         return (<div key={question.question_id} className="flex flex-col relative bg-white rounded-[4px] shadow border border-gray-100 p-2 mt-2 mb-0.5 transition-all duration-300 hover:shadow-md group min-h-[30px]">
                                             <div className="flex flex-row flex-nowrap items-start justify-between gap-2 pr-[60px] relative">
-                                                <div className="flex-1 min-w-0 max-w-full break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2">
+                                                <div className="flex-1 min-w-0 max-w-[95%] break-words text-[13px] md:text-[14px] font-medium text-[#1A2341] leading-tight transition-all duration-300 self-start pl-2 font-roboto mb-2">
                                                     {question.question}
                                                 </div>
                                                 <div className="absolute right-2 top-0 flex gap-2">

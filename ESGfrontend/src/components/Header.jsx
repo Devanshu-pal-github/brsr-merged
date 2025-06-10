@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Menu, ChevronDown, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import EmployeeListPopup from '../pages/PlantPages/employeeListPopup';
+import NotifyPopup from '../components/common/NotifyPopup';
+import NotificationPanel from '../components/common/notificationPanel';
 
 const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
     const navigate = useNavigate();
@@ -14,6 +16,7 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
     const [isFYDropdownOpen, setIsFYDropdownOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const [fiscalYears, setFiscalYears] = useState([]);
+    const [showNotifyPopup, setShowNotifyPopup] = useState(false);
 
     // Fetch financial years from API
     useEffect(() => {
@@ -65,6 +68,7 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
     };
 
     const [showEmployeeList, setShowEmployeeList] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
 
     return (
         <div className="w-full flex items-center justify-between px-3 md:px-5 h-[48px] bg-[#000D30] shadow-md border-b z-40">
@@ -108,10 +112,18 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
                 Manage Access
             </button>
             <div className="flex items-center gap-4">
-                <button className="relative text-[#FFFFFF] focus:outline-none hover:text-gray-300 transition-colors">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white" />
-                </button>
+            <div className="relative">
+                    <button
+                        onClick={() => setShowNotifications((prev) => !prev)}
+                        className="relative text-[#FFFFFF] focus:outline-none hover:text-gray-300 transition-colors cursor-pointer"
+                    >
+                        <Bell className="w-5 h-5" />
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white" />
+                    </button>
+
+                    {/* Notification Panel */}
+                    <NotificationPanel isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
+                </div>
                 <div className="relative">
                     <button
                         onClick={toggleUserDropdown}
@@ -150,10 +162,15 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
 
                             <li
                                 className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
-                                onClick={() => setIsUserDropdownOpen(false)}
+                                onClick={() => {
+                                    setShowNotifyPopup(true);
+                                    setIsUserDropdownOpen(false);
+                                }}
                             >
-                                Settings
+                                Notify
                             </li>
+
+
 
                             <li
                                 className="px-4 py-2 text-[12px] text-white cursor-pointer hover:bg-[#20305D] transition-colors"
@@ -171,6 +188,9 @@ const Header = ({ toggleSidebar, showHamburger, isSidebarOpen }) => {
             </div>
             {showEmployeeList && (
                 <EmployeeListPopup onClose={() => setShowEmployeeList(false)} />
+            )}
+            {showNotifyPopup && (
+                <NotifyPopup onClose={() => setShowNotifyPopup(false)} />
             )}
         </div>
     );

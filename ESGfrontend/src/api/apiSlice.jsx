@@ -777,6 +777,38 @@ export const apiSlice = createApi({
       invalidatesTags: ["AuditLog"],
     }),
 
+
+    // New mutation for creating a notification
+    createNotification: builder.mutation({
+      query: (notificationData) => {
+        const company_id = localStorage.getItem('company_id');
+        const plant_id = localStorage.getItem('plant_id');
+        const user_id = localStorage.getItem('user_id');
+
+        if (!company_id || !plant_id || !user_id) {
+          throw new Error('Required context missing: company_id, plant_id, or user_id');
+        }
+
+        return {
+          url: `/notifications/`,
+          method: 'POST',
+          body: notificationData, // Expects { title, description, recipients }
+        };
+      },
+      invalidatesTags: ['Notifications'], // Invalidate to refresh notification queries
+    }),
+
+    getNotifications: builder.query({
+      query: () => {
+        return {
+          url: '/notifications',
+          method: 'GET',
+        };
+      },
+      providesTags: ['Notifications'],
+    }),
+
+
   }),
 });
 
@@ -808,5 +840,7 @@ export const {
   useCreateResponseMutation,
   useUpdateResponseMutation,
   useBulkUpdateResponsesMutation,
+  useCreateNotificationMutation,
+  useGetNotificationsQuery
 } = apiSlice;
 ////working fine
