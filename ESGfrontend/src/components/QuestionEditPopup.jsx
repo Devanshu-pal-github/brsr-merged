@@ -203,11 +203,38 @@ const QuestionEditPopup = ({
                     type: "table",
                     response: {
                         table: currentValue.table,
-                        meta_version: question.table_metadata?.version,
+                        meta_version: question.table_metadata?.version || "1.0",
                     },
                 };
-                await onSuccess?.(question.question_id, response.response);
+
+                // Store the question data first
+                await storeQuestionData({
+                    moduleId,
+                    questionId: question.question_id,
+                    metadata: {
+                        question_text: question.question,
+                        has_string_value: question.has_string_value,
+                        has_decimal_value: question.has_decimal_value,
+                        has_boolean_value: question.has_boolean_value,
+                        has_link: question.has_link,
+                        has_note: question.has_note,
+                        string_value_required: question.string_value_required,
+                        decimal_value_required: question.decimal_value_required,
+                        boolean_value_required: question.boolean_value_required,
+                        link_required: question.link_required,
+                        note_required: question.note_required,
+                    },
+                    answer: response.response
+                });
+
+                // Then submit the answer
+                await submitAnswer({
+                    questionId: question.question_id,
+                    answerData: response.response
+                }).unwrap();
+
                 toast.success("Question updated successfully!");
+                await onSuccess?.(question.question_id, response.response);
                 setTimeout(() => {
                     onClose();
                 }, 1500);
