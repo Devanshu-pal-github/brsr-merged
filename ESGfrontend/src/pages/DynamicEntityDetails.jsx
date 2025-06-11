@@ -312,9 +312,9 @@ const DynamicEntityDetails = () => {
                                                     );
 
                                                     if (isBusinessActivitiesTable) {
-                                                        let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
-                                                        if (!turnoverCol) {
-                                                            columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
+                                                    let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
+                                                    if (!turnoverCol) {
+                                                        columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
                                                         }
                                                     }
 
@@ -502,52 +502,7 @@ const DynamicEntityDetails = () => {
                                             {editModalTableQuestion && editModalTableQuestion.question_id === question.question_id && question.type === 'table' && (
                                                 <QuestionEditPopup
                                                     question={question}
-                                                    initialAnswer={(() => {
-                                                        // Prefill table: create empty structure, then fill with current values
-                                                        const meta = transformTableMetadata(question);
-                                                        // Remove duplicate S No. columns (flexible match)
-                                                        let columns = meta.columns.filter((col, idx, arr) => {
-                                                            const isSNo = col.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || col.label.toLowerCase().replace(/\s/g, '').includes('sno');
-                                                            // Keep only the first occurrence
-                                                            if (!isSNo) return true;
-                                                            return arr.findIndex(c => (c.col_id.toLowerCase().replace(/\s/g, '').includes('sno') || c.label.toLowerCase().replace(/\s/g, '').includes('sno'))) === idx;
-                                                        });
-                                                        // Ensure 'S No.' is always the first column
-                                                        if (!columns.length || !(columns[0].col_id.toLowerCase().replace(/\s/g, '').includes('sno') || columns[0].label.toLowerCase().replace(/\s/g, '').includes('sno'))) {
-                                                            columns = [
-                                                                { col_id: 's_no', label: 'S No.' },
-                                                                ...columns
-                                                            ];
-                                                        }
-                                                        // Ensure '% turnover of the entity' column is present (flexible match)
-                                                        let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
-                                                        if (!turnoverCol) {
-                                                            columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
-                                                        }
-                                                        const emptyTable = createEmptyTableResponse({ ...meta, columns });
-                                                        const currentTable = answer?.table || [];
-                                                        // Fill values from currentTable (flat array) into emptyTable (structured)
-                                                        const filledRows = emptyTable.rows.map((row, idx) => ({
-                                                            ...row,
-                                                            cells: row.cells.map(cell => {
-                                                                if (cell.col_id === 's_no' || cell.label?.toLowerCase().includes('s no')) {
-                                                                    return { ...cell, value: (idx + 1).toString() };
-                                                                }
-                                                                // Flexible match for turnover column
-                                                                const isTurnover = cell.col_id.toLowerCase().includes('turnover') || cell.label?.toLowerCase().includes('turnover');
-                                                                let tableArray = Array.isArray(currentTable) ? currentTable : [];
-                                                                let found = tableArray.find(c => {
-                                                                    const rowMatch = c.row === row.row_id || c.row === row.label || c.row === `activity_${meta.rows.findIndex(r => r.row_id === row.row_id) + 1}`;
-                                                                    if (isTurnover) {
-                                                                        return rowMatch && (c.col.toLowerCase().includes('turnover') || c.col === cell.col_id);
-                                                                    }
-                                                                    return rowMatch && (c.col === cell.col_id || c.col.toLowerCase() === cell.col_id.toLowerCase());
-                                                                });
-                                                                return found ? { ...cell, value: found.value } : cell;
-                                                            })
-                                                        }));
-                                                        return { ...answer, table: { columns, rows: filledRows } };
-                                                    })()}
+                                                    initialAnswer={answers[question.question_id]}
                                                     onClose={handleEditClose}
                                                     onSuccess={handleEditSuccess}
                                                     moduleId={moduleId}

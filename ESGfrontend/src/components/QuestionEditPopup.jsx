@@ -25,6 +25,10 @@ const QuestionEditPopup = ({
     onSuccess,
     moduleId,
 }) => {
+
+
+    console.log( "question", question);
+    console.log( "initialAnswer", initialAnswer);
     const [formData, setFormData] = useState({
         string_value: initialAnswer?.string_value || "",
         decimal_value: initialAnswer?.decimal_value || "",
@@ -43,8 +47,40 @@ const QuestionEditPopup = ({
     const [currentValue, setCurrentValue] = useState(() => {
         if (question.type === "table") {
             const meta = transformTableMetadata(question);
+            
+            // If we have initial answer data
+            if (initialAnswer?.table) {
+                // Ensure the structure matches our requirements
+                const formattedTable = {
+                    columns: meta.columns,
+                    rows: meta.rows.map((row, idx) => ({
+                        row_id: row.row_id,
+                        cells: meta.columns.map(col => {
+                            // Try to find existing value
+                            const existingCell = initialAnswer.table.rows?.[idx]?.cells?.find(cell => {
+                                const normalizeId = (id) => id?.toLowerCase().replace(/[^a-z0-9]/g, '');
+                                const normalizedColId = normalizeId(cell.col_id);
+                                const normalizedTargetColId = normalizeId(col.col_id);
+                                return normalizedColId === normalizedTargetColId;
+                            });
+
+                            return {
+                                row_id: row.row_id,
+                                col_id: col.col_id,
+                                value: existingCell?.value ?? null,
+                                calc: col.calc || false
+                            };
+                        })
+                    }))
+                };
+                return {
+                    table: formattedTable
+                };
+            }
+            
+            // Otherwise create empty response
             return {
-                table: initialAnswer?.table || createEmptyTableResponse(meta),
+                table: createEmptyTableResponse(meta)
             };
         }
         return {};
@@ -53,9 +89,40 @@ const QuestionEditPopup = ({
     useEffect(() => {
         if (question.type === "table") {
             const meta = transformTableMetadata(question);
-            setCurrentValue({
-                table: initialAnswer?.table || createEmptyTableResponse(meta),
-            });
+            
+            // If we have initial answer data
+            if (initialAnswer?.table) {
+                // Ensure the structure matches our requirements
+                const formattedTable = {
+                    columns: meta.columns,
+                    rows: meta.rows.map((row, idx) => ({
+                        row_id: row.row_id,
+                        cells: meta.columns.map(col => {
+                            // Try to find existing value
+                            const existingCell = initialAnswer.table.rows?.[idx]?.cells?.find(cell => {
+                                const normalizeId = (id) => id?.toLowerCase().replace(/[^a-z0-9]/g, '');
+                                const normalizedColId = normalizeId(cell.col_id);
+                                const normalizedTargetColId = normalizeId(col.col_id);
+                                return normalizedColId === normalizedTargetColId;
+                            });
+
+                            return {
+                                row_id: row.row_id,
+                                col_id: col.col_id,
+                                value: existingCell?.value ?? null,
+                                calc: col.calc || false
+                            };
+                        })
+                    }))
+                };
+                setCurrentValue({
+                    table: formattedTable
+                });
+            } else {
+                setCurrentValue({
+                    table: createEmptyTableResponse(meta)
+                });
+            }
         }
     }, [initialAnswer, question]);
 
@@ -275,71 +342,39 @@ const QuestionEditPopup = ({
     // Table rendering logic extracted for clarity
     const renderTable = () => {
         if (question.type !== "table") return null;
-        let meta = transformTableMetadata(question);
-        let columns = meta.columns.filter((col, idx, arr) => {
-            const isSNo =
-                col.col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
-                col.label.toLowerCase().replace(/\s/g, "").includes("sno");
-            if (!isSNo) return true;
-            return (
-                arr.findIndex(
-                    (c) =>
-                        c.col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
-                        c.label.toLowerCase().replace(/\s/g, "").includes("sno")
-                ) === idx
-            );
-        });
-        if (
-            !columns.length ||
-            !(
-                columns[0].col_id.toLowerCase().replace(/\s/g, "").includes("sno") ||
-                columns[0].label.toLowerCase().replace(/\s/g, "").includes("sno")
-            )
-        ) {
-            columns = [{ col_id: "s_no", label: "S No." }, ...columns];
-        }
-        let turnoverCol = columns.find((col) =>
-            col.col_id.toLowerCase().includes("turnover")
-        );
-        if (!turnoverCol) {
-            columns.push({
-                col_id: "percent_turnover_of_the_entity",
-                label: "% turnover of the entity",
-            });
-        }
-        const currentTable =
-            currentValue?.table || createEmptyTableResponse({ ...meta, columns });
+        const meta = transformTableMetadata(question);
+        
+        // Get current table data, preserving existing values
+        const currentTable = currentValue?.table || createEmptyTableResponse(meta);
+        
+        // Map the table data while preserving existing values
         const tableWithSNo = {
-            columns,
+            columns: meta.columns,
             rows: currentTable.rows.map((row, idx) => ({
-                ...row,
-                cells: columns.map((col) => {
-                    if (
-                        col.col_id === "s_no" ||
-                        col.label?.toLowerCase().includes("s no")
-                    ) {
-                        return {
-                            ...col,
-                            col_id: col.col_id,
-                            value: (idx + 1).toString(),
-                            readOnly: true,
-                        };
-                    }
-                    const found = row.cells?.find((cell) => cell.col_id === col.col_id);
-                    return found
-                        ? { ...found, col_id: col.col_id }
-                        : { col_id: col.col_id, value: "" };
+                row_id: row.row_id,
+                cells: meta.columns.map(col => {
+                    // Find existing cell value
+                    const existingCell = row.cells?.find(cell => {
+                        const normalizeId = (id) => id?.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        const normalizedColId = normalizeId(cell.col_id);
+                        const normalizedTargetColId = normalizeId(col.col_id);
+                        return normalizedColId === normalizedTargetColId;
+                    });
+
+                    return existingCell ? 
+                        { ...existingCell, col_id: col.col_id } : 
+                        { col_id: col.col_id, value: null };
                 }),
-            })),
+            }))
         };
+
         return (
             <div className="mb-4">
                 <TableQuestionRenderer
-                    meta={{ ...meta, columns }}
+                    meta={meta}
                     response={tableWithSNo}
                     editable={true}
                     onCellChange={(rowId, colId, value) => {
-                        if (colId === "s_no") return;
                         handleTableCellChange(rowId, colId, value);
                     }}
                 />
