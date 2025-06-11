@@ -76,7 +76,6 @@ const TableQuestionRenderer = ({ meta, response, editable = false, onCellChange 
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell />
             {meta.columns.map(col => (
               <TableCell key={col.col_id} className="bg-gray-50 text-left px-3 py-2 text-xs font-semibold text-[#1A2341] border-b border-gray-200">
                 <Tooltip title={col.note || ""}>
@@ -92,18 +91,11 @@ const TableQuestionRenderer = ({ meta, response, editable = false, onCellChange 
         <TableBody>
           {meta.rows.map(rowMeta => (
             <TableRow key={rowMeta.row_id}>
-              <TableCell className="px-3 py-2 text-sm font-medium text-[#1A2341] bg-gray-50">
-                <Tooltip title={rowMeta.note || ""}>
-                  <span>
-                    {rowMeta.label || rowMeta.row_id}
-                    {rowMeta.calc && <span className="text-gray-500"> (calc)</span>}
-                  </span>
-                </Tooltip>
-              </TableCell>
               {meta.columns.map(col => {
                 const value = getCellValue(rowMeta.row_id, col.col_id);
                 const readOnly = isCellReadOnly(rowMeta.row_id, col.col_id) || !editable;
                 const cellNote = getCellNote(rowMeta.row_id, col.col_id);
+
                 return (
                   <TableCell key={col.col_id} className="px-3 py-2 text-sm text-gray-600">
                     <Tooltip title={cellNote}>
@@ -137,13 +129,6 @@ const TableQuestionRenderer = ({ meta, response, editable = false, onCellChange 
           ))}
         </TableBody>
       </Table>
-      {/* Table-level notes */}
-      {(response?.notes || meta?.restrictions) && (
-        <Typography variant="caption" color="textSecondary" className="mt-2 block px-3 pb-2 text-[10px] text-gray-600 italic">
-          {response?.notes && <>Notes: {response.notes} <br /></>}
-          {meta?.restrictions && <>Restrictions: {JSON.stringify(meta.restrictions)}</>}
-        </Typography>
-      )}
     </TableContainer>
   );
 };
