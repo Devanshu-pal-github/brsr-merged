@@ -38,7 +38,7 @@ const LoginPage = () => {
             console.log('Login successful:', response);
             
             // Redirect to dashboard
-            navigate('/company');
+            navigate('/landing');
         } catch (err) {
             console.error('Login failed:', err);
             setError(err.data?.detail || 'Login failed. Please try again.');
