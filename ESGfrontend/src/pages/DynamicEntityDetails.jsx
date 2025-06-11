@@ -302,40 +302,143 @@ const DynamicEntityDetails = () => {
                                                             ...columns
                                                         ];
                                                     }
-                                                    // Ensure '% turnover of the entity' column is present (flexible match)
-                                                    let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
-                                                    if (!turnoverCol) {
-                                                        columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
+
+                                                    // Only add turnover column for business activities table
+                                                    const isBusinessActivitiesTable = columns.some(col => 
+                                                        col.col_id.toLowerCase().includes('business') || 
+                                                        col.col_id.toLowerCase().includes('activity') ||
+                                                        (col.label && col.label.toLowerCase().includes('business')) ||
+                                                        (col.label && col.label.toLowerCase().includes('activity'))
+                                                    );
+
+                                                    if (isBusinessActivitiesTable) {
+                                                        let turnoverCol = columns.find(col => col.col_id.toLowerCase().includes('turnover'));
+                                                        if (!turnoverCol) {
+                                                            columns.push({ col_id: 'percent_turnover_of_the_entity', label: '% turnover of the entity' });
+                                                        }
                                                     }
-                                                    // Create response object using the transformed metadata's IDs
+
+                                                    // Enhanced normalization function to handle special characters
+                                                    const normalizeId = (id) => {
+                                                        if (!id) return '';
+                                                        // First, handle special cases
+                                                        const specialCases = {
+                                                            'progress_(%)': 'progress',
+                                                            'progress%': 'progress',
+                                                            'progress': 'progress'
+                                                        };
+                                                        
+                                                        const lowerCaseId = id.toLowerCase();
+                                                        // Check if this is a special case
+                                                        for (const [key, value] of Object.entries(specialCases)) {
+                                                            if (lowerCaseId.includes(key)) {
+                                                                return value;
+                                                            }
+                                                        }
+                                                        
+                                                        // If not a special case, do standard normalization
+                                                        return lowerCaseId.replace(/[^a-z0-9]/g, '');
+                                                    };
+
+                                                    // Create response object with the correct structure
                                                     const response = {
-                                                        columns,
+                                                        columns: columns,
                                                         rows: transformedMeta.rows.map((row, idx) => {
                                                             return {
                                                                 row_id: row.row_id,
-                                                                label: row.label,
                                                                 cells: columns.map(col => {
                                                                     if (col.col_id === 's_no' || col.label.toLowerCase().includes('s no')) {
-                                                                        return { col_id: col.col_id, value: (idx + 1).toString() };
+                                                                        return {
+                                                                            col_id: col.col_id,
+                                                                            value: (idx + 1).toString()
+                                                                        };
                                                                     }
-                                                                    // Flexible match for turnover column
-                                                                    const isTurnover = col.col_id.toLowerCase().includes('turnover') || col.label.toLowerCase().includes('turnover');
-                                                                    let tableArray = Array.isArray(answer?.table) ? answer.table : [];
-                                                                    let cell = tableArray.find(cell => {
-                                                                        const rowMatch = cell.row === row.row_id || cell.row === `activity_${idx + 1}`;
-                                                                        if (isTurnover) {
-                                                                            return rowMatch && (cell.col.toLowerCase().includes('turnover') || cell.col === col.col_id);
+
+                                                                    // Handle both data structure formats
+                                                                    if (answer?.table) {
+                                                                        // Format 1: Nested structure with rows array
+                                                                        if (Array.isArray(answer.table.rows)) {
+                                                                            const matchingRow = answer.table.rows.find(r => {
+                                                                                const normalizedRowId = normalizeId(r.row_id);
+                                                                                const normalizedTargetId = normalizeId(row.row_id);
+                                                                                const normalizedActivityId = normalizeId(`activity_${idx + 1}`);
+                                                                                return normalizedRowId === normalizedTargetId || 
+                                                                                       normalizedRowId === normalizedActivityId ||
+                                                                                       normalizeId(r.row_id.replace('Entry', 'entry')) === normalizedTargetId ||
+                                                                                       normalizeId(r.row_id.replace('Target', 'target')) === normalizedTargetId;
+                                                                            });
+
+                                                                            if (matchingRow?.cells) {
+                                                                                const matchingCell = matchingRow.cells.find(c => {
+                                                                                    const normalizedColId = normalizeId(c.col_id);
+                                                                                    const normalizedTargetColId = normalizeId(col.col_id);
+                                                                                    
+                                                                                    // Special handling for progress column
+                                                                                    if (col.col_id.toLowerCase().includes('progress')) {
+                                                                                        return c.col_id.toLowerCase().includes('progress');
+                                                                                    }
+                                                                                    
+                                                                                    return normalizedColId === normalizedTargetColId ||
+                                                                                           (isBusinessActivitiesTable && 
+                                                                                            col.col_id.toLowerCase().includes('turnover') && 
+                                                                                            c.col_id.toLowerCase().includes('turnover'));
+                                                                                });
+
+                                                                                if (matchingCell?.value !== undefined) {
+                                                                                    return {
+                                                                                        col_id: col.col_id,
+                                                                                        value: matchingCell.value
+                                                                                    };
+                                                                                }
+                                                                            }
                                                                         }
-                                                                        return rowMatch && (cell.col === col.col_id || cell.col.toLowerCase() === col.col_id.toLowerCase());
-                                                                    });
+                                                                        // Format 2: Flat array structure
+                                                                        else if (Array.isArray(answer.table)) {
+                                                                            const matchingCell = answer.table.find(cell => {
+                                                                                const normalizedRow = normalizeId(cell.row);
+                                                                                const normalizedTargetRow = normalizeId(row.row_id);
+                                                                                const normalizedActivityRow = normalizeId(`activity_${idx + 1}`);
+                                                                                const rowMatch = normalizedRow === normalizedTargetRow || 
+                                                                                               normalizedRow === normalizedActivityRow;
+
+                                                                                const normalizedCol = normalizeId(cell.col);
+                                                                                const normalizedTargetCol = normalizeId(col.col_id);
+                                                                                
+                                                                                // Special handling for progress column
+                                                                                if (col.col_id.toLowerCase().includes('progress')) {
+                                                                                    return rowMatch && cell.col.toLowerCase().includes('progress');
+                                                                                }
+                                                                                
+                                                                                const colMatch = normalizedCol === normalizedTargetCol ||
+                                                                                               (isBusinessActivitiesTable && 
+                                                                                                col.col_id.toLowerCase().includes('turnover') && 
+                                                                                                cell.col.toLowerCase().includes('turnover'));
+                                                                                
+                                                                                return rowMatch && colMatch;
+                                                                            });
+
+                                                                            if (matchingCell?.value !== undefined) {
+                                                                                return {
+                                                                                    col_id: col.col_id,
+                                                                                    value: matchingCell.value
+                                                                                };
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    // Return empty value if no match found
                                                                     return {
                                                                         col_id: col.col_id,
-                                                                        value: cell?.value ?? ''
+                                                                        value: ''
                                                                     };
                                                                 })
                                                             };
                                                         })
                                                     };
+
+                                                    console.log('Original Data:', answer?.table); // Debug log
+                                                    console.log('Table Response:', response); // Debug log
+
                                                     return (
                                                         <TableQuestionRenderer
                                                             meta={{ ...transformedMeta, columns }}
@@ -529,19 +632,7 @@ const DynamicEntityDetails = () => {
                                                     return hasAnswer;
                                                 }).length || 0), 0) || 0), 0);
 
-                                        console.log('Detailed Progress Stats:', {
-                                            totalAnsweredQuestions: totalAnswered,
-                                            totalQuestions: totalQuestions,
-                                            uniqueQuestionIds: Array.from(questionTracker),
-                                            answerDetails: Object.entries(answers).map(([key, val]) => ({
-                                                questionId: key,
-                                                hasStringValue: !!val?.string_value,
-                                                hasBoolValue: val?.bool_value !== undefined,
-                                                hasDecimalValue: val?.decimal_value !== undefined,
-                                                hasTableResponse: !!(val?.response?.table)
-                                            }))
-                                        });
-
+                                            
                                         return (
                                             <>
                                                 <svg width="6vw" height="6vw" viewBox="0 0 120 120">
@@ -600,22 +691,7 @@ const DynamicEntityDetails = () => {
 
                                     const completionPercentage = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
 
-                                    console.log(`Submodule ${submodule.submodule_name} Progress:`, {
-                                        totalQuestions,
-                                        answeredQuestions,
-                                        completionPercentage,
-                                        uniqueQuestionIds: Array.from(questionTracker),
-                                        categories: submodule.question_categories?.map(cat => ({
-                                            categoryName: cat.category_name,
-                                            totalQuestions: cat.questions?.length || 0,
-                                            answeredQuestions: cat.questions?.filter(q => !questionTracker.has(q.question_id) && answers[q.question_id] && (
-                                                answers[q.question_id].string_value !== undefined || answers[q.question_id].bool_value !== undefined ||
-                                                answers[q.question_id]?.decimal_value !== undefined ||
-                                                (answers[q.question_id].response && answers[q.question_id].response.table)
-                                            )).length || 0
-                                        }))
-                                    });
-
+                                    
                                     return (
                                         <div key={submodule.submodule_id}>
                                             <div className="text-[11px] font-medium text-[#000D30] mb-0.5">{submodule.submodule_name}</div>
