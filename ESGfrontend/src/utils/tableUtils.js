@@ -17,7 +17,7 @@ const deduplicateSNoColumns = (columns) => {
 export const transformTableMetadata = (question) => {
     if (!question?.table_metadata) return { columns: [], rows: [] };
 
-    const { headers = [], rows = [] } = question.table_metadata;
+    const { headers = [], rows = [], column_groups = [] } = question.table_metadata;
 
     // Transform headers into columns
     let columns = headers.map(header => ({
@@ -30,34 +30,62 @@ export const transformTableMetadata = (question) => {
         min_value: header.min_value,
         max_value: header.max_value,
         default_value: header.default_value,
+        parent: header.parent
     }));
 
-    // Add S.No. column if not present
-    if (!columns.some(col => col.col_id === 's_no')) {
+    // Add Category column if not present
+    if (!columns.some(col => col.col_id === 'category')) {
         columns = [
             {
-                col_id: 's_no',
-                label: 'S No.',
-                type: 'decimal',
-                calc: true,
-                required: false
+                col_id: 'category',
+                label: 'Category',
+                type: 'string',
+                calc: false,
+                required: true
             },
             ...columns
         ];
     }
 
-    // Deduplicate S.No. columns
-    columns = deduplicateSNoColumns(columns);
+    // Transform column groups
+    const transformedGroups = column_groups.length > 0 ? column_groups : [
+        // If no groups defined, create default groups based on parent property
+        ...new Set(columns.filter(col => col.parent).map(col => col.parent))
+    ].map(groupLabel => {
+        const groupColumns = columns.filter(col => col.parent === groupLabel);
+        return {
+            label: groupLabel,
+            span: groupColumns.length || 1
+        };
+    });
 
     // Transform rows
     const transformedRows = rows.map((row, index) => ({
-        row_id: row.name || `row_${index + 1}`,
+        row_id: row.name?.toLowerCase().replace(/[^a-z0-9]/g, '_') || `row_${index + 1}`,
         name: row.name || `Row ${index + 1}`,
         required: row.required || false,
     }));
 
     return {
         columns,
-        rows: transformedRows
+        rows: transformedRows,
+        column_groups: transformedGroups,
+        restrictions: question.table_metadata.restrictions || {}
+    };
+};
+
+export const createEmptyTableResponse = (meta) => {
+    const { columns, rows } = meta;
+    return {
+        columns: columns,
+        rows: rows.map((row) => ({
+            row_id: row.row_id,
+            cells: columns.map((col) => ({
+                row_id: row.row_id,
+                col_id: col.col_id,
+                value: null,
+                calc: col.calc || false
+            }))
+        }))
     };
 }; 
